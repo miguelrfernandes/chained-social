@@ -6,7 +6,7 @@ import Blob "mo:base/Blob";
 import Text "mo:base/Text";
 import Cycles "mo:base/ExperimentalCycles";
 import HashMap "mo:base/HashMap";
-import Hash "mo:base/Hash";
+
 import Nat "mo:base/Nat";
 import Principal "mo:base/Principal";
 import Nat32 "mo:base/Nat32";
@@ -17,7 +17,7 @@ actor {
     let userProfileMap = HashMap.HashMap<Nat, Text>(0, Nat.equal, func(n : Nat) : Nat32 { Nat32.fromNat(n) });
     let userResultsMap = HashMap.HashMap<Nat, [Text]>(0, Nat.equal, func(n : Nat) : Nat32 { Nat32.fromNat(n) });
     
-    public query ({ caller }) func getUserProfile() : async Result.Result<{ id : Nat; name : Text }, Text> {
+    public query func getUserProfile() : async Result.Result<{ id : Nat; name : Text }, Text> {
         return #ok({ id = 123; name = "test" });
     };
 
@@ -61,7 +61,7 @@ actor {
         return #ok({ id = userId; results = updatedResults });
     };
 
-    public query ({ caller }) func getUserResults() : async Result.Result<{ id : Nat; results : [Text] }, Text> {
+    public query func getUserResults() : async Result.Result<{ id : Nat; results : [Text] }, Text> {
         return #ok({ id = 123; results = ["fake result111"] });
     };
 
@@ -168,7 +168,7 @@ actor {
         //The way Cycles.add() works is that it adds those cycles to the next asynchronous call
         //"Function add(amount) indicates the additional amount of cycles to be transferred in the next remote call"
         //See: https://internetcomputer.org/docs/current/references/ic-interface-spec/#ic-http_request
-        Cycles.add<system>(230_949_972_000);
+        Cycles.add(230_949_972_000);
 
         //4. MAKE HTTPS REQUEST AND WAIT FOR RESPONSE
         //Since the cycles were added above, we can just call the IC management canister with HTTPS outcalls below
