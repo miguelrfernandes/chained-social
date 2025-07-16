@@ -1,0 +1,12 @@
+.dfx/
+build/
+node_modules/
+dist/
+.DS_Store
+_MACOSX
+.vscode/
+target/
+*.old.did
+.idea
+.mops
+.env
