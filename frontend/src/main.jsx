@@ -26,13 +26,9 @@ function App() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-blue-400 to-purple-500">
       <div className="w-96 rounded-lg bg-white p-8 shadow-lg">
-        <h1 className="mb-4 text-center text-3xl font-bold text-gray-800">🚀 My Crypto Blog 🚀</h1>
+        <h1 className="mb-4 text-center text-3xl font-bold text-gray-800">🚀 Chained Social: Crypto Social Network on ICP! 🚀</h1>
         <p className="text-center text-gray-600">
-          A simple web page hosted onchain on ICP. Built with React, Vite, and Tailwind CSS.
-        </p>
-        <br></br>
-        <p className="text-center text-gray-600">
-          You can host any kind of frontend application, including React, Vue, Svelte, and more on ICP!
+          A social network hosted onchain on ICP.
         </p>
         <div className="mt-6 flex justify-center">
           <button onClick={fetchData} className="rounded bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700">
