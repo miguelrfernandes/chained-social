@@ -5,14 +5,15 @@ import Array "mo:base/Array";
 import Blob "mo:base/Blob";
 import Text "mo:base/Text";
 import Cycles "mo:base/ExperimentalCycles";
-import Map "mo:base/Map";
-import { phash; nhash } "mo:base/Hash";
+import HashMap "mo:base/HashMap";
+import { phash } "mo:base/Hash";
+import Nat "mo:base/Nat";
 
 actor {
     stable var autoIndex = 0;
-    let userIdMap = Map.new<Principal, Nat>();
-    let userProfileMap = Map.new<Nat, Text>();
-    let userResultsMap = Map.new<Nat, [Text]>();
+    let userIdMap = HashMap.HashMap<Principal, Nat>(0, Principal.equal, phash);
+    let userProfileMap = HashMap.HashMap<Nat, Text>(0, Nat.equal, Nat.hash);
+    let userResultsMap = HashMap.HashMap<Nat, [Text]>(0, Nat.equal, Nat.hash);
     
     public query ({ caller }) func getUserProfile() : async Result.Result<{ id : Nat; name : Text }, Text> {
         return #ok({ id = 123; name = "test" });
@@ -20,40 +21,40 @@ actor {
 
     public shared ({ caller }) func setUserProfile(name : Text) : async Result.Result<{ id : Nat; name : Text }, Text> {
         // Check if user already exists
-        switch (Map.get(userIdMap, phash, caller)) {
+        switch (userIdMap.get(caller, phash)) {
             case (?_x) {};
             case (_) {
             // Set user id
-                Map.set(userIdMap, phash, caller, autoIndex);
+                userIdMap.put(caller, autoIndex, phash);
                 autoIndex += 1;
             };
         };
         
         // Set profile name
-        let foundId = switch (Map.get(userIdMap, phash, caller)) {
+        let foundId = switch (userIdMap.get(caller, phash)) {
             case (?found) found;
             case (_) { return #err("User not found") };
         };
 
-        Map.set(userProfileMap, nhash, foundId, name);
+        userProfileMap.put(foundId, name, Nat.hash);
 
         return #ok({ id = foundId; name = name });
     };
 
     public shared ({ caller }) func addUserResult(result : Text) : async Result.Result<{ id : Nat; results : [Text] }, Text> {
         // Check if user already exists
-        let userId = switch (Map.get(userIdMap, phash, caller)) {
+        let userId = switch (userIdMap.get(caller, phash)) {
             case (?found) found;
             case (_) { return #err("User not found") };
         };
 
-        let inputResults = switch (Map.get(userResultsMap, nhash, userId)) {
+        let inputResults = switch (userResultsMap.get(userId, Nat.hash)) {
             case (?found) found;
             case (_) { [] };
         };
 
         let updatedResults = Array.append(inputResults, [result]);
-        Map.set(userResultsMap, nhash, userId, updatedResults);
+        userResultsMap.put(userId, updatedResults, Nat.hash);
 
         return #ok({ id = userId; results = updatedResults });
     };
