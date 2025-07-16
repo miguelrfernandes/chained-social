@@ -5,8 +5,5 @@
     "prebuild": "npm run prebuild --workspaces --if-present",
     "dev": "npm run dev --workspaces --if-present"
   },
-  "type": "module",
-  "workspaces": [
-    "frontend"
-  ]
+  "type": "module"
 }
