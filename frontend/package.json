@@ -5,6 +5,7 @@
   "scripts": {
     "prebuild": "npm i --include=dev",
     "build": "vite build",
+    "postbuild": "cp .ic-assets.json5 dist/",
     "dev": "vite"
   },
   "dependencies": {
