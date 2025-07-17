@@ -69,6 +69,18 @@ After your project has been deployed to the mainnet, it will continuously requir
 
 > If your project's canisters run out of cycles, they will be removed from the network.
 
+## Planned Backend Architecture (ICP Canisters)
+
+This project will use a modular backend architecture on the Internet Computer, with the following canisters:
+
+- **User Management Canister:** Handles profile creation, authentication, and identity verification
+- **Content System Canister:** Manages posts, comments, media uploads, and content moderation
+- **Social Graph Canister:** Controls connections, follows, and social interactions
+- **Governance Canister:** Implements DAO voting, proposals, and community decisions
+- **Monetization Canister:** Manages token rewards, creator payments, and tip system
+
+**First step:** Authentication — Internet Identity integration
+
 ## Additional examples
 
 Additional code examples and sample applications can be found in the [DFINITY examples repo](https://github.com/dfinity/examples).
