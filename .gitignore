@@ -10,3 +10,6 @@ target/
 .idea
 .mops
 .env
+
+# generated files
+**/declarations/

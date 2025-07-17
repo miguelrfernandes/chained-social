@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import '../index.css';
+import NfidLogin from './components/Nfidlogin';
 
 function App() {
   const [posts, setPosts] = useState(null);
@@ -36,6 +37,7 @@ function App() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-blue-400 to-purple-500">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
+        <NfidLogin />
         <h1 className="mb-4 text-center text-3xl font-bold text-gray-800">🚀 Chained Social: Crypto Social Network on ICP! 🚀</h1>
         <p className="text-center text-gray-600">
           A social network hosted onchain on ICP.

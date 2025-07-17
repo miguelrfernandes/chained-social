@@ -39,6 +39,7 @@ Deploy your project to your local developer environment with:
 
 ```
 npm install
+dfx generate
 dfx deploy
 
 ```

@@ -102,15 +102,14 @@ actor {
             headers = [
                 {
                     name = "Content-Security-Policy";
-                    value = "default-src 'self'";
+                    value = "default-src 'self'; frame-src 'self' https://nfid.one https://identity.ic0.app;";
                 },
                 { name = "Referrer-Policy"; value = "strict-origin" },
-                { name = "Permissions-Policy"; value = "geolocation=(self)" },
+                { name = "Permissions-Policy"; value = "geolocation=(self); publickey-credentials-get=(self 'https://nfid.one' 'https://identity.ic0.app')" },
                 {
                     name = "Strict-Transport-Security";
                     value = "max-age=63072000";
                 },
-                { name = "X-Frame-Options"; value = "DENY" },
                 { name = "X-Content-Type-Options"; value = "nosniff" },
             ];
         };
