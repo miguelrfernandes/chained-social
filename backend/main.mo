@@ -4,7 +4,6 @@ import Result "mo:base/Result";
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
 import Text "mo:base/Text";
-import Cycles "mo:base/ExperimentalCycles";
 import HashMap "mo:base/HashMap";
 
 import Nat "mo:base/Nat";
@@ -168,11 +167,9 @@ actor {
         //The way Cycles.add() works is that it adds those cycles to the next asynchronous call
         //"Function add(amount) indicates the additional amount of cycles to be transferred in the next remote call"
         //See: https://internetcomputer.org/docs/current/references/ic-interface-spec/#ic-http_request
-        Cycles.add(230_949_972_000);
-
-        //4. MAKE HTTPS REQUEST AND WAIT FOR RESPONSE
-        //Since the cycles were added above, we can just call the IC management canister with HTTPS outcalls below
-        let http_response : Types.HttpResponsePayload = await ic.http_request(http_request);
+        //Cycles.add(230_949_972_000);
+        //let http_response : Types.HttpResponsePayload = await ic.http_request(http_request);
+        let http_response : Types.HttpResponsePayload = await (with cycles = 230_949_972_000) ic.http_request<system>(http_request);
 
         //5. DECODE THE RESPONSE
 

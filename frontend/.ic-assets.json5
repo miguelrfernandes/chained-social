@@ -1,6 +1,7 @@
 [
   {
     "match": "**/*",
-    "security_policy": "standard"
+    "security_policy": "standard",
+    "disable_security_policy_warning": true
   }
 ] 
