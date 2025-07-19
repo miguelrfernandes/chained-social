@@ -227,6 +227,7 @@ help:
     @echo "📊 Utility Commands:"
     @echo "  just status       - Check project status"
     @echo "  just urls         - Show current canister URLs"
+    @echo "  just explain-urls - Explain different URL types"
     @echo "  just troubleshoot - Troubleshoot deployment issues"
     @echo "  just codespaces-setup - Setup GitHub Codespaces port forwarding"
     @echo "  just check-balance - Check wallet balance"
