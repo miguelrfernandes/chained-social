@@ -15,13 +15,21 @@ generate:
 # 🚢 Deploy all canisters (backend & frontend)
 deploy-canisters:
     just generate
+    dfx start --background
+    dfx deploy
+
+# 🧹 Clean deploy all canisters
+deploy-canisters-clean:
+    just generate
+    dfx stop
+    dfx start --background --clean
     dfx deploy
 
 # 🌟 Full deploy: install, build, and deploy everything
 deploy:
     just install-frontend
     just build-frontend
-    just deploy-canisters
+    just deploy-canisters-clean
 
 # Start dfx on background
 start-dfx:
