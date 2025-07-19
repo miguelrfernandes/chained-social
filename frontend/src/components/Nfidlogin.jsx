@@ -84,11 +84,27 @@ function NfidLogin({ setBackendActor }) {
       let principal;
       
       if (isLocal || isCodespaces) {
-        // For local development and Codespaces, use anonymous identity to avoid delegation issues
-        console.log("✅ Using anonymous identity for development (expected in Codespaces)");
+        // For local development and Codespaces, create a persistent identity
+        console.log("✅ Using persistent identity for development");
+        
+        // Create a deterministic identity based on browser session
+        const sessionKey = localStorage.getItem('chainedsocial_session_key') || 
+                          Math.random().toString(36).substring(2, 15) + 
+                          Math.random().toString(36).substring(2, 15);
+        localStorage.setItem('chainedsocial_session_key', sessionKey);
+        
+        // Create a deterministic identity from the session key
+        const seed = new Uint8Array(32);
+        for (let i = 0; i < sessionKey.length && i < 32; i++) {
+          seed[i] = sessionKey.charCodeAt(i);
+        }
+        
+        // Create identity from seed
+        const { Ed25519KeyIdentity } = await import('@dfinity/identity');
+        const identity = Ed25519KeyIdentity.fromSeed(seed);
         
         agent = new HttpAgent({ 
-          identity: new AnonymousIdentity(),
+          identity: identity,
           host: "http://localhost:4943",
           verifyQuerySignatures: false,
           rejectUnauthorized: false,
@@ -115,7 +131,7 @@ function NfidLogin({ setBackendActor }) {
           throw new Error(`Connection test failed: ${statusError.message}`);
         }
         
-        principal = "Anonymous (Local Development)";
+        principal = identity.getPrincipal().toText();
         
       } else {
         // For production, use NFID

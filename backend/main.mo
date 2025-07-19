@@ -5,6 +5,7 @@ import Array "mo:base/Array";
 import Blob "mo:base/Blob";
 import Text "mo:base/Text";
 import HashMap "mo:base/HashMap";
+import Buffer "mo:base/Buffer";
 
 import Nat "mo:base/Nat";
 import Principal "mo:base/Principal";
@@ -16,8 +17,24 @@ actor {
     let userProfileMap = HashMap.HashMap<Nat, { name : Text; bio : Text }>(0, Nat.equal, func(n : Nat) : Nat32 { Nat32.fromNat(n) });
     let userResultsMap = HashMap.HashMap<Nat, [Text]>(0, Nat.equal, func(n : Nat) : Nat32 { Nat32.fromNat(n) });
     
+    // Add reverse lookup for username uniqueness
+    let usernameToUserIdMap = HashMap.HashMap<Text, Nat>(0, Text.equal, Text.hash);
+    
     public query func getUserProfile() : async Result.Result<{ id : Nat; name : Text; bio : Text }, Text> {
         return #ok({ id = 123; name = "test"; bio = "test bio" });
+    };
+
+    // Get current user's profile
+    public shared query ({ caller }) func getCurrentUserProfile() : async Result.Result<{ id : Nat; name : Text; bio : Text }, Text> {
+        let userId = switch (userIdMap.get(caller)) {
+            case (?found) found;
+            case (_) { return #err("User not found") };
+        };
+        
+        switch (userProfileMap.get(userId)) {
+            case (?profile) { #ok({ id = userId; name = profile.name; bio = profile.bio }) };
+            case (null) { #err("Profile not found") };
+        };
     };
 
     public query func getUserProfileByUsername(username : Text) : async Result.Result<{ id : Nat; name : Text; bio : Text }, Text> {
@@ -30,36 +47,88 @@ actor {
         return #err("User not found");
     };
 
+    // Check if username is available
+    public query func isUsernameAvailable(username : Text) : async Bool {
+        switch (usernameToUserIdMap.get(username)) {
+            case (?existingUserId) { false };
+            case (null) { true };
+        };
+    };
+
+    // Get all registered usernames (for debugging/testing)
+    public query func getAllUsernames() : async [Text] {
+        let usernames = Buffer.Buffer<Text>(0);
+        for ((username, userId) in usernameToUserIdMap.entries()) {
+            usernames.add(username);
+        };
+        return Buffer.toArray(usernames);
+    };
+
     public shared ({ caller }) func setUserProfile(name : Text, bio : Text) : async Result.Result<{ id : Nat; name : Text; bio : Text }, Text> {
         // Debug logging
         let _callerText = Principal.toText(caller);
         let isAnonymous = Principal.isAnonymous(caller);
         
-        // Check if user already exists
-        var userId : Nat = 0;
-        
-        // For anonymous identities (local development), use a default user ID
-        if (isAnonymous) {
-            userId := 0; // Use 0 for anonymous users in local development
-        } else {
-            switch (userIdMap.get(caller)) {
-                case (?_x) {};
-                case (_) {
-                // Set user id
-                    userIdMap.put(caller, autoIndex);
-                    autoIndex += 1;
+        // Check if username already exists for a different user
+        switch (usernameToUserIdMap.get(name)) {
+            case (?existingUserId) {
+                // Check if this is the same user trying to update their profile
+                let currentUserId = switch (userIdMap.get(caller)) {
+                    case (?found) found;
+                    case (_) { 
+                        // Create new user ID for this principal
+                        let newUserId = autoIndex;
+                        userIdMap.put(caller, newUserId);
+                        autoIndex += 1;
+                        newUserId;
+                    };
+                };
+                
+                if (existingUserId != currentUserId) {
+                    // Username taken by a different user
+                    return #err("Username '" # name # "' is already taken. Please choose a different username.");
                 };
             };
-            
-            // Get the user ID
-            userId := switch (userIdMap.get(caller)) {
-                case (?found) found;
-                case (_) { return #err("User not found") };
+            case (null) {
+                // Username is available
+            };
+        };
+        
+        // Get or create user ID for this principal
+        var userId : Nat = 0;
+        
+        switch (userIdMap.get(caller)) {
+            case (?found) {
+                userId := found;
+            };
+            case (_) {
+                // Create new user ID for this principal
+                userIdMap.put(caller, autoIndex);
+                userId := autoIndex;
+                autoIndex += 1;
+            };
+        };
+        
+        // Check if this is a new registration or profile update
+        let existingProfile = userProfileMap.get(userId);
+        switch (existingProfile) {
+            case (?profile) {
+                // This is a profile update - check if username is changing
+                if (profile.name != name) {
+                    // Username is being changed, remove old username from tracking
+                    usernameToUserIdMap.delete(profile.name);
+                };
+            };
+            case (null) {
+                // This is a new registration
             };
         };
         
         // Set profile name and bio
         userProfileMap.put(userId, { name = name; bio = bio });
+        
+        // Add username to reverse lookup map for uniqueness tracking
+        usernameToUserIdMap.put(name, userId);
 
         return #ok({ id = userId; name = name; bio = bio });
     };
