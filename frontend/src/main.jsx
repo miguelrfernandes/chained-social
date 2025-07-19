@@ -52,7 +52,9 @@ function App() {
 
     setIsSettingProfile(true);
     try {
+      console.log("🔄 Setting profile with:", { username: profileForm.username, bio: profileForm.bio });
       const result = await backendActor.setUserProfile(profileForm.username, profileForm.bio);
+      console.log("✅ Profile set result:", result);
       if ('ok' in result) {
         setUserProfile(result.ok);
         setProfileForm({ username: '', bio: '' });
@@ -60,6 +62,7 @@ function App() {
         setError('Failed to set profile: ' + result.err);
       }
     } catch (err) {
+      console.error("❌ Error setting profile:", err);
       setError('Error setting profile: ' + err.message);
     } finally {
       setIsSettingProfile(false);

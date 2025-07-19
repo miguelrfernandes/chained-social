@@ -21,11 +21,15 @@ actor {
     };
 
     public shared ({ caller }) func setUserProfile(name : Text, bio : Text) : async Result.Result<{ id : Nat; name : Text; bio : Text }, Text> {
+        // Debug logging
+        let callerText = Principal.toText(caller);
+        let isAnonymous = Principal.isAnonymous(caller);
+        
         // Check if user already exists
         var userId : Nat = 0;
         
         // For anonymous identities (local development), use a default user ID
-        if (Principal.isAnonymous(caller)) {
+        if (isAnonymous) {
             userId := 0; // Use 0 for anonymous users in local development
         } else {
             switch (userIdMap.get(caller)) {
