@@ -18,8 +18,6 @@ setup:
     @echo "✅ Setup complete! Your project is ready."
     just urls
 
-
-
 # 📦 Install frontend dependencies
 install-frontend:
     cd frontend && npm install
@@ -191,11 +189,15 @@ troubleshoot:
     @echo "🔧 Troubleshooting deployment issues..."
     @echo ""
     @echo "📊 Current Status:"
+    @echo "dfx ping"
     dfx ping
     @echo ""
     @echo "🏗️ Canister Status:"
+    @echo "dfx canister status backend 2>/dev/null || echo 'Backend: Not deployed'"
     dfx canister status backend 2>/dev/null || echo "Backend: Not deployed"
+    @echo "dfx canister status content 2>/dev/null || echo 'Content: Not deployed'"
     dfx canister status content 2>/dev/null || echo "Content: Not deployed"
+    @echo "dfx canister status frontend 2>/dev/null || echo 'Frontend: Not deployed'"
     dfx canister status frontend 2>/dev/null || echo "Frontend: Not deployed"
     @echo ""
     @echo "🌐 Current URLs:"
@@ -206,6 +208,27 @@ troubleshoot:
     @echo ""
     @echo "💡 If URLs show 'not-deployed', run:"
     @echo "  just deploy"
+
+# 🔧 Codespaces-specific troubleshooting
+codespaces-troubleshoot:
+    @echo "🔧 Codespaces-specific troubleshooting..."
+    @echo ""
+    @echo "📋 Environment Check:"
+    @echo "CODESPACES: $CODESPACES"
+    @echo "CODESPACE_NAME: $CODESPACE_NAME"
+    @echo "GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN: $GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN"
+    @echo ""
+    @echo "🌐 Port Forwarding Check:"
+    @echo "Make sure port 4943 is forwarded and set to 'Public'"
+    @echo ""
+    @echo "🔗 Alternative URL Formats to Try:"
+    @echo "1. Direct: https://your-codespace-4943.github.dev/"
+    @echo "2. With canisterId: https://your-codespace-4943.github.dev/?canisterId=FRONTEND_ID"
+    @echo "3. Local fallback: http://127.0.0.1:4943/?canisterId=FRONTEND_ID"
+    @echo ""
+    @echo "💡 If none work, try:"
+    @echo "  just reset"
+    @echo "  just setup"
 
 # 🆘 Help: Show available commands
 help:
@@ -230,6 +253,7 @@ help:
     @echo "  just explain-urls - Explain different URL types"
     @echo "  just troubleshoot - Troubleshoot deployment issues"
     @echo "  just codespaces-setup - Setup GitHub Codespaces port forwarding"
+    @echo "  just codespaces-troubleshoot - Codespaces-specific troubleshooting"
     @echo "  just check-balance - Check wallet balance"
     @echo "  just convert-cycles - Convert ICP to cycles"
     @echo ""
