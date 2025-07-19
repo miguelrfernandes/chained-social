@@ -13,14 +13,14 @@ import Nat32 "mo:base/Nat32";
 actor {
     stable var autoIndex = 0;
     let userIdMap = HashMap.HashMap<Principal, Nat>(0, Principal.equal, Principal.hash);
-    let userProfileMap = HashMap.HashMap<Nat, Text>(0, Nat.equal, func(n : Nat) : Nat32 { Nat32.fromNat(n) });
+    let userProfileMap = HashMap.HashMap<Nat, { name : Text; bio : Text }>(0, Nat.equal, func(n : Nat) : Nat32 { Nat32.fromNat(n) });
     let userResultsMap = HashMap.HashMap<Nat, [Text]>(0, Nat.equal, func(n : Nat) : Nat32 { Nat32.fromNat(n) });
     
-    public query func getUserProfile() : async Result.Result<{ id : Nat; name : Text }, Text> {
-        return #ok({ id = 123; name = "test" });
+    public query func getUserProfile() : async Result.Result<{ id : Nat; name : Text; bio : Text }, Text> {
+        return #ok({ id = 123; name = "test"; bio = "test bio" });
     };
 
-    public shared ({ caller }) func setUserProfile(name : Text) : async Result.Result<{ id : Nat; name : Text }, Text> {
+    public shared ({ caller }) func setUserProfile(name : Text, bio : Text) : async Result.Result<{ id : Nat; name : Text; bio : Text }, Text> {
         // Check if user already exists
         switch (userIdMap.get(caller)) {
             case (?_x) {};
@@ -31,15 +31,15 @@ actor {
             };
         };
         
-        // Set profile name
+        // Set profile name and bio
         let foundId = switch (userIdMap.get(caller)) {
             case (?found) found;
             case (_) { return #err("User not found") };
         };
 
-        userProfileMap.put(foundId, name);
+        userProfileMap.put(foundId, { name = name; bio = bio });
 
-        return #ok({ id = foundId; name = name });
+        return #ok({ id = foundId; name = name; bio = bio });
     };
 
     public shared ({ caller }) func addUserResult(result : Text) : async Result.Result<{ id : Nat; results : [Text] }, Text> {
@@ -102,7 +102,7 @@ actor {
             headers = [
                 {
                     name = "Content-Security-Policy";
-                    value = "default-src 'self'; frame-src 'self' https://nfid.one https://identity.ic0.app;";
+                    value = "default-src 'self' data: blob:; connect-src 'self' http://localhost:* https://* http://* data: blob:; frame-src 'self' https://* http://* data: blob:; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*; style-src 'self' 'unsafe-inline' https://* http://*; style-src-elem 'self' 'unsafe-inline' https://* http://*; font-src 'self' https://* http://* data:; img-src 'self' data: blob: https://* http://*;";
                 },
                 { name = "Referrer-Policy"; value = "strict-origin" },
                 { name = "Permissions-Policy"; value = "geolocation=(self); publickey-credentials-get=(self 'https://nfid.one' 'https://identity.ic0.app')" },
