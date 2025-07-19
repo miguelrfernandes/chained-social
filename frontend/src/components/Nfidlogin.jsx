@@ -10,6 +10,95 @@ import {
 function NfidLogin({ setBackendActor }) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loginError, setLoginError] = useState(null);
+  const [nfidInitialized, setNfidInitialized] = useState(false);
+  
+  // Store NFID instance once initialized
+  const [nfidInstance, setNfidInstance] = useState(null);
+
+  // Initialize NFID with proper promise-based waiting
+  const initializeNFID = async () => {
+    if (nfidInitialized && nfidInstance) {
+      return nfidInstance;
+    }
+    
+    const nfidConfig = {
+      application: {
+        name: "Chained Social",
+        logo: "https://taikai.azureedge.net/g85_fmDME2uOKEmFV0CfFmfcZQCmiDvIFknjOsWr8v8/rs:fit:350:0:0/aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL3RhaWthaS1zdG9yYWdlL2ltYWdlcy9iYTViMmVhMC04ZDUxLTExZWYtYTI3MS02NTA0MjI1OTI3NGJTcXVlcmUtMiAoMikucG5n",
+      },
+    };
+    
+    // Wait for DOM to be ready
+    await new Promise(resolve => {
+      if (document.readyState === 'complete') {
+        resolve();
+      } else {
+        window.addEventListener('load', resolve, { once: true });
+      }
+    });
+    
+    // Wait for NFID iframe to be available
+    await new Promise((resolve, reject) => {
+      const maxAttempts = 10;
+      let attempts = 0;
+      
+      const checkNFIDReady = () => {
+        attempts++;
+        console.log(`🔄 Checking NFID readiness (attempt ${attempts}/${maxAttempts})`);
+        
+        try {
+          // Check if NFID is available in global scope
+          if (typeof window.NFID !== 'undefined') {
+            console.log("✅ NFID is available");
+            resolve();
+            return;
+          }
+          
+          if (attempts >= maxAttempts) {
+            reject(new Error("NFID not available after maximum attempts"));
+            return;
+          }
+          
+          // Check again in 200ms
+          setTimeout(checkNFIDReady, 200);
+        } catch (error) {
+          if (attempts >= maxAttempts) {
+            reject(error);
+          } else {
+            setTimeout(checkNFIDReady, 200);
+          }
+        }
+      };
+      
+      checkNFIDReady();
+    });
+    
+    // Initialize NFID with retry mechanism
+    let nfid;
+    let retryCount = 0;
+    const maxRetries = 3;
+    
+    while (retryCount < maxRetries) {
+      try {
+        console.log(`🔄 Attempting NFID initialization (attempt ${retryCount + 1}/${maxRetries})`);
+        nfid = await NFID.init(nfidConfig);
+        console.log("✅ NFID initialized successfully");
+        setNfidInitialized(true);
+        setNfidInstance(nfid);
+        return nfid;
+      } catch (initError) {
+        retryCount++;
+        console.warn(`⚠️ NFID init attempt ${retryCount} failed:`, initError);
+        
+        if (retryCount >= maxRetries) {
+          throw new Error(`NFID initialization failed after ${maxRetries} attempts: ${initError.message}`);
+        }
+        
+        // Wait before retrying
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+  };
 
   async function handleLogin() {
     setIsLoggingIn(true);
@@ -29,7 +118,7 @@ function NfidLogin({ setBackendActor }) {
       
       if (isLocal || isCodespaces) {
         // For local development and Codespaces, use anonymous identity to avoid delegation issues
-        console.log("🔧 Using anonymous identity for local development/Codespaces");
+        console.log("✅ Using anonymous identity for development (expected in Codespaces)");
         
         agent = new HttpAgent({ 
           identity: new AnonymousIdentity(),
@@ -65,16 +154,9 @@ function NfidLogin({ setBackendActor }) {
         // For production, use NFID
         console.log("🚀 Using NFID for production");
         
-        const nfidConfig = {
-          application: {
-            name: "Chained Social",
-            logo: "https://taikai.azureedge.net/g85_fmDME2uOKEmFV0CfFmfcZQCmiDvIFknjOsWr8v8/rs:fit:350:0:0/aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL3RhaWthaS1zdG9yYWdlL2ltYWdlcy9iYTViMmVhMC04ZDUxLTExZWYtYTI3MS02NTA0MjI1OTI3NGJTcXVlcmUtMiAoMikucG5n",
-          },
-        };
+        // Use promise-based initialization
+        const nfid = await initializeNFID();
         
-        const nfid = await NFID.init(nfidConfig);
-        console.log("✅ NFID initialized");
-
         const delegationIdentity = await nfid.getDelegation({
           maxTimeToLive: BigInt(8) * BigInt(3_600_000_000_000),
         });
@@ -107,7 +189,9 @@ function NfidLogin({ setBackendActor }) {
       } else if (error.message.includes("threshold signature")) {
         userMessage = "Bitcoin service integration issue. This is expected in local development.";
       } else if (error.message.includes("iframe not instantiated")) {
-        userMessage = "NFID iframe blocked in Codespaces. Using anonymous identity instead.";
+        userMessage = "✅ Using anonymous identity for development (expected in Codespaces)";
+      } else if (error.message.includes("NFID initialization failed")) {
+        userMessage = "🔄 NFID is initializing... Please try again in a moment.";
       }
       
       setLoginError(userMessage);
