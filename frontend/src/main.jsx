@@ -6,9 +6,6 @@ import PostForm from './components/PostForm';
 import PostList from './components/PostList';
 
 function App() {
-  const [posts, setPosts] = useState(null);
-  const [users, setUsers] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [backendActor, setBackendActor] = useState(null);
   const [contentActor, setContentActor] = useState(null);
@@ -19,46 +16,20 @@ function App() {
   const [profileForm, setProfileForm] = useState({ username: '', bio: '' });
 
 
+
+
+  // Initialize content actor for everyone (not just logged in users)
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
+    const initContentActor = async () => {
       try {
-        // Fetch posts and users in parallel
-        const [postsRes, usersRes] = await Promise.all([
-          fetch('https://jsonplaceholder.typicode.com/posts'),
-          fetch('https://randomuser.me/api/?results=5'),
-        ]);
-        if (!postsRes.ok || !usersRes.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const postsData = await postsRes.json();
-        const usersData = await usersRes.json();
-        setPosts(postsData.slice(0, 5));
-        setUsers(usersData.results);
+        const { content } = await import('../../src/declarations/content');
+        setContentActor(content);
       } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
+        console.error('Failed to initialize content actor:', err);
       }
     };
-    fetchData();
+    initContentActor();
   }, []);
-
-  // Initialize content actor when backend actor is set
-  useEffect(() => {
-    if (backendActor) {
-      const initContentActor = async () => {
-        try {
-          const { backend } = await import('../../src/declarations/backend');
-          const { content } = await import('../../src/declarations/content');
-          setContentActor(content);
-        } catch (err) {
-          console.error('Failed to initialize content actor:', err);
-        }
-      };
-      initContentActor();
-    }
-  }, [backendActor]);
 
 
 
@@ -97,122 +68,105 @@ function App() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-blue-400 to-purple-500">
-      <div className="w-full max-w-4xl rounded-lg bg-white p-8 shadow-lg">
-        <NfidLogin setBackendActor={handleBackendActorSet} />
-        
-        {isLoggedIn && (
-          <div className="mb-4 rounded-lg bg-green-50 p-4 border border-green-200">
-            <p className="text-green-800 font-medium">✅ Logged in successfully!</p>
-            <p className="text-green-600 text-sm mt-1">Principal: {userPrincipal}</p>
-          </div>
-        )}
+    <div className="min-h-screen bg-gradient-to-r from-blue-400 to-purple-500">
+      <div className="w-full max-w-4xl mx-auto p-8">
+        {/* Header with Title */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">🚀 Chained Social</h1>
+          <p className="text-white text-lg opacity-90">Crypto Social Network on ICP!</p>
+        </div>
 
-        {isLoggedIn && !userProfile && (
-          <div className="mb-6 rounded-lg bg-blue-50 p-4 border border-blue-200">
-            <h3 className="text-blue-800 font-medium mb-3">👤 Set Your Profile</h3>
-            <form onSubmit={handleSetProfile} className="space-y-3">
-              <div>
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-                  Username
-                </label>
-                <input
-                  type="text"
-                  id="username"
-                  value={profileForm.username}
-                  onChange={(e) => setProfileForm({ ...profileForm, username: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter your username"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
-                  Bio
-                </label>
-                <textarea
-                  id="bio"
-                  value={profileForm.bio}
-                  onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Tell us about yourself..."
-                  rows="3"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isSettingProfile || !profileForm.username.trim()}
-                className="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSettingProfile ? '🔄 Setting Profile...' : '💾 Save Profile'}
-              </button>
-            </form>
-          </div>
-        )}
+        <div className="bg-white rounded-lg shadow-lg p-8">
+          <NfidLogin setBackendActor={handleBackendActorSet} />
+          
+          {isLoggedIn && (
+            <div className="mb-4 rounded-lg bg-green-50 p-4 border border-green-200">
+              <p className="text-green-800 font-medium">✅ Logged in successfully!</p>
+              <p className="text-green-600 text-sm mt-1">Principal: {userPrincipal}</p>
+            </div>
+          )}
 
-        {userProfile && (
-          <div className="mb-4 rounded-lg bg-purple-50 p-4 border border-purple-200">
-            <h3 className="text-purple-800 font-medium">👤 Your Profile</h3>
-            <p className="text-purple-600 text-sm mt-1">Username: {userProfile.name}</p>
-            <p className="text-purple-600 text-sm">Bio: {userProfile.bio || 'No bio set'}</p>
-            <p className="text-purple-600 text-sm">ID: {userProfile.id}</p>
-          </div>
-        )}
-
-        {/* Posting Interface */}
-        {userProfile && contentActor && (
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">📝 Create a Post</h2>
-            <PostForm 
-              contentActor={contentActor}
-              userProfile={userProfile}
-              onPostCreated={handlePostCreated}
-            />
-          </div>
-        )}
-
-        {/* Posts Display */}
-        {userProfile && contentActor && (
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">📰 Recent Posts</h2>
-            <PostList 
-              contentActor={contentActor}
-              userProfile={userProfile}
-              onPostCreated={handlePostCreated}
-            />
-          </div>
-        )}
-        
-        <h1 className="mb-4 text-center text-3xl font-bold text-gray-800">🚀 Chained Social: Crypto Social Network on ICP! 🚀</h1>
-        <p className="text-center text-gray-600">
-          A social network hosted onchain on ICP.
-        </p>
-        {isLoading && <p className="mt-4 text-center text-gray-600">Loading...</p>}
-        {error && <p className="mt-4 text-center text-red-500">Error: {error}</p>}
-        {posts && users && (
-          <div className="mt-6 flex flex-col gap-4">
-            {posts.map((post, idx) => {
-              const user = users[idx];
-              return (
-                <div key={post.id} className="flex items-start gap-3 rounded-lg bg-gray-50 p-4 shadow-sm hover:shadow-md transition-shadow">
-                  <img
-                    src={user.picture.large}
-                    alt={user.login.username}
-                    className="h-12 w-12 rounded-full border border-gray-200 object-cover"
+          {isLoggedIn && !userProfile && (
+            <div className="mb-6 rounded-lg bg-blue-50 p-4 border border-blue-200">
+              <h3 className="text-blue-800 font-medium mb-3">👤 Set Your Profile</h3>
+              <form onSubmit={handleSetProfile} className="space-y-3">
+                <div>
+                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    id="username"
+                    value={profileForm.username}
+                    onChange={(e) => setProfileForm({ ...profileForm, username: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter your username"
+                    required
                   />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-gray-800">{user.name.first} {user.name.last}</span>
-                      <span className="text-xs text-gray-400">· @{user.login.username}</span>
-                    </div>
-                    <h3 className="mt-1 text-base font-medium text-gray-900">{post.title}</h3>
-                    <p className="mt-1 text-sm text-gray-700">{post.body.slice(0, 100)}...</p>
-                  </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
+                <div>
+                  <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
+                    Bio
+                  </label>
+                  <textarea
+                    id="bio"
+                    value={profileForm.bio}
+                    onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Tell us about yourself..."
+                    rows="3"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={isSettingProfile || !profileForm.username.trim()}
+                  className="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSettingProfile ? '🔄 Setting Profile...' : '💾 Save Profile'}
+                </button>
+              </form>
+            </div>
+          )}
+
+          {userProfile && (
+            <div className="mb-4 rounded-lg bg-purple-50 p-4 border border-purple-200">
+              <h3 className="text-purple-800 font-medium">👤 Your Profile</h3>
+              <p className="text-purple-600 text-sm mt-1">Username: {userProfile.name}</p>
+              <p className="text-purple-600 text-sm">Bio: {userProfile.bio || 'No bio set'}</p>
+              <p className="text-purple-600 text-sm">ID: {userProfile.id}</p>
+            </div>
+          )}
+
+          {/* Posting Interface */}
+          {userProfile && contentActor && (
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">📝 Create a Post</h2>
+              <PostForm 
+                contentActor={contentActor}
+                userProfile={userProfile}
+                onPostCreated={handlePostCreated}
+              />
+            </div>
+          )}
+
+          {/* Posts Display - Now visible to everyone */}
+          {contentActor && (
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">📰 Recent Posts</h2>
+              <PostList 
+                contentActor={contentActor}
+                userProfile={userProfile}
+                onPostCreated={handlePostCreated}
+              />
+            </div>
+          )}
+          
+          <p className="text-center text-gray-600 mt-6">
+            A social network hosted onchain on ICP.
+          </p>
+          
+          {error && <p className="mt-4 text-center text-red-500">Error: {error}</p>}
+        </div>
       </div>
     </div>
   );
