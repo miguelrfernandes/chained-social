@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
-function PostList({ contentActor, userProfile, onPostCreated }) {
+function PostList({ contentActor, userProfile, onPostCreated, posts: externalPosts, showUserPostsOnly = false }) {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -9,8 +10,12 @@ function PostList({ contentActor, userProfile, onPostCreated }) {
   const [isCommenting, setIsCommenting] = useState({});
 
   useEffect(() => {
-    loadPosts();
-  }, [contentActor]);
+    if (externalPosts) {
+      setPosts(externalPosts);
+    } else {
+      loadPosts();
+    }
+  }, [contentActor, externalPosts]);
 
   // Refresh posts when a new post is created
   useEffect(() => {
@@ -153,13 +158,21 @@ function PostList({ contentActor, userProfile, onPostCreated }) {
           <div className="p-4 pb-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                <Link 
+                  to={`/profile/${post.authorName}`}
+                  className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center hover:scale-105 transition-transform cursor-pointer"
+                >
                   <span className="text-sm font-bold text-white">
                     {post.authorName.charAt(0).toUpperCase()}
                   </span>
-                </div>
+                </Link>
                 <div>
-                  <p className="font-semibold text-gray-900">{post.authorName}</p>
+                  <Link 
+                    to={`/profile/${post.authorName}`}
+                    className="font-semibold text-gray-900 hover:text-blue-600 transition-colors cursor-pointer"
+                  >
+                    {post.authorName}
+                  </Link>
                   <p className="text-sm text-gray-500">{formatTimestamp(post.timestamp)}</p>
                 </div>
               </div>
@@ -210,14 +223,22 @@ function PostList({ contentActor, userProfile, onPostCreated }) {
               <div className="space-y-3">
                 {post.comments.map((comment, index) => (
                   <div key={index} className="flex space-x-3">
-                    <div className="h-6 w-6 rounded-full bg-gradient-to-r from-green-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                    <Link 
+                      to={`/profile/${comment.authorName}`}
+                      className="h-6 w-6 rounded-full bg-gradient-to-r from-green-500 to-blue-600 flex items-center justify-center flex-shrink-0 hover:scale-105 transition-transform cursor-pointer"
+                    >
                       <span className="text-xs font-bold text-white">
                         {comment.authorName.charAt(0).toUpperCase()}
                       </span>
-                    </div>
+                    </Link>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2 mb-1">
-                        <span className="text-sm font-medium text-gray-900">{comment.authorName}</span>
+                        <Link 
+                          to={`/profile/${comment.authorName}`}
+                          className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors cursor-pointer"
+                        >
+                          {comment.authorName}
+                        </Link>
                         <span className="text-xs text-gray-500">{formatTimestamp(comment.timestamp)}</span>
                       </div>
                       <p className="text-sm text-gray-700">{comment.content}</p>

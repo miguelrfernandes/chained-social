@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import '../index.css';
 import NfidLogin from './components/Nfidlogin';
 import PostForm from './components/PostForm';
 import PostList from './components/PostList';
 import Header from './components/Header';
 import Toast from './components/Toast';
+import Profile from './components/Profile';
 
 function App() {
   const [error, setError] = useState(null);
@@ -109,112 +111,141 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header 
-        isLoggedIn={isLoggedIn}
-        userPrincipal={userPrincipal}
-        userProfile={userProfile}
-        setBackendActor={handleBackendActorSet}
-      />
-      
-      <div className="w-full max-w-4xl mx-auto p-8">
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          
-
-
-          {isLoggedIn && !userProfile && (
-            <div className="mb-6 rounded-lg bg-blue-50 p-4 border border-blue-200">
-              <h3 className="text-blue-800 font-medium mb-3">👤 Set Your Profile</h3>
-              <form onSubmit={handleSetProfile} className="space-y-3">
-                <div>
-                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-                    Username
-                  </label>
-                  <input
-                    type="text"
-                    id="username"
-                    value={profileForm.username}
-                    onChange={(e) => setProfileForm({ ...profileForm, username: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter your username"
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
-                    Bio
-                  </label>
-                  <textarea
-                    id="bio"
-                    value={profileForm.bio}
-                    onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Tell us about yourself..."
-                    rows="3"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={isSettingProfile || !profileForm.username.trim()}
-                  className="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSettingProfile ? '🔄 Setting Profile...' : '💾 Save Profile'}
-                </button>
-              </form>
-            </div>
-          )}
-
-          {userProfile && (
-            <div className="mb-4 rounded-lg bg-purple-50 p-4 border border-purple-200">
-              <h3 className="text-purple-800 font-medium">👤 Your Profile</h3>
-              <p className="text-purple-600 text-sm mt-1">Username: {userProfile.name}</p>
-              <p className="text-purple-600 text-sm">Bio: {userProfile.bio || 'No bio set'}</p>
-              <p className="text-purple-600 text-sm">ID: {userProfile.id}</p>
-            </div>
-          )}
-
-          {/* Posting Interface */}
-          {userProfile && contentActor && (
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">📝 Create a Post</h2>
-              <PostForm 
-                contentActor={contentActor}
-                userProfile={userProfile}
-                onPostCreated={handlePostCreated}
-              />
-            </div>
-          )}
-
-          {/* Posts Display - Now visible to everyone */}
-          {contentActor && (
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">📰 Recent Posts</h2>
-              <PostList 
-                contentActor={contentActor}
-                userProfile={userProfile}
-                onPostCreated={handlePostCreated}
-              />
-            </div>
-          )}
-          
-          <p className="text-center text-gray-600 mt-6">
-            A social network hosted onchain on ICP.
-          </p>
-          
-          {error && <p className="mt-4 text-center text-red-500">Error: {error}</p>}
-        </div>
-      </div>
-      
-      {/* Toast Notification */}
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          duration={toast.duration}
-          onClose={() => setToast(null)}
+    <Router>
+      <div className="min-h-screen bg-gray-50">
+        <Header 
+          isLoggedIn={isLoggedIn}
+          userPrincipal={userPrincipal}
+          userProfile={userProfile}
+          setBackendActor={handleBackendActorSet}
         />
-      )}
-    </div>
+        
+        <Routes>
+          <Route path="/profile/:username" element={
+            <Profile 
+              contentActor={contentActor}
+              userProfile={userProfile}
+              isLoggedIn={isLoggedIn}
+            />
+          } />
+          <Route path="/" element={
+            <div className="w-full max-w-4xl mx-auto p-8">
+              <div className="bg-white rounded-lg shadow-lg p-8">
+                
+                {isLoggedIn && !userProfile && (
+                  <div className="mb-6 rounded-lg bg-blue-50 p-4 border border-blue-200">
+                    <h3 className="text-blue-800 font-medium mb-3">👤 Set Your Profile</h3>
+                    <form onSubmit={handleSetProfile} className="space-y-3">
+                      <div>
+                        <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+                          Username
+                        </label>
+                        <input
+                          type="text"
+                          id="username"
+                          value={profileForm.username}
+                          onChange={(e) => setProfileForm({ ...profileForm, username: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Enter your username"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
+                          Bio
+                        </label>
+                        <textarea
+                          id="bio"
+                          value={profileForm.bio}
+                          onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Tell us about yourself..."
+                          rows="3"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={isSettingProfile || !profileForm.username.trim()}
+                        className="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isSettingProfile ? '🔄 Setting Profile...' : '💾 Save Profile'}
+                      </button>
+                    </form>
+                  </div>
+                )}
+
+                          {userProfile && (
+            <div className="mb-4 rounded-lg bg-purple-50 p-4 border border-purple-200">
+              <div className="flex items-center space-x-3 mb-3">
+                <Link 
+                  to={`/profile/${userProfile.name}`}
+                  className="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform"
+                >
+                  <span className="text-lg font-bold text-white">
+                    {userProfile.name.charAt(0).toUpperCase()}
+                  </span>
+                </Link>
+                <div className="flex-1">
+                  <h3 className="text-purple-800 font-medium">👤 Your Profile</h3>
+                  <p className="text-purple-600 text-sm">Username: {userProfile.name}</p>
+                  <p className="text-purple-600 text-sm">Bio: {userProfile.bio || 'No bio set'}</p>
+                  <p className="text-purple-600 text-sm">ID: {userProfile.id}</p>
+                </div>
+              </div>
+              <Link 
+                to={`/profile/${userProfile.name}`}
+                className="inline-block px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors text-sm"
+              >
+                View Full Profile →
+              </Link>
+            </div>
+          )}
+
+                {/* Posting Interface */}
+                {userProfile && contentActor && (
+                  <div className="mb-6">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-4">📝 Create a Post</h2>
+                    <PostForm 
+                      contentActor={contentActor}
+                      userProfile={userProfile}
+                      onPostCreated={handlePostCreated}
+                    />
+                  </div>
+                )}
+
+                {/* Posts Display - Now visible to everyone */}
+                {contentActor && (
+                  <div className="mb-6">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-4">📰 Recent Posts</h2>
+                    <PostList 
+                      contentActor={contentActor}
+                      userProfile={userProfile}
+                      onPostCreated={handlePostCreated}
+                    />
+                  </div>
+                )}
+                
+                <p className="text-center text-gray-600 mt-6">
+                  A social network hosted onchain on ICP.
+                </p>
+                
+                {error && <p className="mt-4 text-center text-red-500">Error: {error}</p>}
+              </div>
+            </div>
+          } />
+        </Routes>
+        
+        {/* Toast Notification */}
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            duration={toast.duration}
+            onClose={() => setToast(null)}
+          />
+        )}
+      </div>
+    </Router>
   );
 }
 

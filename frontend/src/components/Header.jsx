@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import NfidLogin from './Nfidlogin';
 
 function Header({ isLoggedIn, userPrincipal, userProfile, setBackendActor }) {
@@ -6,7 +7,7 @@ function Header({ isLoggedIn, userPrincipal, userProfile, setBackendActor }) {
     <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-sm shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 max-w-4xl">
         {/* Logo */}
-        <div className="flex items-center space-x-3">
+        <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-purple-600">
             <span className="text-sm font-bold text-white">IC</span>
           </div>
@@ -14,7 +15,7 @@ function Header({ isLoggedIn, userPrincipal, userProfile, setBackendActor }) {
             <h1 className="text-xl font-bold text-gray-900">Chained Social</h1>
             <p className="text-xs text-gray-500">Decentralized on ICP</p>
           </div>
-        </div>
+        </Link>
 
         {/* Search Bar */}
         <div className="hidden md:flex flex-1 max-w-md mx-8">
@@ -43,7 +44,10 @@ function Header({ isLoggedIn, userPrincipal, userProfile, setBackendActor }) {
               </button>
               
               {/* User Profile */}
-              <div className="flex items-center space-x-2 rounded-lg bg-gray-50 px-3 py-1.5">
+              <Link 
+                to={userProfile ? `/profile/${userProfile.name}` : "/"}
+                className="flex items-center space-x-2 rounded-lg bg-gray-50 px-3 py-1.5 hover:bg-gray-100 transition-colors cursor-pointer"
+              >
                 <div className="h-6 w-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
                   <span className="text-xs font-bold text-white">
                     {userProfile ? userProfile.name.charAt(0).toUpperCase() : 'U'}
@@ -52,7 +56,7 @@ function Header({ isLoggedIn, userPrincipal, userProfile, setBackendActor }) {
                 <span className="text-sm font-medium text-gray-700">
                   {userProfile ? userProfile.name : (userPrincipal ? `${userPrincipal.slice(0, 8)}...` : 'User')}
                 </span>
-              </div>
+              </Link>
             </>
           ) : (
             <NfidLogin setBackendActor={setBackendActor} />
