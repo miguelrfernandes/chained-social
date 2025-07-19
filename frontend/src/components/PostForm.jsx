@@ -13,10 +13,18 @@ function PostForm({ contentActor, userProfile, onPostCreated }) {
     setError(null);
 
     try {
+      console.log('🔄 Creating post with:', {
+        content: postContent.trim(),
+        authorName: userProfile.name || 'Anonymous',
+        contentActor: !!contentActor
+      });
+
       const result = await contentActor.createPost({
         content: postContent.trim(),
         authorName: userProfile.name || 'Anonymous'
       });
+
+      console.log('📝 Post creation result:', result);
 
       if ('ok' in result) {
         setPostContent('');
@@ -24,11 +32,24 @@ function PostForm({ contentActor, userProfile, onPostCreated }) {
           onPostCreated(result.ok);
         }
       } else {
+        console.error('❌ Post creation failed:', result.err);
         setError('Failed to create post: ' + result.err);
       }
     } catch (err) {
-      console.error('Error creating post:', err);
-      setError('Error creating post: ' + err.message);
+      console.error('❌ Error creating post:', err);
+      
+      // Provide specific error messages for common issues
+      let errorMessage = 'Error creating post: ' + err.message;
+      
+      if (err.message.includes('Agent')) {
+        errorMessage = 'Connection issue. Please check if dfx is running and try again.';
+      } else if (err.message.includes('certificate')) {
+        errorMessage = 'Authentication issue. Please refresh the page and try again.';
+      } else if (err.message.includes('timeout')) {
+        errorMessage = 'Request timed out. Please try again.';
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsPosting(false);
     }

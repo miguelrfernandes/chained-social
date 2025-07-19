@@ -38,10 +38,19 @@ function App() {
   useEffect(() => {
     const initContentActor = async () => {
       try {
+        console.log('🔄 Initializing content actor...');
         const { content } = await import('../../src/declarations/content');
         setContentActor(content);
+        
+        // Test the connection
+        try {
+          const testResult = await content.getPosts(1, 0);
+          console.log('✅ Content actor initialized successfully:', testResult);
+        } catch (testErr) {
+          console.error('⚠️ Content actor connection test failed:', testErr);
+        }
       } catch (err) {
-        console.error('Failed to initialize content actor:', err);
+        console.error('❌ Failed to initialize content actor:', err);
       }
     };
     initContentActor();
@@ -200,6 +209,19 @@ function App() {
               </Link>
             </div>
           )}
+
+                {/* Debug Info for Codespaces */}
+                {window.location.hostname.includes('github.dev') && (
+                  <div className="mb-6 rounded-lg bg-yellow-50 p-4 border border-yellow-200">
+                    <h3 className="text-yellow-800 font-medium mb-2">🔧 Codespaces Debug Info</h3>
+                    <div className="text-sm text-yellow-700 space-y-1">
+                      <p>• Content Actor: {contentActor ? '✅ Loaded' : '❌ Not loaded'}</p>
+                      <p>• User Profile: {userProfile ? '✅ Set' : '❌ Not set'}</p>
+                      <p>• Is Logged In: {isLoggedIn ? '✅ Yes' : '❌ No'}</p>
+                      <p>• Environment: Codespaces (Anonymous Identity)</p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Posting Interface */}
                 {userProfile && contentActor && (
