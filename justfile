@@ -6,9 +6,10 @@ setup:
     @echo "📦 Installing frontend dependencies..."
     cd frontend && npm install
     @echo "📝 Creating stub declarations for build..."
-    mkdir -p src/declarations/content src/declarations/backend src/declarations/frontend
+    mkdir -p src/declarations/content src/declarations/backend src/declarations/socialgraph src/declarations/frontend
     echo 'export const content = { createPost: async () => ({ err: "Not available" }), getPosts: async () => ({ err: "Not available" }), getPost: async () => ({ err: "Not available" }), getUserPosts: async () => ({ err: "Not available" }), likePost: async () => ({ err: "Not available" }), addComment: async () => ({ err: "Not available" }), getPostCount: async () => 0 };' > src/declarations/content/index.js
     echo 'export const backend = { setUserProfile: async () => ({ err: "Not available" }), getUserProfile: async () => ({ err: "Not available" }), getUserProfileByUsername: async () => ({ err: "Not available" }), addUserResult: async () => ({ err: "Not available" }), getUserResults: async () => ({ err: "Not available" }), outcall_ai_model_for_sentiment_analysis: async () => ({ err: "Not available" }) };' > src/declarations/backend/index.js
+    echo 'export const socialgraph = { followUser: async () => ({ err: "Not available" }), unfollowUser: async () => ({ err: "Not available" }), sendConnectionRequest: async () => ({ err: "Not available" }), respondToConnectionRequest: async () => ({ err: "Not available" }), addInteraction: async () => ({ err: "Not available" }), getFollowers: async () => [], getFollowing: async () => [], getConnections: async () => [], getUserStats: async () => ({ followersCount: 0, followingCount: 0, connectionsCount: 0, interactionsReceived: 0, interactionsGiven: 0 }), getSocialGraph: async () => ({ followers: [], following: [], connections: [], interactions: [] }), isFollowing: async () => false, areConnected: async () => false };' > src/declarations/socialgraph/index.js
     echo 'export const canisterId = "stub-canister-id";' >> src/declarations/backend/index.js
     echo 'export const createActor = (canisterId, options) => ({ stub: true });' >> src/declarations/backend/index.js
     echo 'export const frontend = {};' > src/declarations/frontend/index.js
@@ -64,6 +65,7 @@ status:
     @echo "Canister IDs:"
     @echo "Backend: $(dfx canister id backend 2>/dev/null || echo 'Not deployed')"
     @echo "Content: $(dfx canister id content 2>/dev/null || echo 'Not deployed')"
+    @echo "SocialGraph: $(dfx canister id socialgraph 2>/dev/null || echo 'Not deployed')"
     @echo "Frontend: $(dfx canister id frontend 2>/dev/null || echo 'Not deployed')"
 
 # 🌐 URLs: Show current canister URLs
@@ -81,6 +83,7 @@ troubleshoot:
     @echo "🏗️ Canister Status:"
     dfx canister status backend 2>/dev/null || echo "Backend: Not deployed"
     dfx canister status content 2>/dev/null || echo "Content: Not deployed"
+    dfx canister status socialgraph 2>/dev/null || echo "SocialGraph: Not deployed"
     dfx canister status frontend 2>/dev/null || echo "Frontend: Not deployed"
     @echo ""
     @echo "🌐 Current URLs:"
@@ -121,6 +124,7 @@ mainnet:
     @echo "Frontend: https://$(dfx canister id frontend --network ic).ic0.app"
     @echo "Backend: $(dfx canister id backend --network ic)"
     @echo "Content: $(dfx canister id content --network ic)"
+    @echo "SocialGraph: $(dfx canister id socialgraph --network ic)"
 
 # 💰 Wallet commands
 balance:

@@ -114,6 +114,7 @@ Run `just explain-urls` for detailed information about URL types.
 chainedsocial/
 ├── backend/          # Backend canister (Motoko)
 ├── content/          # Content canister (Motoko)
+├── socialgraph/      # Social Graph canister (Motoko)
 ├── frontend/         # React frontend application
 ├── scripts/          # Utility scripts
 ├── justfile          # Task runner configuration
@@ -127,6 +128,7 @@ chainedsocial/
 
 - **Backend Canister**: Core application logic and user management
 - **Content Canister**: Content storage and management
+- **Social Graph Canister**: Controls connections, follows, and social interactions
 - **Frontend Canister**: Web application assets
 
 ### Frontend
@@ -174,15 +176,15 @@ chainedsocial/
 
 ### Backend Architecture (ICP Canisters)
 
-This project will use a modular backend architecture on the Internet Computer:
+This project uses a modular backend architecture on the Internet Computer:
 
 - **User Management Canister:** Profile creation, authentication, and identity verification
 - **Content System Canister:** Posts, comments, media uploads, and content moderation
-- **Social Graph Canister:** Connections, follows, and social interactions
+- **Social Graph Canister:** Connections, follows, and social interactions ✅ **Implemented**
 - **Governance Canister:** DAO voting, proposals, and community decisions
 - **Monetization Canister:** Token rewards, creator payments, and tip system
 
-**Current Status:** Basic canister structure with authentication integration planned.
+**Current Status:** Core canisters implemented with social graph functionality.
 
 ## 📚 Resources
 

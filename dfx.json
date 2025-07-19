@@ -8,8 +8,12 @@
       "main": "content/main.mo",
       "type": "motoko"
     },
+    "socialgraph": {
+      "main": "socialgraph/main.mo",
+      "type": "motoko"
+    },
     "frontend": {
-      "dependencies": ["backend", "content"],
+      "dependencies": ["backend", "content", "socialgraph"],
       "frontend": {
         "entrypoint": "frontend/index.html"
       },
