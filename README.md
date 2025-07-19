@@ -1,7 +1,10 @@
-# My Crypto Blog
+# Chained Social
 
-This frontend-only asset canister allows you to serve static files without a backend canister.
-Asset canisters can be used to serve static frontend files, such as HTML, CSS, and JavaScript files, to users through a web browser.
+A decentralized social media platform built on the Internet Computer (ICP). This project features a modular backend architecture with user management, content system, social graph, governance, and monetization canisters.
+
+## Project Overview
+
+Chained Social is a comprehensive social media platform that leverages the Internet Computer's capabilities to provide a truly decentralized social experience. The platform includes features for user authentication, content creation, social interactions, community governance, and creator monetization.
 
 ## Project structure
 `sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"`
