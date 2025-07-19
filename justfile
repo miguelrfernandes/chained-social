@@ -53,6 +53,8 @@ create-stub-declarations:
     mkdir -p src/declarations/frontend
     echo 'export const content = { createPost: async () => ({ err: "Not available" }), getPosts: async () => ({ err: "Not available" }), getPost: async () => ({ err: "Not available" }), getUserPosts: async () => ({ err: "Not available" }), likePost: async () => ({ err: "Not available" }), addComment: async () => ({ err: "Not available" }), getPostCount: async () => 0 };' > src/declarations/content/index.js
     echo 'export const backend = { setUserProfile: async () => ({ err: "Not available" }), getUserProfile: async () => ({ err: "Not available" }), getUserProfileByUsername: async () => ({ err: "Not available" }), addUserResult: async () => ({ err: "Not available" }), getUserResults: async () => ({ err: "Not available" }), outcall_ai_model_for_sentiment_analysis: async () => ({ err: "Not available" }) };' > src/declarations/backend/index.js
+    echo 'export const canisterId = "stub-canister-id";' >> src/declarations/backend/index.js
+    echo 'export const createActor = (canisterId, options) => ({ stub: true });' >> src/declarations/backend/index.js
     echo 'export const frontend = {};' > src/declarations/frontend/index.js
 
 # 🏗️ Build: Build frontend and generate types
