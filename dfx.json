@@ -16,5 +16,11 @@
       "source": ["frontend/dist"],
       "type": "assets"
     }
+  },
+  "networks": {
+    "ic": {
+      "providers": ["https://ic0.app"],
+      "type": "persistent"
+    }
   }
 }
