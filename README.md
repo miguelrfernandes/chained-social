@@ -9,6 +9,8 @@ Chained Social is a comprehensive social media platform that leverages the Inter
 # Download and install just (latest release)
 curl -s https://just.systems/install.sh | bash -s -- --to /usr/local/bin
 
+just setup
+
 ## Project structure
 `sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"`
 `pnpm add -g ic-mops`
