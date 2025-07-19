@@ -14,7 +14,8 @@
         "entrypoint": "frontend/index.html"
       },
       "source": ["frontend/dist"],
-      "type": "assets"
+      "type": "assets",
+      "candid": "frontend/assetstorage.did"
     }
   },
   "networks": {

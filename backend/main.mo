@@ -32,7 +32,7 @@ actor {
 
     public shared ({ caller }) func setUserProfile(name : Text, bio : Text) : async Result.Result<{ id : Nat; name : Text; bio : Text }, Text> {
         // Debug logging
-        let callerText = Principal.toText(caller);
+        let _callerText = Principal.toText(caller);
         let isAnonymous = Principal.isAnonymous(caller);
         
         // Check if user already exists

@@ -186,7 +186,7 @@ actor {
     };
 
     // Like a post
-    public shared ({ caller }) func likePost(postId : Nat) : async Result.Result<Post, Text> {
+    public shared ({ caller = _ }) func likePost(postId : Nat) : async Result.Result<Post, Text> {
         switch (posts.get(postId)) {
             case (?post) {
                 let updatedPost : Post = {

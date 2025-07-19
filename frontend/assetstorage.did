@@ -1,0 +1,19 @@
+service : {
+  "http_request": (record {
+    url: text;
+    method: text;
+    body: opt blob;
+    headers: vec record { text; text };
+    transform: opt record { function: func (record { response: record { status: nat; headers: vec record { text; text }; body: blob } }) -> record { status: nat; headers: vec record { text; text }; body: blob } };
+  }) -> (record {
+    status: nat;
+    headers: vec record { text; text };
+    body: blob;
+  });
+  "http_request_streaming_callback": (record {
+    token: opt record { text; text; text };
+  }) -> (record {
+    body: blob;
+    token: opt record { text; text; text };
+  });
+} 
