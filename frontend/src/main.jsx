@@ -8,6 +8,9 @@ function App() {
   const [users, setUsers] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [backendActor, setBackendActor] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userPrincipal, setUserPrincipal] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,10 +37,24 @@ function App() {
     fetchData();
   }, []);
 
+  const handleBackendActorSet = (actor, principal) => {
+    setBackendActor(actor);
+    setUserPrincipal(principal);
+    setIsLoggedIn(true);
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-blue-400 to-purple-500">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-        <NfidLogin />
+        <NfidLogin setBackendActor={handleBackendActorSet} />
+        
+        {isLoggedIn && (
+          <div className="mb-4 rounded-lg bg-green-50 p-4 border border-green-200">
+            <p className="text-green-800 font-medium">✅ Logged in successfully!</p>
+            <p className="text-green-600 text-sm mt-1">Principal: {userPrincipal}</p>
+          </div>
+        )}
+        
         <h1 className="mb-4 text-center text-3xl font-bold text-gray-800">🚀 Chained Social: Crypto Social Network on ICP! 🚀</h1>
         <p className="text-center text-gray-600">
           A social network hosted onchain on ICP.

@@ -17,3 +17,7 @@ deploy:
     just install-frontend
     just build-frontend
     just deploy-canisters
+
+# Start dfx on background
+start-dfx:
+    dfx start --background
