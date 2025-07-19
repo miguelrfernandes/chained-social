@@ -39,18 +39,30 @@ function App() {
     const initContentActor = async () => {
       try {
         console.log('🔄 Initializing content actor...');
-        const { content } = await import('../../src/declarations/content');
         
-        if (!content) {
-          console.error('❌ Content actor is undefined - canister ID may not be set');
+        // Try to import the content actor
+        const { content, createActor } = await import('../../src/declarations/content');
+        
+        let contentActor = content;
+        
+        // If content is undefined, try to create it manually
+        if (!contentActor) {
+          console.log('⚠️ Content actor is undefined, trying to create manually...');
+          const canisterId = "u6s2n-gx777-77774-qaaba-cai";
+          contentActor = createActor(canisterId);
+          console.log('🔧 Created content actor manually with canister ID:', canisterId);
+        }
+        
+        if (!contentActor) {
+          console.error('❌ Failed to create content actor');
           return;
         }
         
-        setContentActor(content);
+        setContentActor(contentActor);
         
         // Test the connection
         try {
-          const testResult = await content.getPosts(1, 0);
+          const testResult = await contentActor.getPosts(1, 0);
           console.log('✅ Content actor initialized successfully:', testResult);
         } catch (testErr) {
           console.error('⚠️ Content actor connection test failed:', testErr);
