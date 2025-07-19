@@ -15,7 +15,7 @@ function NfidLogin({ setBackendActor }) {
   // Store NFID instance once initialized
   const [nfidInstance, setNfidInstance] = useState(null);
 
-  // Initialize NFID with proper promise-based waiting
+  // Initialize NFID with simple promise-based approach
   const initializeNFID = async () => {
     if (nfidInitialized && nfidInstance) {
       return nfidInstance;
@@ -28,50 +28,12 @@ function NfidLogin({ setBackendActor }) {
       },
     };
     
-    // Wait for DOM to be ready
-    await new Promise(resolve => {
-      if (document.readyState === 'complete') {
-        resolve();
-      } else {
+    // Simple wait for DOM to be ready
+    if (document.readyState !== 'complete') {
+      await new Promise(resolve => {
         window.addEventListener('load', resolve, { once: true });
-      }
-    });
-    
-    // Wait for NFID iframe to be available
-    await new Promise((resolve, reject) => {
-      const maxAttempts = 10;
-      let attempts = 0;
-      
-      const checkNFIDReady = () => {
-        attempts++;
-        console.log(`🔄 Checking NFID readiness (attempt ${attempts}/${maxAttempts})`);
-        
-        try {
-          // Check if NFID is available in global scope
-          if (typeof window.NFID !== 'undefined') {
-            console.log("✅ NFID is available");
-            resolve();
-            return;
-          }
-          
-          if (attempts >= maxAttempts) {
-            reject(new Error("NFID not available after maximum attempts"));
-            return;
-          }
-          
-          // Check again in 200ms
-          setTimeout(checkNFIDReady, 200);
-        } catch (error) {
-          if (attempts >= maxAttempts) {
-            reject(error);
-          } else {
-            setTimeout(checkNFIDReady, 200);
-          }
-        }
-      };
-      
-      checkNFIDReady();
-    });
+      });
+    }
     
     // Initialize NFID with retry mechanism
     let nfid;
@@ -83,6 +45,7 @@ function NfidLogin({ setBackendActor }) {
         console.log(`🔄 Attempting NFID initialization (attempt ${retryCount + 1}/${maxRetries})`);
         nfid = await NFID.init(nfidConfig);
         console.log("✅ NFID initialized successfully");
+        
         setNfidInitialized(true);
         setNfidInstance(nfid);
         return nfid;
@@ -104,6 +67,8 @@ function NfidLogin({ setBackendActor }) {
     setIsLoggingIn(true);
     setLoginError(null);
     
+    console.log("🔍 Starting login process...");
+    
     try {
       // Environment detection
       const isLocal = window.location.hostname.includes('localhost') || 
@@ -112,6 +77,8 @@ function NfidLogin({ setBackendActor }) {
                           window.location.hostname.includes('app.github.dev');
       
       console.log(`🌍 Environment: ${isLocal ? 'Local' : isCodespaces ? 'Codespaces' : 'Production'}`);
+      console.log(`📍 Hostname: ${window.location.hostname}`);
+      console.log(`🔗 URL: ${window.location.href}`);
       
       let agent;
       let principal;
@@ -157,10 +124,31 @@ function NfidLogin({ setBackendActor }) {
         // Use promise-based initialization
         const nfid = await initializeNFID();
         
-        const delegationIdentity = await nfid.getDelegation({
-          maxTimeToLive: BigInt(8) * BigInt(3_600_000_000_000),
-        });
-        console.log("✅ Delegation acquired");
+        // Try delegation with retry mechanism
+        let delegationIdentity;
+        let delegationRetries = 0;
+        const maxDelegationRetries = 3;
+        
+        while (delegationRetries < maxDelegationRetries) {
+          try {
+            console.log(`🔄 Attempting delegation (attempt ${delegationRetries + 1}/${maxDelegationRetries})`);
+            delegationIdentity = await nfid.getDelegation({
+              maxTimeToLive: BigInt(8) * BigInt(3_600_000_000_000),
+            });
+            console.log("✅ Delegation acquired");
+            break;
+          } catch (delegationError) {
+            delegationRetries++;
+            console.warn(`⚠️ Delegation attempt ${delegationRetries} failed:`, delegationError);
+            
+            if (delegationRetries >= maxDelegationRetries) {
+              throw delegationError;
+            }
+            
+            // Wait before retrying delegation
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        }
 
         agent = new HttpAgent({ 
           identity: delegationIdentity,
@@ -188,10 +176,12 @@ function NfidLogin({ setBackendActor }) {
         userMessage = "Local replica not running. Please start dfx: dfx start --clean";
       } else if (error.message.includes("threshold signature")) {
         userMessage = "Bitcoin service integration issue. This is expected in local development.";
-      } else if (error.message.includes("iframe not instantiated")) {
-        userMessage = "✅ Using anonymous identity for development (expected in Codespaces)";
+      } else if (error.message.includes("iframe not instantiated") || error.message.includes("NFID iframe not properly instantiated")) {
+        userMessage = "🔄 NFID iframe issue detected. Please try again or refresh the page.";
       } else if (error.message.includes("NFID initialization failed")) {
         userMessage = "🔄 NFID is initializing... Please try again in a moment.";
+      } else {
+        userMessage = `Login failed: ${error.message}`;
       }
       
       setLoginError(userMessage);

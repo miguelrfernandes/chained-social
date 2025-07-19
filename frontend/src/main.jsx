@@ -88,7 +88,7 @@ function App() {
     
     // Show success toast
     setToast({
-      message: `✅ Logged in successfully!\nPrincipal: ${principal}`,
+      message: `Logged in successfully!\nPrincipal: ${principal}`,
       type: 'success',
       duration: 4000
     });
@@ -107,7 +107,7 @@ function App() {
         setUserProfile(result.ok);
         setProfileForm({ username: '', bio: '' });
         setToast({
-          message: '✅ Profile saved successfully!',
+          message: 'Profile saved successfully!',
           type: 'success',
           duration: 3000
         });
@@ -135,7 +135,7 @@ function App() {
   const handlePostCreated = async (newPost) => {
     console.log('✅ Post created successfully:', newPost);
     setToast({
-      message: '✅ Post created successfully!',
+      message: 'Post created successfully!',
       type: 'success',
       duration: 3000
     });
