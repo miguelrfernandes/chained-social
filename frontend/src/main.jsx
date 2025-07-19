@@ -4,6 +4,7 @@ import '../index.css';
 import NfidLogin from './components/Nfidlogin';
 import PostForm from './components/PostForm';
 import PostList from './components/PostList';
+import Header from './components/Header';
 
 function App() {
   const [error, setError] = useState(null);
@@ -68,14 +69,14 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-400 to-purple-500">
+    <div className="min-h-screen bg-gray-50">
+      <Header 
+        isLoggedIn={isLoggedIn}
+        userPrincipal={userPrincipal}
+        userProfile={userProfile}
+      />
+      
       <div className="w-full max-w-4xl mx-auto p-8">
-        {/* Header with Title */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">🚀 Chained Social</h1>
-          <p className="text-white text-lg opacity-90">Crypto Social Network on ICP!</p>
-        </div>
-
         <div className="bg-white rounded-lg shadow-lg p-8">
           <NfidLogin setBackendActor={handleBackendActorSet} />
           

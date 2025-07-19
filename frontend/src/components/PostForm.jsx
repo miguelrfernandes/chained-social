@@ -43,34 +43,58 @@ function PostForm({ contentActor, userProfile, onPostCreated }) {
   }
 
   return (
-    <div className="mb-6 rounded-lg bg-white p-4 border border-gray-200 shadow-sm">
-      <h3 className="text-lg font-medium text-gray-900 mb-3">📝 Create a Post</h3>
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <div>
-          <textarea
-            value={postContent}
-            onChange={(e) => setPostContent(e.target.value)}
-            placeholder="What's on your mind?"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-            rows="3"
-            maxLength="1000"
-            required
-          />
-          <div className="flex justify-between items-center mt-1">
+    <div className="mb-6 rounded-lg bg-white border border-gray-200 shadow-sm">
+      <form onSubmit={handleSubmit} className="p-4">
+        {/* Header */}
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+            <span className="text-sm font-bold text-white">
+              {userProfile ? userProfile.name.charAt(0).toUpperCase() : 'U'}
+            </span>
+          </div>
+          <div className="flex-1">
+            <textarea
+              placeholder="What's on your mind?"
+              value={postContent}
+              onChange={(e) => setPostContent(e.target.value)}
+              className="min-h-[80px] resize-none border-0 bg-gray-50 focus:bg-white transition-colors w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows="3"
+              maxLength="1000"
+              required
+            />
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <button type="button" className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </button>
+            <button type="button" className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+          </div>
+          <div className="flex items-center space-x-3">
             <span className="text-xs text-gray-500">
               {postContent.length}/1000 characters
             </span>
             <button
               type="submit"
               disabled={isPosting || !postContent.trim()}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition-all"
             >
               {isPosting ? '🔄 Posting...' : '📤 Post'}
             </button>
           </div>
         </div>
+        
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+          <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-red-800 text-sm">❌ {error}</p>
           </div>
         )}
