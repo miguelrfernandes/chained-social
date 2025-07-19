@@ -27,6 +27,7 @@ deploy-canisters-clean:
 
 # 🌟 Full deploy: install, build, and deploy everything
 deploy:
+    just generate
     just install-frontend
     just build-frontend
     just deploy-canisters-clean
