@@ -113,19 +113,19 @@ function NfidLogin({ setBackendActor }) {
   }
 
   return (
-    <div className="text-center mb-6">
+    <div>
       <button
         id="loginBtn"
         onClick={handleLogin}
         disabled={isLoggingIn}
-        className="px-6 py-3 text-lg bg-green-500 text-white border-none rounded-lg cursor-pointer shadow-lg transition-all duration-300 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white border-none rounded-lg cursor-pointer shadow-sm transition-all duration-300 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
       >
-        {isLoggingIn ? "🔄 Logging in..." : "🚀 Login with Gmail (powered by NFID)"}
+        {isLoggingIn ? "🔄 Connecting..." : "Connect to start posting"}
       </button>
       
       {loginError && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-800 text-sm">❌ Login error: {loginError}</p>
+        <div className="absolute top-16 right-4 mt-2 p-3 bg-red-50 border border-red-200 rounded-lg shadow-lg z-50 max-w-xs">
+          <p className="text-red-800 text-sm">❌ {loginError}</p>
           {loginError.includes("dfx start") && (
             <p className="text-red-600 text-xs mt-1">
               💡 Try running: <code className="bg-red-100 px-1 rounded">dfx start --clean</code>

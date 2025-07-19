@@ -6,6 +6,7 @@ function PostList({ contentActor, userProfile, onPostCreated }) {
   const [error, setError] = useState(null);
   const [commentText, setCommentText] = useState({});
   const [isLiking, setIsLiking] = useState({});
+  const [isCommenting, setIsCommenting] = useState({});
 
   useEffect(() => {
     loadPosts();
@@ -61,6 +62,8 @@ function PostList({ contentActor, userProfile, onPostCreated }) {
   const handleComment = async (postId) => {
     if (!contentActor || !userProfile || !commentText[postId]?.trim()) return;
 
+    setIsCommenting({ ...isCommenting, [postId]: true });
+
     try {
       const result = await contentActor.addComment({
         postId: postId,
@@ -73,9 +76,37 @@ function PostList({ contentActor, userProfile, onPostCreated }) {
           post.id === postId ? result.ok : post
         ));
         setCommentText({ ...commentText, [postId]: '' });
+        
+        // Show success toast
+        if (window.showToast) {
+          window.showToast({
+            message: 'Comment posted successfully!',
+            type: 'success',
+            duration: 3000
+          });
+        }
+      } else {
+        // Show error toast
+        if (window.showToast) {
+          window.showToast({
+            message: `❌ Failed to post comment: ${result.err}`,
+            type: 'error',
+            duration: 5000
+          });
+        }
       }
     } catch (err) {
       console.error('Error adding comment:', err);
+      // Show error toast
+      if (window.showToast) {
+        window.showToast({
+          message: `❌ Error posting comment: ${err.message}`,
+          type: 'error',
+          duration: 5000
+        });
+      }
+    } finally {
+      setIsCommenting({ ...isCommenting, [postId]: false });
     }
   };
 
@@ -171,6 +202,68 @@ function PostList({ contentActor, userProfile, onPostCreated }) {
               </svg>
             </button>
           </div>
+
+          {/* Comments Section */}
+          {post.comments.length > 0 && (
+            <div className="px-4 py-3 border-t border-gray-100 bg-gray-50">
+              <h4 className="text-sm font-medium text-gray-700 mb-3">💬 Comments ({post.comments.length})</h4>
+              <div className="space-y-3">
+                {post.comments.map((comment, index) => (
+                  <div key={index} className="flex space-x-3">
+                    <div className="h-6 w-6 rounded-full bg-gradient-to-r from-green-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-bold text-white">
+                        {comment.authorName.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <span className="text-sm font-medium text-gray-900">{comment.authorName}</span>
+                        <span className="text-xs text-gray-500">{formatTimestamp(comment.timestamp)}</span>
+                      </div>
+                      <p className="text-sm text-gray-700">{comment.content}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Comment Input */}
+          {userProfile && (
+            <div className="px-4 py-3 border-t border-gray-100">
+              <div className="flex space-x-3">
+                <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                  <span className="text-xs font-bold text-white">
+                    {userProfile.name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      placeholder="Write a comment..."
+                      value={commentText[post.id] || ''}
+                      onChange={(e) => setCommentText({ ...commentText, [post.id]: e.target.value })}
+                      className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          handleComment(post.id);
+                        }
+                      }}
+                    />
+                    <button
+                      onClick={() => handleComment(post.id)}
+                      disabled={!commentText[post.id]?.trim() || isCommenting[post.id]}
+                      className="px-4 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {isCommenting[post.id] ? '🔄 Posting...' : 'Post'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
         </div>
       ))}

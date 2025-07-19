@@ -5,6 +5,7 @@ import NfidLogin from './components/Nfidlogin';
 import PostForm from './components/PostForm';
 import PostList from './components/PostList';
 import Header from './components/Header';
+import Toast from './components/Toast';
 
 function App() {
   const [error, setError] = useState(null);
@@ -15,6 +16,18 @@ function App() {
   const [userProfile, setUserProfile] = useState(null);
   const [isSettingProfile, setIsSettingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState({ username: '', bio: '' });
+  const [toast, setToast] = useState(null);
+
+  // Expose toast function globally for components to use
+  useEffect(() => {
+    window.showToast = (toastConfig) => {
+      setToast(toastConfig);
+    };
+    
+    return () => {
+      delete window.showToast;
+    };
+  }, []);
 
 
 
@@ -38,6 +51,13 @@ function App() {
     setBackendActor(actor);
     setUserPrincipal(principal);
     setIsLoggedIn(true);
+    
+    // Show success toast
+    setToast({
+      message: `✅ Logged in successfully!\nPrincipal: ${principal}`,
+      type: 'success',
+      duration: 4000
+    });
   };
 
   const handleSetProfile = async (e) => {
@@ -52,12 +72,27 @@ function App() {
       if ('ok' in result) {
         setUserProfile(result.ok);
         setProfileForm({ username: '', bio: '' });
+        setToast({
+          message: '✅ Profile saved successfully!',
+          type: 'success',
+          duration: 3000
+        });
       } else {
         setError('Failed to set profile: ' + result.err);
+        setToast({
+          message: `❌ Failed to save profile: ${result.err}`,
+          type: 'error',
+          duration: 5000
+        });
       }
     } catch (err) {
       console.error("❌ Error setting profile:", err);
       setError('Error setting profile: ' + err.message);
+      setToast({
+        message: `❌ Error setting profile: ${err.message}`,
+        type: 'error',
+        duration: 5000
+      });
     } finally {
       setIsSettingProfile(false);
     }
@@ -65,6 +100,11 @@ function App() {
 
   const handlePostCreated = async (newPost) => {
     console.log('✅ Post created successfully:', newPost);
+    setToast({
+      message: '✅ Post created successfully!',
+      type: 'success',
+      duration: 3000
+    });
     // The PostList component will handle refreshing itself
   };
 
@@ -74,18 +114,13 @@ function App() {
         isLoggedIn={isLoggedIn}
         userPrincipal={userPrincipal}
         userProfile={userProfile}
+        setBackendActor={handleBackendActorSet}
       />
       
       <div className="w-full max-w-4xl mx-auto p-8">
         <div className="bg-white rounded-lg shadow-lg p-8">
-          <NfidLogin setBackendActor={handleBackendActorSet} />
           
-          {isLoggedIn && (
-            <div className="mb-4 rounded-lg bg-green-50 p-4 border border-green-200">
-              <p className="text-green-800 font-medium">✅ Logged in successfully!</p>
-              <p className="text-green-600 text-sm mt-1">Principal: {userPrincipal}</p>
-            </div>
-          )}
+
 
           {isLoggedIn && !userProfile && (
             <div className="mb-6 rounded-lg bg-blue-50 p-4 border border-blue-200">
@@ -169,6 +204,16 @@ function App() {
           {error && <p className="mt-4 text-center text-red-500">Error: {error}</p>}
         </div>
       </div>
+      
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          duration={toast.duration}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

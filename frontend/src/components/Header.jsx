@@ -1,6 +1,7 @@
 import React from 'react';
+import NfidLogin from './Nfidlogin';
 
-function Header({ isLoggedIn, userPrincipal, userProfile }) {
+function Header({ isLoggedIn, userPrincipal, userProfile, setBackendActor }) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-sm shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 max-w-4xl">
@@ -54,9 +55,7 @@ function Header({ isLoggedIn, userPrincipal, userProfile }) {
               </div>
             </>
           ) : (
-            <div className="text-sm text-gray-500">
-              Connect to start posting
-            </div>
+            <NfidLogin setBackendActor={setBackendActor} />
           )}
         </div>
       </div>
