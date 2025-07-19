@@ -27,6 +27,7 @@ deploy-canisters-clean:
 
 # 🌟 Full deploy: install, build, and deploy everything
 deploy:
+    just start-dfx | echo "dfx already running"
     just generate
     just install-frontend
     just build-frontend

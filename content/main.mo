@@ -99,31 +99,23 @@ actor {
 
         // Apply pagination
         let startIndex = offset;
-        let endIndex = Nat.min(startIndex + limit, Array.size(sortedPosts));
+        let totalSize = Array.size(sortedPosts);
+        let endIndex = if (startIndex >= totalSize) { totalSize } else {
+            let calculatedEnd = startIndex + limit;
+            if (calculatedEnd > totalSize) { totalSize } else { calculatedEnd }
+        };
         
         if (startIndex >= Array.size(sortedPosts)) {
             return #ok([]);
         };
 
-        // Create paginated array manually
+        // Create paginated array using Array.tabulate
         let paginatedSize = endIndex - startIndex;
-        let paginatedPosts = Array.init<Post>(paginatedSize, {
-            id = 0;
-            author = Principal.fromText("2vxsx-fae");
-            authorName = "";
-            content = "";
-            timestamp = 0;
-            likes = 0;
-            comments = [];
+        let paginatedPosts = Array.tabulate<Post>(paginatedSize, func(i : Nat) : Post {
+            sortedPosts[startIndex + i]
         });
         
-        var i = 0;
-        while (i < paginatedSize) {
-            paginatedPosts[i] := sortedPosts[startIndex + i];
-            i += 1;
-        };
-        
-        return #ok(Array.freeze(paginatedPosts));
+        return #ok(paginatedPosts);
     };
 
     // Get posts by a specific user
@@ -155,31 +147,23 @@ actor {
 
                 // Apply pagination
                 let startIndex = offset;
-                let endIndex = Nat.min(startIndex + limit, Array.size(sortedPosts));
+                let totalSize = Array.size(sortedPosts);
+                let endIndex = if (startIndex >= totalSize) { totalSize } else {
+                    let calculatedEnd = startIndex + limit;
+                    if (calculatedEnd > totalSize) { totalSize } else { calculatedEnd }
+                };
                 
                 if (startIndex >= Array.size(sortedPosts)) {
                     return #ok([]);
                 };
 
-                // Create paginated array manually
+                // Create paginated array using Array.tabulate
                 let paginatedSize = endIndex - startIndex;
-                let paginatedPosts = Array.init<Post>(paginatedSize, {
-                    id = 0;
-                    author = Principal.fromText("2vxsx-fae");
-                    authorName = "";
-                    content = "";
-                    timestamp = 0;
-                    likes = 0;
-                    comments = [];
+                let paginatedPosts = Array.tabulate<Post>(paginatedSize, func(i : Nat) : Post {
+                    sortedPosts[startIndex + i]
                 });
                 
-                var i = 0;
-                while (i < paginatedSize) {
-                    paginatedPosts[i] := sortedPosts[startIndex + i];
-                    i += 1;
-                };
-                
-                return #ok(Array.freeze(paginatedPosts));
+                return #ok(paginatedPosts);
             };
             case (_) #ok([]);
         };
