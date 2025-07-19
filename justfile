@@ -1,6 +1,6 @@
 # 🚀 Justfile for Chained Social ICP Project
 
-# 🛠️ Setup: Complete project initialization and first-time setup
+# 🛠️ Setup: Complete project initialization and deployment
 setup:
     @echo "🚀 Setting up Chained Social project..."
     @echo "📦 Installing frontend dependencies..."
@@ -10,26 +10,15 @@ setup:
     @echo "🏗️ Building frontend assets..."
     just build-frontend
     @echo "🚀 Starting dfx and deploying canisters..."
-    just deploy-canisters-clean
+    dfx stop || true
+    dfx start --background --clean
+    dfx deploy
     @echo "🔄 Generating type declarations..."
-    just generate
+    dfx generate
     @echo "✅ Setup complete! Your project is ready."
-    @echo "🌐 Frontend: http://localhost:4943"
-    @echo "📚 Backend API: http://127.0.0.1:4943/?canisterId=umunu-kh777-77774-qaaca-cai&id=uxrrr-q7777-77774-qaaaq-cai"
+    just urls
 
-# 🛠️ Setup: Development environment only (no deployment)
-setup-dev:
-    @echo "🛠️ Setting up development environment..."
-    @echo "📦 Installing frontend dependencies..."
-    just install-frontend
-    @echo "🚀 Starting dfx in background..."
-    just start-dfx
-    @echo "🔄 Generating type declarations..."
-    just generate
-    @echo "🏗️ Building frontend assets..."
-    just build-frontend
-    @echo "✅ Development setup complete!"
-    @echo "💡 Run 'just deploy' to deploy your canisters"
+
 
 # 📦 Install frontend dependencies
 install-frontend:
@@ -149,23 +138,14 @@ status:
     @echo ""
     @echo "Network: $(dfx info identity 2>/dev/null || echo 'Not configured')"
 
-# 🐳 DevContainer: Setup optimized for devcontainer environment
-setup-devcontainer:
-    @echo "🐳 Setting up Chained Social in devcontainer..."
-    @echo "📦 Installing frontend dependencies..."
-    just install-frontend
-    @echo "📝 Creating stub declarations for build..."
-    just create-stub-declarations
-    @echo "🏗️ Building frontend assets..."
-    just build-frontend
-    @echo "🚀 Starting dfx and deploying canisters..."
-    dfx stop || true
-    dfx start --background --clean
-    dfx deploy
-    @echo "🔄 Generating type declarations..."
-    dfx generate
-    @echo "✅ DevContainer setup complete!"
-    @echo "🌐 Frontend: http://localhost:4943"
+
+
+# 🌐 URLs: Show current canister URLs
+urls:
+    @echo "🌐 Current Canister URLs:"
+    @echo "Frontend: http://$(dfx canister id frontend).localhost:4943/"
+    @echo "Backend: http://127.0.0.1:4943/?canisterId=umunu-kh777-77774-qaaca-cai&id=$(dfx canister id backend)"
+    @echo "Content: http://127.0.0.1:4943/?canisterId=umunu-kh777-77774-qaaca-cai&id=$(dfx canister id content)"
 
 # 🆘 Help: Show available commands
 help:
@@ -173,8 +153,6 @@ help:
     @echo ""
     @echo "📋 Setup Commands:"
     @echo "  just setup        - Complete project setup and deployment"
-    @echo "  just setup-dev    - Development environment setup only"
-    @echo "  just setup-devcontainer - DevContainer optimized setup"
     @echo "  just reset        - Clean everything and start fresh"
     @echo ""
     @echo "🛠️ Development Commands:"
@@ -188,6 +166,7 @@ help:
     @echo ""
     @echo "📊 Utility Commands:"
     @echo "  just status       - Check project status"
+    @echo "  just urls         - Show current canister URLs"
     @echo "  just check-balance - Check wallet balance"
     @echo "  just convert-cycles - Convert ICP to cycles"
     @echo ""
