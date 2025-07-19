@@ -5,12 +5,14 @@ setup:
     @echo "🚀 Setting up Chained Social project..."
     @echo "📦 Installing frontend dependencies..."
     just install-frontend
+    @echo "📝 Creating stub declarations for build..."
+    just create-stub-declarations
+    @echo "🏗️ Building frontend assets..."
+    just build-frontend
     @echo "🚀 Starting dfx and deploying canisters..."
     just deploy-canisters-clean
     @echo "🔄 Generating type declarations..."
     just generate
-    @echo "🏗️ Building frontend assets..."
-    just build-frontend
     @echo "✅ Setup complete! Your project is ready."
     @echo "🌐 Frontend: http://localhost:4943"
     @echo "📚 Backend API: http://127.0.0.1:4943/?canisterId=umunu-kh777-77774-qaaca-cai&id=uxrrr-q7777-77774-qaaaq-cai"
@@ -42,6 +44,16 @@ build-frontend:
 build-frontend-no-types:
     @echo "🏗️ Building frontend assets (without type declarations)..."
     cd frontend && npm run build -- --mode development
+
+# 🛠️ Create stub declarations for build
+create-stub-declarations:
+    @echo "📝 Creating stub declarations for build..."
+    mkdir -p src/declarations/content
+    mkdir -p src/declarations/backend
+    mkdir -p src/declarations/frontend
+    echo 'export const content = { createPost: async () => ({ err: "Not available" }), getPosts: async () => ({ err: "Not available" }), getPost: async () => ({ err: "Not available" }), getUserPosts: async () => ({ err: "Not available" }), likePost: async () => ({ err: "Not available" }), addComment: async () => ({ err: "Not available" }), getPostCount: async () => 0 };' > src/declarations/content/index.js
+    echo 'export const backend = { setUserProfile: async () => ({ err: "Not available" }), getUserProfile: async () => ({ err: "Not available" }), getUserProfileByUsername: async () => ({ err: "Not available" }), addUserResult: async () => ({ err: "Not available" }), getUserResults: async () => ({ err: "Not available" }), outcall_ai_model_for_sentiment_analysis: async () => ({ err: "Not available" }) };' > src/declarations/backend/index.js
+    echo 'export const frontend = {};' > src/declarations/frontend/index.js
 
 # 🏗️ Build: Build frontend and generate types
 build:
@@ -140,14 +152,16 @@ setup-devcontainer:
     @echo "🐳 Setting up Chained Social in devcontainer..."
     @echo "📦 Installing frontend dependencies..."
     just install-frontend
+    @echo "📝 Creating stub declarations for build..."
+    just create-stub-declarations
+    @echo "🏗️ Building frontend assets..."
+    just build-frontend
     @echo "🚀 Starting dfx and deploying canisters..."
     dfx stop || true
     dfx start --background --clean
     dfx deploy
     @echo "🔄 Generating type declarations..."
     dfx generate
-    @echo "🏗️ Building frontend assets..."
-    just build-frontend
     @echo "✅ DevContainer setup complete!"
     @echo "🌐 Frontend: http://localhost:4943"
 
