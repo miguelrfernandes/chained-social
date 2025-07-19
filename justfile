@@ -5,12 +5,12 @@ setup:
     @echo "🚀 Setting up Chained Social project..."
     @echo "📦 Installing frontend dependencies..."
     just install-frontend
-    @echo "🏗️ Building frontend assets..."
-    just build-frontend
     @echo "🚀 Starting dfx and deploying canisters..."
     just deploy-canisters-clean
     @echo "🔄 Generating type declarations..."
     just generate
+    @echo "🏗️ Building frontend assets..."
+    just build-frontend
     @echo "✅ Setup complete! Your project is ready."
     @echo "🌐 Frontend: http://localhost:4943"
     @echo "📚 Backend API: http://127.0.0.1:4943/?canisterId=umunu-kh777-77774-qaaca-cai&id=uxrrr-q7777-77774-qaaaq-cai"
@@ -20,12 +20,12 @@ setup-dev:
     @echo "🛠️ Setting up development environment..."
     @echo "📦 Installing frontend dependencies..."
     just install-frontend
-    @echo "🏗️ Building frontend assets..."
-    just build-frontend
     @echo "🚀 Starting dfx in background..."
     just start-dfx
     @echo "🔄 Generating type declarations..."
     just generate
+    @echo "🏗️ Building frontend assets..."
+    just build-frontend
     @echo "✅ Development setup complete!"
     @echo "💡 Run 'just deploy' to deploy your canisters"
 
@@ -35,7 +35,13 @@ install-frontend:
 
 # 🛠️ Build frontend assets
 build-frontend:
+    @echo "🏗️ Building frontend assets..."
     cd frontend && npm run build
+
+# 🛠️ Build frontend assets (without type declarations)
+build-frontend-no-types:
+    @echo "🏗️ Building frontend assets (without type declarations)..."
+    cd frontend && npm run build -- --mode development
 
 # 🏗️ Build: Build frontend and generate types
 build:
@@ -63,10 +69,10 @@ deploy-canisters-clean:
 # 🌟 Full deploy: install, build, and deploy everything
 deploy:
     just start-dfx | echo "dfx already running"
-    just generate
     just install-frontend
-    just build-frontend
     just deploy-canisters-clean
+    just generate
+    just build-frontend
 
 # Start dfx on background
 start-dfx:
@@ -134,14 +140,14 @@ setup-devcontainer:
     @echo "🐳 Setting up Chained Social in devcontainer..."
     @echo "📦 Installing frontend dependencies..."
     just install-frontend
-    @echo "🏗️ Building frontend assets..."
-    just build-frontend
     @echo "🚀 Starting dfx and deploying canisters..."
     dfx stop || true
     dfx start --background --clean
     dfx deploy
     @echo "🔄 Generating type declarations..."
     dfx generate
+    @echo "🏗️ Building frontend assets..."
+    just build-frontend
     @echo "✅ DevContainer setup complete!"
     @echo "🌐 Frontend: http://localhost:4943"
 
