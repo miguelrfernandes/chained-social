@@ -6,9 +6,13 @@ A decentralized social media platform built on the Internet Computer (ICP). This
 
 Chained Social is a comprehensive social media platform that leverages the Internet Computer's capabilities to provide a truly decentralized social experience. The platform includes features for user authentication, content creation, social interactions, community governance, and creator monetization.
 
+# Download and install just (latest release)
+curl -s https://just.systems/install.sh | bash -s -- --to /usr/local/bin
+
 ## Project structure
 `sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"`
 `pnpm add -g ic-mops`
+
 
 ```
 dfx start --background

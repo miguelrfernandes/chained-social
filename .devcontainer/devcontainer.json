@@ -1,6 +1,6 @@
 {
   "name": "ICP Dev Environment",
-  "image": "ghcr.io/dfinity/icp-dev-env-slim:17",
+  "image": "ghcr.io/dfinity/icp-dev-env-slim",
   "forwardPorts": [4943, 5173],
   "portsAttributes": {
     "4943": {
@@ -16,5 +16,6 @@
     "vscode": {
       "extensions": ["dfinity-foundation.vscode-motoko"]
     }
-  }
+  },
+  "postCreateCommand": "curl -s https://just.systems/install.sh | bash -s -- --to /usr/local/bin"
 }
