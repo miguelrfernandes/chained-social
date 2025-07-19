@@ -143,17 +143,23 @@ status:
 
 # 🌐 URLs: Show current canister URLs
 urls:
-    @echo "🌐 Current Canister URLs:"
-    # Check if we're in GitHub Codespaces
-    if [ -n "$$CODESPACES" ]; then \
-        echo "Frontend: https://$$CODESPACE_NAME-4943.$$GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN/"; \
-        echo "Backend: https://$$CODESPACE_NAME-4943.$$GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN/?canisterId=umunu-kh777-77774-qaaca-cai&id=$(dfx canister id backend)"; \
-        echo "Content: https://$$CODESPACE_NAME-4943.$$GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN/?canisterId=umunu-kh777-77774-qaaca-cai&id=$(dfx canister id content)"; \
-    else \
-        echo "Frontend: http://$(dfx canister id frontend).localhost:4943/"; \
-        echo "Backend: http://127.0.0.1:4943/?canisterId=umunu-kh777-77774-qaaca-cai&id=$(dfx canister id backend)"; \
-        echo "Content: http://127.0.0.1:4943/?canisterId=umunu-kh777-77774-qaaca-cai&id=$(dfx canister id content)"; \
-    fi
+    chmod +x scripts/urls.sh
+    ./scripts/urls.sh
+
+# 🚀 Codespaces: Setup port forwarding for GitHub Codespaces
+codespaces-setup:
+    @echo "🚀 Setting up GitHub Codespaces port forwarding..."
+    @echo "📋 Add these ports to your Codespaces configuration:"
+    @echo "  - Port 4943 (dfx replica)"
+    @echo "  - Port 5173 (vite dev server)"
+    @echo ""
+    @echo "💡 In VS Code:"
+    @echo "  1. Go to Ports tab"
+    @echo "  2. Click '+' to add port 4943"
+    @echo "  3. Set visibility to 'Public'"
+    @echo "  4. Repeat for port 5173 if using dev server"
+    @echo ""
+    @echo "🌐 After setup, run 'just urls' to get the correct URLs"
 
 # 🆘 Help: Show available commands
 help:
@@ -175,6 +181,7 @@ help:
     @echo "📊 Utility Commands:"
     @echo "  just status       - Check project status"
     @echo "  just urls         - Show current canister URLs"
+    @echo "  just codespaces-setup - Setup GitHub Codespaces port forwarding"
     @echo "  just check-balance - Check wallet balance"
     @echo "  just convert-cycles - Convert ICP to cycles"
     @echo ""
