@@ -34,6 +34,10 @@ deploy:
     cd frontend && npm run build
     just urls
 
+# 🚀 Deploy to playground
+deploy-playground:
+    dfx deploy --playground
+
 # 🛠️ Build: Build frontend and generate types
 build:
     @echo "🏗️ Building frontend and generating types..."

@@ -8,6 +8,8 @@ Chained Social is a comprehensive social media platform that leverages the Inter
 
 ## 🚀 Quick Start
 
+USE DFX 0.27.0
+
 ### Option 1: GitHub Codespaces (Recommended)
 
 1. **Open in Codespaces:**
