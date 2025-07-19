@@ -1,16 +1,75 @@
-# Chained Social
+# ChainedSocial - Decentralized Social Media Platform
 
-A decentralized social media platform built on the Internet Computer (ICP). This project features a modular backend architecture with user management, content system, social graph, governance, and monetization canisters.
+[![Built for ICP WCHL25](https://img.shields.io/badge/Built%20for-ICP%20WCHL25-blue)](https://dorahacks.io/hackathon/wchl25-qualification-round)
+[![ICP](https://img.shields.io/badge/Built%20on-Internet%20Computer-orange)](https://internetcomputer.org)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-## Project Overview
+## 🌟 Vision
 
-Chained Social is a comprehensive social media platform that leverages the Internet Computer's capabilities to provide a truly decentralized social experience. The platform includes features for user authentication, content creation, social interactions, community governance, and creator monetization.
+ChainedSocial is a fully decentralized social media platform built on the Internet Computer Protocol (ICP) blockchain. Our mission is to create a social media ecosystem where users own their data, control their content, and participate in platform governance.
+
+## 🚀 Key Features
+
+- **100% On-Chain**: All data stored on ICP blockchain with unlimited scalability
+- **Passwordless Auth**: Secure authentication via Internet Identity
+- **Community Governance**: DAO-based decision making for platform features
+- **Creator Economy**: Direct monetization through ICP tokens and tips
+- **Censorship Resistant**: Content stored across distributed nodes
+- **Real-Time Messaging**: Instant communication between users
+- **NFT Integration**: Profile pictures and collectible posts as NFTs
+- **AI-Powered Discovery**: Intelligent content recommendations
+
+## 🏗️ Technical Architecture
+
+### Backend (ICP Canisters)
+- **Language**: Motoko
+- **User Management**: Profile creation, authentication, identity verification ✅ **Implemented**
+- **Content System**: Posts, comments, media uploads, moderation ✅ **Implemented**
+- **Social Graph**: Connections, follows, friend suggestions ✅ **Implemented**
+- **Governance**: DAO voting, proposals, community decisions 🚧 **Planned**
+- **Monetization**: Token rewards, tips, creator payments 🚧 **Planned**
+
+### Frontend
+- **Framework**: React + TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **State Management**: React Context
+- **Routing**: React Router
+
+### Infrastructure
+- **Authentication**: Internet Identity (NFID)
+- **Storage**: ICP On-chain Storage
+- **Deployment**: ICP Mainnet
+- **Development**: DFX SDK
 
 ## 🚀 Quick Start
 
-USE DFX 0.27.0
+**USE DFX 0.27.0**
 
-### Option 1: GitHub Codespaces (Recommended)
+### Option 1: Playground Development (Recommended)
+
+1. **Setup the Project:**
+   ```bash
+   just setup
+   ```
+
+2. **Deploy to Playground:**
+   ```bash
+   dfx deploy --playground
+   ```
+
+3. **Get Your URLs:**
+   ```bash
+   just urls
+   ```
+
+4. **Access Your Application:**
+   - Use the **Frontend URL** for normal browsing
+   - Use the **Backend/Content Candid URLs** for API testing
+
+> **💡 Pro Tip:** Playground deployment provides a shared, persistent environment perfect for development and testing.
+
+### Option 2: GitHub Codespaces
 
 1. **Open in Codespaces:**
    - Click the green "Code" button on this repository
@@ -38,7 +97,7 @@ USE DFX 0.27.0
 
 > **💡 Pro Tip:** The devcontainer is pre-configured with all necessary tools including DFX, Node.js, and just. Port forwarding is automatically set up for seamless development.
 
-### Option 2: Local Development
+### Option 3: Local Development
 
 1. **Install Dependencies:**
    ```bash
@@ -78,64 +137,79 @@ just
 - `just troubleshoot` - Diagnose deployment issues
 - `just status` - Check project status
 
-## 🌐 Understanding URLs
-
-This project generates different types of URLs:
-
-- **Frontend URL**: Your main web application (use for normal browsing)
-- **Backend/Content Candid URLs**: API interfaces for testing canister functions
-
-Run `just explain-urls` for detailed information about URL types.
-
-## 🔧 Troubleshooting
-
-### Common Issues:
-
-1. **CanisterIdNotFound Errors:**
-   ```bash
-   just troubleshoot
-   ```
-
-2. **Port Forwarding Issues (Codespaces):**
-   ```bash
-   just codespaces-setup
-   ```
-
-3. **Build Errors:**
-   ```bash
-   just reset
-   just setup
-   just deploy
-   ```
-
 ## 📁 Project Structure
 
 ```
 chainedsocial/
 ├── backend/          # Backend canister (Motoko)
+│   ├── main.mo      # User management & authentication
+│   └── types.mo     # Type definitions
 ├── content/          # Content canister (Motoko)
+│   └── main.mo      # Posts, comments, media
 ├── socialgraph/      # Social Graph canister (Motoko)
+│   └── main.mo      # Connections, follows, interactions
 ├── frontend/         # React frontend application
+│   ├── src/
+│   │   ├── components/
+│   │   └── main.jsx
+│   └── package.json
 ├── scripts/          # Utility scripts
 ├── justfile          # Task runner configuration
 ├── dfx.json          # DFX project configuration
 └── README.md         # This file
 ```
 
-## 🏗️ Architecture
+## 🏆 Current Features
 
-### Canisters (Backend Services)
+### ✅ Implemented
+- **User Authentication**: NFID login with persistent identities
+- **Profile Management**: Username uniqueness, bio, persistent profiles
+- **Content System**: Posts, comments, media uploads
+- **Social Graph**: Follow/unfollow, connections, user interactions
+- **Real-time UI**: Username availability checking, profile editing
+- **Logout System**: Complete session management
 
-- **Backend Canister**: Core application logic and user management
-- **Content Canister**: Content storage and management
-- **Social Graph Canister**: Controls connections, follows, and social interactions
-- **Frontend Canister**: Web application assets
+### 🚧 In Development
+- **Governance**: DAO voting and proposals
+- **Monetization**: Token rewards and creator payments
+- **NFT Integration**: Profile pictures and collectible posts
+- **AI Discovery**: Intelligent content recommendations
 
-### Frontend
+## 🎯 WCHL25 Roadmap
 
-- **React**: Modern UI framework
-- **Vite**: Fast build tool
-- **Tailwind CSS**: Utility-first CSS framework
+### Phase 1: Foundation ✅ **COMPLETED**
+- [x] User registration and authentication
+- [x] Basic profile management
+- [x] Simple posting functionality
+- [x] Core UI components
+
+### Phase 2: Social Features ✅ **COMPLETED**
+- [x] Following/followers system
+- [x] Comments and reactions
+- [x] Content discovery feed
+- [x] Real-time messaging (basic)
+
+### Phase 3: Governance 🚧 **IN PROGRESS**
+- [ ] DAO governance implementation
+- [ ] Proposal creation and voting
+- [ ] Community moderation tools
+- [ ] Token distribution system
+
+### Phase 4: Advanced Features 📋 **PLANNED**
+- [ ] Creator monetization
+- [ ] NFT integration
+- [ ] AI-powered recommendations
+- [ ] Performance optimization
+
+## 🏆 Competitive Advantages
+
+1. **True Decentralization**: 100% on-chain vs. hybrid solutions
+2. **Infinite Scalability**: ICP's unique architecture allows unlimited growth
+3. **No Gas Fees**: Users don't pay transaction costs
+4. **Community Owned**: DAO governance ensures user interests come first
+5. **Censorship Resistant**: Distributed storage prevents content removal
+6. **Persistent Identities**: Users maintain their profiles across sessions
+7. **Username Uniqueness**: Prevents duplicate usernames across the platform
 
 ## 🔧 Development
 
@@ -172,19 +246,55 @@ chainedsocial/
 
 > **Note:** Mainnet deployment requires cycles. Learn more about [ICP cycles](https://internetcomputer.org/docs/building-apps/getting-started/tokens-and-cycles).
 
-## 🚧 Planned Features
+## 🌐 Understanding URLs
 
-### Backend Architecture (ICP Canisters)
+This project generates different types of URLs:
 
-This project uses a modular backend architecture on the Internet Computer:
+- **Frontend URL**: Your main web application (use for normal browsing)
+- **Backend/Content Candid URLs**: API interfaces for testing canister functions
 
-- **User Management Canister:** Profile creation, authentication, and identity verification
-- **Content System Canister:** Posts, comments, media uploads, and content moderation
-- **Social Graph Canister:** Connections, follows, and social interactions ✅ **Implemented**
-- **Governance Canister:** DAO voting, proposals, and community decisions
-- **Monetization Canister:** Token rewards, creator payments, and tip system
+Run `just explain-urls` for detailed information about URL types.
 
-**Current Status:** Core canisters implemented with social graph functionality.
+## 🔧 Troubleshooting
+
+### Common Issues:
+
+1. **CanisterIdNotFound Errors:**
+   ```bash
+   just troubleshoot
+   ```
+
+2. **Port Forwarding Issues (Codespaces):**
+   ```bash
+   just codespaces-setup
+   ```
+
+3. **Build Errors:**
+   ```bash
+   just reset
+   just setup
+   just deploy
+   ```
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🌐 Links
+
+- **Demo**: https://chainedsocial.icp0.io
+- **Documentation**: https://docs.chainedsocial.network
+- **Twitter**: https://twitter.com/chainedsocial
+- **Discord**: https://discord.gg/chainedsocial
+- **Telegram**: https://t.me/chainedsocial
+
+## 🚀 Built for ICP WCHL25
+
+This project is built for the World Computer Hacker League 2025 qualification round. It demonstrates the power of the Internet Computer Protocol for hosting complete, scalable social media platforms entirely on-chain.
 
 ## 📚 Resources
 
@@ -192,3 +302,7 @@ This project uses a modular backend architecture on the Internet Computer:
 - [DFINITY Examples](https://github.com/dfinity/examples)
 - [Motoko Language Guide](https://internetcomputer.org/docs/current/developer-docs/build/languages/motoko/)
 - [Candid Interface Specification](https://internetcomputer.org/docs/current/developer-docs/build/candid/candid-intro)
+
+---
+
+**Own Your Voice, Control Your Data** - ChainedSocial
