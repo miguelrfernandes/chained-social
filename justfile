@@ -8,8 +8,13 @@ install-frontend:
 build-frontend:
     cd frontend && npm run build
 
+# 🔄 Regenerate type declarations
+generate:
+    dfx generate
+
 # 🚢 Deploy all canisters (backend & frontend)
 deploy-canisters:
+    just generate
     dfx deploy
 
 # 🌟 Full deploy: install, build, and deploy everything

@@ -4,8 +4,12 @@
       "main": "backend/main.mo",
       "type": "motoko"
     },
+    "content": {
+      "main": "content/main.mo",
+      "type": "motoko"
+    },
     "frontend": {
-      "dependencies": ["backend"],
+      "dependencies": ["backend", "content"],
       "frontend": {
         "entrypoint": "frontend/index.html"
       },

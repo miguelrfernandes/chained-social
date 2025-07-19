@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import '../index.css';
 import NfidLogin from './components/Nfidlogin';
+import PostForm from './components/PostForm';
+import PostList from './components/PostList';
 
 function App() {
   const [posts, setPosts] = useState(null);
@@ -9,11 +11,13 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [backendActor, setBackendActor] = useState(null);
+  const [contentActor, setContentActor] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userPrincipal, setUserPrincipal] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [isSettingProfile, setIsSettingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState({ username: '', bio: '' });
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,6 +43,24 @@ function App() {
     };
     fetchData();
   }, []);
+
+  // Initialize content actor when backend actor is set
+  useEffect(() => {
+    if (backendActor) {
+      const initContentActor = async () => {
+        try {
+          const { backend } = await import('../../src/declarations/backend');
+          const { content } = await import('../../src/declarations/content');
+          setContentActor(content);
+        } catch (err) {
+          console.error('Failed to initialize content actor:', err);
+        }
+      };
+      initContentActor();
+    }
+  }, [backendActor]);
+
+
 
   const handleBackendActorSet = (actor, principal) => {
     setBackendActor(actor);
@@ -69,9 +91,14 @@ function App() {
     }
   };
 
+  const handlePostCreated = async (newPost) => {
+    console.log('✅ Post created successfully:', newPost);
+    // The PostList component will handle refreshing itself
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-blue-400 to-purple-500">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
+      <div className="w-full max-w-4xl rounded-lg bg-white p-8 shadow-lg">
         <NfidLogin setBackendActor={handleBackendActorSet} />
         
         {isLoggedIn && (
@@ -129,6 +156,30 @@ function App() {
             <p className="text-purple-600 text-sm mt-1">Username: {userProfile.name}</p>
             <p className="text-purple-600 text-sm">Bio: {userProfile.bio || 'No bio set'}</p>
             <p className="text-purple-600 text-sm">ID: {userProfile.id}</p>
+          </div>
+        )}
+
+        {/* Posting Interface */}
+        {userProfile && contentActor && (
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">📝 Create a Post</h2>
+            <PostForm 
+              contentActor={contentActor}
+              userProfile={userProfile}
+              onPostCreated={handlePostCreated}
+            />
+          </div>
+        )}
+
+        {/* Posts Display */}
+        {userProfile && contentActor && (
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">📰 Recent Posts</h2>
+            <PostList 
+              contentActor={contentActor}
+              userProfile={userProfile}
+              onPostCreated={handlePostCreated}
+            />
           </div>
         )}
         
