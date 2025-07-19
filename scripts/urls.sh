@@ -2,13 +2,26 @@
 
 echo "🌐 Current Canister URLs:"
 
+# Get current canister IDs
+FRONTEND_ID=$(dfx canister id frontend 2>/dev/null || echo "not-deployed")
+BACKEND_ID=$(dfx canister id backend 2>/dev/null || echo "not-deployed")
+CONTENT_ID=$(dfx canister id content 2>/dev/null || echo "not-deployed")
+
 # Check if we're in GitHub Codespaces
 if [ -n "$CODESPACES" ]; then
-    echo "Frontend: https://${CODESPACE_NAME}-4943.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/"
-    echo "Backend: https://${CODESPACE_NAME}-4943.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/?canisterId=umunu-kh777-77774-qaaca-cai&id=$(dfx canister id backend)"
-    echo "Content: https://${CODESPACE_NAME}-4943.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/?canisterId=umunu-kh777-77774-qaaca-cai&id=$(dfx canister id content)"
+    BASE_URL="https://${CODESPACE_NAME}-4943.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}"
+    echo "Frontend: ${BASE_URL}/"
+    echo "Backend: ${BASE_URL}/?canisterId=${BACKEND_ID}"
+    echo "Content: ${BASE_URL}/?canisterId=${CONTENT_ID}"
 else
-    echo "Frontend: http://$(dfx canister id frontend).localhost:4943/"
-    echo "Backend: http://127.0.0.1:4943/?canisterId=umunu-kh777-77774-qaaca-cai&id=$(dfx canister id backend)"
-    echo "Content: http://127.0.0.1:4943/?canisterId=umunu-kh777-77774-qaaca-cai&id=$(dfx canister id content)"
-fi 
+    echo "Frontend: http://${FRONTEND_ID}.localhost:4943/"
+    echo "Backend: http://127.0.0.1:4943/?canisterId=${BACKEND_ID}"
+    echo "Content: http://127.0.0.1:4943/?canisterId=${CONTENT_ID}"
+fi
+
+# Show deployment status
+echo ""
+echo "📊 Deployment Status:"
+echo "Frontend: ${FRONTEND_ID}"
+echo "Backend: ${BACKEND_ID}"
+echo "Content: ${CONTENT_ID}" 

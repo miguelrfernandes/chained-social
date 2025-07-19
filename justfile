@@ -161,6 +161,27 @@ codespaces-setup:
     @echo ""
     @echo "🌐 After setup, run 'just urls' to get the correct URLs"
 
+# 🔧 Troubleshoot: Check deployment and connectivity
+troubleshoot:
+    @echo "🔧 Troubleshooting deployment issues..."
+    @echo ""
+    @echo "📊 Current Status:"
+    dfx ping
+    @echo ""
+    @echo "🏗️ Canister Status:"
+    dfx canister status backend 2>/dev/null || echo "Backend: Not deployed"
+    dfx canister status content 2>/dev/null || echo "Content: Not deployed"
+    dfx canister status frontend 2>/dev/null || echo "Frontend: Not deployed"
+    @echo ""
+    @echo "🌐 Current URLs:"
+    just urls
+    @echo ""
+    @echo "💡 If canisters show 'Not deployed', run:"
+    @echo "  just setup"
+    @echo ""
+    @echo "💡 If URLs show 'not-deployed', run:"
+    @echo "  just deploy"
+
 # 🆘 Help: Show available commands
 help:
     @echo "🚀 Chained Social - Available Commands:"
@@ -181,6 +202,7 @@ help:
     @echo "📊 Utility Commands:"
     @echo "  just status       - Check project status"
     @echo "  just urls         - Show current canister URLs"
+    @echo "  just troubleshoot - Troubleshoot deployment issues"
     @echo "  just codespaces-setup - Setup GitHub Codespaces port forwarding"
     @echo "  just check-balance - Check wallet balance"
     @echo "  just convert-cycles - Convert ICP to cycles"
