@@ -14,30 +14,73 @@ function Profile({ contentActor, userProfile, isLoggedIn }) {
     loadProfileData();
   }, [username, contentActor]);
 
-  const loadProfileData = async () => {
+    const loadProfileData = async () => {
     if (!contentActor) return;
 
     setIsLoading(true);
     setError(null);
 
     try {
-      // For now, we'll use the current user's profile if the username matches
-      // In a real app, you'd fetch the profile by username from the backend
-      if (userProfile && userProfile.name === username) {
-        setProfileData(userProfile);
-        setIsOwnProfile(true);
-      } else {
-              // Mock profile data for demonstration
-      setProfileData({
-        name: username,
-        bio: 'This user has not set a bio yet.',
-        id: 'sample-id-123'
-      });
-        setIsOwnProfile(false);
+      console.log('👤 Current userProfile:', userProfile);
+      console.log('🔍 Looking for username:', username);
+      
+      // First, try to get the user's profile from the backend
+      let foundProfile = null;
+      try {
+        const { backend } = await import('../../../src/declarations/backend');
+        console.log('🔍 Searching for profile in backend:', username);
+        const profileResult = await backend.getUserProfileByUsername(username);
+        console.log('📋 Backend profile result:', profileResult);
+        if ('ok' in profileResult) {
+          console.log('✅ Found profile in backend:', profileResult.ok);
+          foundProfile = profileResult.ok;
+        }
+      } catch (backendErr) {
+        console.error('❌ Error fetching profile from backend:', backendErr);
       }
 
-      // Load user's posts (this would need backend support)
-      // For now, we'll show all posts
+      // If we found a profile, use it
+      if (foundProfile) {
+        setProfileData(foundProfile);
+        setIsOwnProfile(userProfile && userProfile.name === username);
+      } else {
+        // Check if it's the current user's profile
+        if (userProfile && userProfile.name === username) {
+          console.log('✅ Found own profile:', userProfile);
+          setProfileData(userProfile);
+          setIsOwnProfile(true);
+        } else {
+          // User profile not found, check if they have posts
+          const result = await contentActor.getPosts(50, 0);
+          if ('ok' in result) {
+            const userPosts = result.ok.filter(post => post.authorName === username);
+            if (userPosts.length > 0) {
+              // User exists but has no profile, create default profile
+              setProfileData({
+                name: username,
+                bio: 'This user has not set a bio yet.',
+                id: 'user-' + username
+              });
+            } else {
+              // User doesn't exist
+              setProfileData({
+                name: username,
+                bio: 'This user has not set a bio yet.',
+                id: 'unknown-user'
+              });
+            }
+          } else {
+            setProfileData({
+              name: username,
+              bio: 'This user has not set a bio yet.',
+              id: 'unknown-user'
+            });
+          }
+          setIsOwnProfile(false);
+        }
+      }
+
+      // Load user's posts
       const result = await contentActor.getPosts(20, 0);
       if ('ok' in result) {
         setUserPosts(result.ok.filter(post => post.authorName === username));
@@ -129,16 +172,19 @@ function Profile({ contentActor, userProfile, isLoggedIn }) {
           </div>
 
           <p className="text-gray-900 mb-4">
-            {profileData?.bio || 'No bio available'}
+            {profileData?.bio === 'This user has not set a bio yet.' ? 
+              <span className="text-gray-500 italic">{profileData.bio}</span> : 
+              profileData?.bio || 'No bio available'
+            }
           </p>
 
           <div className="flex items-center space-x-6 text-sm">
             <div>
-              <span className="font-semibold text-gray-900">1.2K</span>
+              <span className="font-semibold text-gray-900">0</span>
               <span className="text-gray-500 ml-1">Following</span>
             </div>
             <div>
-              <span className="font-semibold text-gray-900">850</span>
+              <span className="font-semibold text-gray-900">0</span>
               <span className="text-gray-500 ml-1">Followers</span>
             </div>
             <div>

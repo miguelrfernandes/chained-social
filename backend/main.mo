@@ -20,6 +20,16 @@ actor {
         return #ok({ id = 123; name = "test"; bio = "test bio" });
     };
 
+    public query func getUserProfileByUsername(username : Text) : async Result.Result<{ id : Nat; name : Text; bio : Text }, Text> {
+        // Search through all user profiles to find one with matching username
+        for ((userId, profile) in userProfileMap.entries()) {
+            if (profile.name == username) {
+                return #ok({ id = userId; name = profile.name; bio = profile.bio });
+            };
+        };
+        return #err("User not found");
+    };
+
     public shared ({ caller }) func setUserProfile(name : Text, bio : Text) : async Result.Result<{ id : Nat; name : Text; bio : Text }, Text> {
         // Debug logging
         let callerText = Principal.toText(caller);
