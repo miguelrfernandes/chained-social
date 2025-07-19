@@ -22,24 +22,32 @@ actor {
 
     public shared ({ caller }) func setUserProfile(name : Text, bio : Text) : async Result.Result<{ id : Nat; name : Text; bio : Text }, Text> {
         // Check if user already exists
-        switch (userIdMap.get(caller)) {
-            case (?_x) {};
-            case (_) {
-            // Set user id
-                userIdMap.put(caller, autoIndex);
-                autoIndex += 1;
+        var userId : Nat = 0;
+        
+        // For anonymous identities (local development), use a default user ID
+        if (Principal.isAnonymous(caller)) {
+            userId := 0; // Use 0 for anonymous users in local development
+        } else {
+            switch (userIdMap.get(caller)) {
+                case (?_x) {};
+                case (_) {
+                // Set user id
+                    userIdMap.put(caller, autoIndex);
+                    autoIndex += 1;
+                };
+            };
+            
+            // Get the user ID
+            userId := switch (userIdMap.get(caller)) {
+                case (?found) found;
+                case (_) { return #err("User not found") };
             };
         };
         
         // Set profile name and bio
-        let foundId = switch (userIdMap.get(caller)) {
-            case (?found) found;
-            case (_) { return #err("User not found") };
-        };
+        userProfileMap.put(userId, { name = name; bio = bio });
 
-        userProfileMap.put(foundId, { name = name; bio = bio });
-
-        return #ok({ id = foundId; name = name; bio = bio });
+        return #ok({ id = userId; name = name; bio = bio });
     };
 
     public shared ({ caller }) func addUserResult(result : Text) : async Result.Result<{ id : Nat; results : [Text] }, Text> {

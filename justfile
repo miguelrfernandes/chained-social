@@ -21,3 +21,8 @@ deploy:
 # Start dfx on background
 start-dfx:
     dfx start --background
+
+start-dfx-clean:
+    dfx stop
+    dfx start --background --clean
+    dfx identity use m
