@@ -160,6 +160,31 @@ codespaces-setup:
     @echo "  4. Repeat for port 5173 if using dev server"
     @echo ""
     @echo "🌐 After setup, run 'just urls' to get the correct URLs"
+    @echo ""
+    @echo "📝 URL Types Explained:"
+    @echo "  - Frontend URL: Direct access to your web app"
+    @echo "  - Backend/Content Candid URLs: API interface for testing"
+    @echo "  - Use Frontend URL for normal browsing"
+    @echo "  - Use Candid URLs for API testing and debugging"
+
+# 📝 Explain URL types
+explain-urls:
+    @echo "📝 Understanding the Different URL Types:"
+    @echo ""
+    @echo "🌐 Frontend URL:"
+    @echo "  - This is your main web application"
+    @echo "  - Use this for normal browsing and user interaction"
+    @echo "  - Example: https://your-codespace-4943.github.dev/"
+    @echo ""
+    @echo "🔧 Backend/Content Candid URLs:"
+    @echo "  - These are API interfaces for testing canister functions"
+    @echo "  - Use these for debugging and API testing"
+    @echo "  - Example: https://your-codespace-4943.github.dev/?canisterId=xxx&id=yyy"
+    @echo ""
+    @echo "💡 When to use which:"
+    @echo "  - For normal usage: Use the Frontend URL"
+    @echo "  - For development/testing: Use the Candid URLs"
+    @echo "  - For debugging: Use 'just troubleshoot'"
 
 # 🔧 Troubleshoot: Check deployment and connectivity
 troubleshoot:
