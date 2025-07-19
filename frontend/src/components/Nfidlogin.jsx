@@ -19,15 +19,17 @@ function NfidLogin({ setBackendActor }) {
       // Environment detection
       const isLocal = window.location.hostname.includes('localhost') || 
                      window.location.hostname.includes('127.0.0.1');
+      const isCodespaces = window.location.hostname.includes('github.dev') ||
+                          window.location.hostname.includes('app.github.dev');
       
-      console.log(`🌍 Environment: ${isLocal ? 'Local' : 'Production'}`);
+      console.log(`🌍 Environment: ${isLocal ? 'Local' : isCodespaces ? 'Codespaces' : 'Production'}`);
       
       let agent;
       let principal;
       
-      if (isLocal) {
-        // For local development, use anonymous identity to avoid delegation issues
-        console.log("🔧 Using anonymous identity for local development");
+      if (isLocal || isCodespaces) {
+        // For local development and Codespaces, use anonymous identity to avoid delegation issues
+        console.log("🔧 Using anonymous identity for local development/Codespaces");
         
         agent = new HttpAgent({ 
           identity: new AnonymousIdentity(),
@@ -104,6 +106,8 @@ function NfidLogin({ setBackendActor }) {
         userMessage = "Local replica not running. Please start dfx: dfx start --clean";
       } else if (error.message.includes("threshold signature")) {
         userMessage = "Bitcoin service integration issue. This is expected in local development.";
+      } else if (error.message.includes("iframe not instantiated")) {
+        userMessage = "NFID iframe blocked in Codespaces. Using anonymous identity instead.";
       }
       
       setLoginError(userMessage);
@@ -122,6 +126,13 @@ function NfidLogin({ setBackendActor }) {
       >
         {isLoggingIn ? "🔄 Connecting..." : "Connect to start posting"}
       </button>
+      
+      {/* Show Codespaces info */}
+      {window.location.hostname.includes('github.dev') && (
+        <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+          💡 <strong>Codespaces Mode:</strong> Using anonymous identity for development
+        </div>
+      )}
       
       {loginError && (
         <div className="absolute top-16 right-4 mt-2 p-3 bg-red-50 border border-red-200 rounded-lg shadow-lg z-50 max-w-xs">
