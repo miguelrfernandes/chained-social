@@ -40,6 +40,12 @@ function App() {
       try {
         console.log('🔄 Initializing content actor...');
         const { content } = await import('../../src/declarations/content');
+        
+        if (!content) {
+          console.error('❌ Content actor is undefined - canister ID may not be set');
+          return;
+        }
+        
         setContentActor(content);
         
         // Test the connection
@@ -48,9 +54,14 @@ function App() {
           console.log('✅ Content actor initialized successfully:', testResult);
         } catch (testErr) {
           console.error('⚠️ Content actor connection test failed:', testErr);
+          console.error('This might be due to:');
+          console.error('1. DFX not running');
+          console.error('2. Canister not deployed');
+          console.error('3. Network connectivity issues');
         }
       } catch (err) {
         console.error('❌ Failed to initialize content actor:', err);
+        console.error('Error details:', err.message);
       }
     };
     initContentActor();
