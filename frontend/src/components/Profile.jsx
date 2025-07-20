@@ -22,106 +22,163 @@ function Profile({ contentActor, socialGraphActor }) {
 
 
   const checkFollowStatus = async () => {
-    if (!socialGraphActor || !userPrincipal || isOwnProfile) return;
+    console.log('🔍 checkFollowStatus called with:', {
+      socialGraphActor: !!socialGraphActor,
+      userPrincipal,
+      isOwnProfile,
+      profileData: profileData?.name
+    });
+
+    if (!socialGraphActor || !userPrincipal || isOwnProfile) {
+      console.log('❌ checkFollowStatus early return:', {
+        noSocialGraphActor: !socialGraphActor,
+        noUserPrincipal: !userPrincipal,
+        isOwnProfile
+      });
+      return;
+    }
 
     try {
       // Convert string principal to Principal object
       const { Principal } = await import('@dfinity/principal');
       const currentUserPrincipal = Principal.fromText(userPrincipal);
+      console.log('✅ Current user principal created:', currentUserPrincipal.toText());
       
       // Get the principal for the target user
       const { backend } = await import('../../../src/declarations/backend');
+      console.log('🔍 Fetching principal for username:', profileData.name);
       const principalResult = await backend.getPrincipalByUsername(profileData.name);
+      console.log('📋 Principal result:', principalResult);
       
       if ('ok' in principalResult) {
         const targetPrincipal = principalResult.ok;
         console.log('🔍 Target principal type:', typeof targetPrincipal);
         console.log('🔍 Target principal value:', targetPrincipal);
         console.log('🔍 Current user principal type:', typeof currentUserPrincipal);
-        console.log('🔍 Current user principal value:', currentUserPrincipal);
+        console.log('🔍 Current user principal value:', currentUserPrincipal.toText());
         
         // Convert targetPrincipal to Principal object if it's a string
         let targetPrincipalObj = targetPrincipal;
         if (typeof targetPrincipal === 'string') {
           targetPrincipalObj = Principal.fromText(targetPrincipal);
+          console.log('✅ Converted target principal to Principal object:', targetPrincipalObj.toText());
         }
         
+        console.log('🔍 Calling socialGraphActor.isFollowing with:', {
+          currentUser: currentUserPrincipal.toText(),
+          targetUser: targetPrincipalObj.toText()
+        });
         const result = await socialGraphActor.isFollowing(currentUserPrincipal, targetPrincipalObj);
+        console.log('✅ isFollowing result:', result);
         setIsFollowing(result);
       } else {
-        console.log('Could not find principal for user:', profileData.name);
+        console.log('❌ Could not find principal for user:', profileData.name);
+        console.log('❌ Principal result error:', principalResult.err);
         setIsFollowing(false);
       }
     } catch (err) {
-      console.error('Error checking follow status:', err);
+      console.error('❌ Error checking follow status:', err);
       setIsFollowing(false);
     }
   };
 
   const handleFollow = async () => {
-    if (!socialGraphActor || !userPrincipal || isOwnProfile) return;
+    console.log('🔍 handleFollow called with:', {
+      socialGraphActor: !!socialGraphActor,
+      userPrincipal,
+      isOwnProfile,
+      profileData: profileData?.name,
+      isFollowing
+    });
+
+    if (!socialGraphActor || !userPrincipal || isOwnProfile) {
+      console.log('❌ handleFollow early return:', {
+        noSocialGraphActor: !socialGraphActor,
+        noUserPrincipal: !userPrincipal,
+        isOwnProfile
+      });
+      return;
+    }
 
     setIsFollowLoading(true);
     try {
       // Convert string principal to Principal object
       const { Principal } = await import('@dfinity/principal');
       const currentUserPrincipal = Principal.fromText(userPrincipal);
+      console.log('✅ Current user principal created:', currentUserPrincipal.toText());
       
       // Get the principal for the target user
       const { backend } = await import('../../../src/declarations/backend');
+      console.log('🔍 Fetching principal for username:', profileData.name);
       const principalResult = await backend.getPrincipalByUsername(profileData.name);
+      console.log('📋 Principal result:', principalResult);
       
-              if ('ok' in principalResult) {
-          const targetPrincipal = principalResult.ok;
+      if ('ok' in principalResult) {
+        const targetPrincipal = principalResult.ok;
+        console.log('🔍 Target principal type:', typeof targetPrincipal);
+        console.log('🔍 Target principal value:', targetPrincipal);
+        
+        // Convert targetPrincipal to Principal object if it's a string
+        let targetPrincipalObj = targetPrincipal;
+        if (typeof targetPrincipal === 'string') {
+          targetPrincipalObj = Principal.fromText(targetPrincipal);
+          console.log('✅ Converted target principal to Principal object:', targetPrincipalObj.toText());
+        }
+        
+        if (isFollowing) {
+          console.log('🔄 Attempting to unfollow user:', targetPrincipalObj.toText());
+          const result = await socialGraphActor.unfollowUser(targetPrincipalObj);
+          console.log('📋 Unfollow result:', result);
           
-          // Convert targetPrincipal to Principal object if it's a string
-          let targetPrincipalObj = targetPrincipal;
-          if (typeof targetPrincipal === 'string') {
-            targetPrincipalObj = Principal.fromText(targetPrincipal);
-          }
-          
-          if (isFollowing) {
-            const result = await socialGraphActor.unfollowUser(targetPrincipalObj);
-            if ('ok' in result) {
-              setIsFollowing(false);
-              if (window.showToast) {
-                window.showToast({
-                  message: `Unfollowed ${profileData.name}`,
-                  type: 'success',
-                  duration: 3000
-                });
-              }
-            } else {
-              if (window.showToast) {
-                window.showToast({
-                  message: `Failed to unfollow: ${result.err}`,
-                  type: 'error',
-                  duration: 5000
-                });
-              }
+          if ('ok' in result) {
+            console.log('✅ Unfollow successful');
+            setIsFollowing(false);
+            if (window.showToast) {
+              window.showToast({
+                message: `Unfollowed ${profileData.name}`,
+                type: 'success',
+                duration: 3000
+              });
             }
           } else {
-            const result = await socialGraphActor.followUser(targetPrincipalObj);
-            if ('ok' in result) {
-              setIsFollowing(true);
-              if (window.showToast) {
-                window.showToast({
-                  message: `Started following ${profileData.name}`,
-                  type: 'success',
-                  duration: 3000
-                });
-              }
-            } else {
-              if (window.showToast) {
-                window.showToast({
-                  message: `Failed to follow: ${result.err}`,
-                  type: 'error',
-                  duration: 5000
-                });
-              }
+            console.log('❌ Unfollow failed:', result.err);
+            if (window.showToast) {
+              window.showToast({
+                message: `Failed to unfollow: ${result.err}`,
+                type: 'error',
+                duration: 5000
+              });
             }
           }
         } else {
+          console.log('🔄 Attempting to follow user:', targetPrincipalObj.toText());
+          const result = await socialGraphActor.followUser(targetPrincipalObj);
+          console.log('📋 Follow result:', result);
+          
+          if ('ok' in result) {
+            console.log('✅ Follow successful');
+            setIsFollowing(true);
+            if (window.showToast) {
+              window.showToast({
+                message: `Started following ${profileData.name}`,
+                type: 'success',
+                duration: 3000
+              });
+            }
+          } else {
+            console.log('❌ Follow failed:', result.err);
+            if (window.showToast) {
+              window.showToast({
+                message: `Failed to follow: ${result.err}`,
+                type: 'error',
+                duration: 5000
+              });
+            }
+          }
+        }
+      } else {
+        console.log('❌ Could not find principal for user:', profileData.name);
+        console.log('❌ Principal result error:', principalResult.err);
         if (window.showToast) {
           window.showToast({
             message: `Could not find user: ${profileData.name}`,
@@ -131,7 +188,7 @@ function Profile({ contentActor, socialGraphActor }) {
         }
       }
     } catch (err) {
-      console.error('Error following/unfollowing:', err);
+      console.error('❌ Error following/unfollowing:', err);
       if (window.showToast) {
         window.showToast({
           message: `Error: ${err.message}`,
@@ -145,13 +202,37 @@ function Profile({ contentActor, socialGraphActor }) {
   };
 
   useEffect(() => {
+    console.log('🔍 Profile useEffect triggered with:', {
+      profileData: !!profileData,
+      userPrincipal: !!userPrincipal,
+      isOwnProfile,
+      socialGraphActor: !!socialGraphActor
+    });
+    
     if (profileData && userPrincipal && !isOwnProfile && socialGraphActor) {
+      console.log('✅ Calling checkFollowStatus');
       checkFollowStatus();
+    } else {
+      console.log('❌ Not calling checkFollowStatus:', {
+        noProfileData: !profileData,
+        noUserPrincipal: !userPrincipal,
+        isOwnProfile,
+        noSocialGraphActor: !socialGraphActor
+      });
     }
   }, [profileData, userPrincipal, isOwnProfile, socialGraphActor]);
 
     const loadProfileData = async () => {
-    if (!contentActor) return;
+    console.log('🔍 loadProfileData called with:', {
+      contentActor: !!contentActor,
+      username,
+      userProfile: userProfile?.name
+    });
+
+    if (!contentActor) {
+      console.log('❌ loadProfileData early return: no contentActor');
+      return;
+    }
 
     setIsLoading(true);
     setError(null);

@@ -14,19 +14,33 @@ export function AuthProvider({ children }) {
   const [isSettingProfile, setIsSettingProfile] = useState(false);
 
   const handleBackendActorSet = async (actor, principal) => {
+    console.log("🔍 handleBackendActorSet called with:", {
+      actor: !!actor,
+      principal,
+      principalType: typeof principal
+    });
+
     setBackendActor(actor);
     setUserPrincipal(principal);
     setIsLoggedIn(true);
+
+    console.log("✅ Authentication state updated:", {
+      isLoggedIn: true,
+      userPrincipal: principal
+    });
 
     // Try to load existing user profile
     try {
       console.log("🔄 Loading existing user profile...");
       const profileResult = await actor.getCurrentUserProfile();
+      console.log("📋 Profile result:", profileResult);
+      
       if ('ok' in profileResult) {
         console.log("✅ Found existing profile:", profileResult.ok);
         console.log("🔍 Profile ID type:", typeof profileResult.ok.id);
         console.log("🔍 Profile ID value:", profileResult.ok.id);
         setUserProfile(profileResult.ok);
+        console.log("✅ User profile set in context");
         window.showToast?.({
           message: `Welcome back, ${profileResult.ok.name}!`,
           type: 'success',
@@ -34,6 +48,7 @@ export function AuthProvider({ children }) {
         });
       } else {
         console.log("ℹ️ No existing profile found, user needs to set up profile");
+        console.log("❌ Profile error:", profileResult.err);
         window.showToast?.({
           message: `Logged in successfully!\nPrincipal: ${principal}\nPlease set up your profile.`,
           type: 'success',
@@ -182,7 +197,17 @@ export function AuthProvider({ children }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
+    console.error('❌ useAuth called outside of AuthProvider');
     throw new Error('useAuth must be used within an AuthProvider');
   }
+  
+  // Log authentication state when useAuth is called
+  console.log('🔍 useAuth called with state:', {
+    isLoggedIn: context.isLoggedIn,
+    userPrincipal: context.userPrincipal,
+    userProfile: context.userProfile?.name,
+    isLoggingIn: context.isLoggingIn
+  });
+  
   return context;
 } 
