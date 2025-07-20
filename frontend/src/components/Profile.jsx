@@ -371,7 +371,7 @@ function Profile({ contentActor }) {
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">{profileData?.name || 'Unknown User'}</h1>
                 <p className="text-gray-500">@{profileData?.name?.toLowerCase()}</p>
-                <p className="text-sm text-gray-500 mt-1">Joined March 2024</p>
+                <p className="text-sm text-gray-500 mt-1">Joined March 2025</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
