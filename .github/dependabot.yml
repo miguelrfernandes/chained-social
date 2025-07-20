@@ -139,22 +139,4 @@ updates:
       - dependency-name: "ic-cdk"
         update-types: ["version-update:semver-major"]
       - dependency-name: "ic-cdk-macros"
-        update-types: ["version-update:semver-major"]
-
-# Global configuration
-registries:
-  # Add private registries if needed in the future
-  # npm-registry:
-  #   type: npm-registry
-  #   url: https://npm.pkg.github.com
-  #   username: ${{secrets.GITHUB_USERNAME}}
-  #   password: ${{secrets.GITHUB_TOKEN}}
-
-# Configuration for security updates
-security-updates-only: false
-
-# Allow Dependabot to access private registries if needed
-# This is commented out but can be enabled if you add private packages
-# allow:
-#   - dependency-type: "direct"
-#   - dependency-type: "indirect" 
+        update-types: ["version-update:semver-major"] 
