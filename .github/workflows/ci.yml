@@ -34,14 +34,18 @@ jobs:
           cd frontend
           npm ci
 
+      - name: 🚀 Deploy canisters
+        run: |
+          dfx deploy
+
+      - name: 📋 Generate type declarations
+        run: |
+          dfx generate
+
       - name: 🏗️ Build frontend
         run: |
           cd frontend
           npm run build
-
-      - name: 🚀 Deploy canisters
-        run: |
-          dfx deploy
 
       - name: 🧪 Run unit tests
         run: |
@@ -82,14 +86,18 @@ jobs:
           cd frontend
           npm ci
 
+      - name: 🚀 Deploy canisters
+        run: |
+          dfx deploy
+
+      - name: 📋 Generate type declarations
+        run: |
+          dfx generate
+
       - name: 🏗️ Build frontend
         run: |
           cd frontend
           npm run build
-
-      - name: 🚀 Deploy canisters
-        run: |
-          dfx deploy
 
       - name: 🔍 Validate deployment
         run: |
@@ -179,14 +187,18 @@ jobs:
           cd frontend
           npm ci
 
+      - name: 🚀 Deploy to playground
+        run: |
+          dfx deploy --playground
+
+      - name: 📋 Generate type declarations
+        run: |
+          dfx generate
+
       - name: 🏗️ Build frontend
         run: |
           cd frontend
           npm run build
-
-      - name: 🚀 Deploy to playground
-        run: |
-          dfx deploy --playground
 
       - name: 📋 Get playground URLs
         run: |
