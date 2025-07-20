@@ -8,7 +8,6 @@ on:
 
 env:
   DFX_VERSION: 0.27.0
-  NODE_VERSION: 20
 
 jobs:
   test:
@@ -18,6 +17,13 @@ jobs:
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
 
       - name: 📦 Install just
         uses: taiki-e/install-action@just
@@ -63,6 +69,13 @@ jobs:
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
 
       - name: 📦 Install just
         uses: taiki-e/install-action@just
@@ -130,6 +143,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
       - name: 🔍 Run Super-Linter
         uses: super-linter/super-linter@v8
         env:
@@ -156,6 +176,13 @@ jobs:
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
 
       - name: 📦 Install just
         uses: taiki-e/install-action@just
