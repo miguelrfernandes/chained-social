@@ -15,7 +15,7 @@
         dfxVersion = "0.27.0";
         
         # Node.js version
-        nodeVersion = "18";
+        nodeVersion = "22";
         
         # Python version
         pythonVersion = "3.11";
