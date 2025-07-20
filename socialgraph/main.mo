@@ -1,6 +1,6 @@
 import Principal "mo:base/Principal";
 import HashMap "mo:base/HashMap";
-import Array "mo:base/Array";
+
 import Nat "mo:base/Nat";
 import Nat32 "mo:base/Nat32";
 import Text "mo:base/Text";
@@ -303,7 +303,7 @@ actor {
     // ===== TEST FUNCTIONS =====
     
     // Test follow functionality
-    public shared ({ caller }) func testFollowUser() : async Bool {
+    public shared ({ caller = _ }) func testFollowUser() : async Bool {
         Debug.print("🧪 Testing followUser...");
         
         let testUser1 = Principal.fromText("2vxsx-fae");
@@ -324,10 +324,9 @@ actor {
     };
 
     // Test unfollow functionality
-    public shared ({ caller }) func testUnfollowUser() : async Bool {
+    public shared ({ caller = _ }) func testUnfollowUser() : async Bool {
         Debug.print("🧪 Testing unfollowUser...");
         
-        let testUser1 = Principal.fromText("2vxsx-fae");
         let testUser2 = Principal.fromText("3lsaa-3rti4-nxknq-3bgcr-orfvo-izh54-ynkrn-lo4a7-dew2m-ztmea-aae");
         
         // First follow the user
@@ -352,14 +351,13 @@ actor {
     public shared ({ caller }) func testIsFollowing() : async Bool {
         Debug.print("🧪 Testing isFollowing...");
         
-        let testUser1 = Principal.fromText("2vxsx-fae");
         let testUser2 = Principal.fromText("3lsaa-3rti4-nxknq-3bgcr-orfvo-izh54-ynkrn-lo4a7-dew2m-ztmea-aae");
         
         // First follow the user
         let _ = await followUser(testUser2);
         
         // Check if following
-        let isFollowingResult = await isFollowing(testUser1, testUser2);
+        let isFollowingResult = await isFollowing(caller, testUser2);
         
         if (isFollowingResult) {
             Debug.print("✅ isFollowing passed - Correctly detected following status");
@@ -371,14 +369,13 @@ actor {
     };
 
     // Test isFollowing when not following
-    public shared ({ caller }) func testIsFollowingNotFollowing() : async Bool {
+    public shared ({ caller = _ }) func testIsFollowingNotFollowing() : async Bool {
         Debug.print("🧪 Testing isFollowing when not following...");
         
-        let testUser1 = Principal.fromText("2vxsx-fae");
         let testUser2 = Principal.fromText("3lsaa-3rti4-nxknq-3bgcr-orfvo-izh54-ynkrn-lo4a7-dew2m-ztmea-aae");
         
         // Check if following (should be false)
-        let isFollowingResult = await isFollowing(testUser1, testUser2);
+        let isFollowingResult = await isFollowing(Principal.fromText("2vxsx-fae"), testUser2);
         
         if (not isFollowingResult) {
             Debug.print("✅ isFollowingNotFollowing passed - Correctly detected not following");
@@ -390,7 +387,7 @@ actor {
     };
 
     // Test self-follow prevention
-    public shared ({ caller }) func testSelfFollow() : async Bool {
+    public shared ({ caller = _ }) func testSelfFollow() : async Bool {
         Debug.print("🧪 Testing self-follow prevention...");
         
         let testUser = Principal.fromText("2vxsx-fae");
@@ -415,12 +412,12 @@ actor {
     };
 
     // Test multiple follows
-    public shared ({ caller }) func testMultipleFollows() : async Bool {
+    public shared ({ caller = _ }) func testMultipleFollows() : async Bool {
         Debug.print("🧪 Testing multiple follows...");
         
         let testUser1 = Principal.fromText("2vxsx-fae");
         let testUser2 = Principal.fromText("3lsaa-3rti4-nxknq-3bgcr-orfvo-izh54-ynkrn-lo4a7-dew2m-ztmea-aae");
-        let testUser3 = Principal.fromText("4lsaa-3rti4-nxknq-3bgcr-orfvo-izh54-ynkrn-lo4a7-dew2m-ztmea-aae");
+        let testUser3 = Principal.fromText("2vxsx-fae");
         
         // Follow two users
         let result1 = await followUser(testUser2);
@@ -439,19 +436,19 @@ actor {
     };
 
     // Test getUserStats
-    public shared ({ caller }) func testGetUserStats() : async Bool {
+    public shared ({ caller = _ }) func testGetUserStats() : async Bool {
         Debug.print("🧪 Testing getUserStats...");
         
         let testUser = Principal.fromText("2vxsx-fae");
         
-        let stats = await getUserStats(testUser);
+        let _stats = await getUserStats(testUser);
         
         Debug.print("✅ testGetUserStats passed - Stats calculated correctly");
         return true;
     };
 
     // Test getFollowing
-    public shared ({ caller }) func testGetFollowing() : async Bool {
+    public shared ({ caller = _ }) func testGetFollowing() : async Bool {
         Debug.print("🧪 Testing getFollowing...");
         
         let testUser1 = Principal.fromText("2vxsx-fae");
@@ -473,7 +470,7 @@ actor {
     };
 
     // Run all tests
-    public shared ({ caller }) func runAllTests() : async Text {
+    public shared ({ caller = _ }) func runAllTests() : async Text {
         Debug.print("🚀 Starting social graph tests...");
         
         var passedTests = 0;

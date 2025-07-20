@@ -79,27 +79,13 @@ actor {
     public shared ({ caller }) func setUserProfile(name : Text, bio : Text) : async Result.Result<{ id : Nat; name : Text; bio : Text }, Text> {
         // Debug logging
         let _callerText = Principal.toText(caller);
-        let isAnonymous = Principal.isAnonymous(caller);
+        let _isAnonymous = Principal.isAnonymous(caller);
         
         // Check if username already exists for a different user
         switch (usernameToUserIdMap.get(name)) {
-            case (?existingUserId) {
-                // Check if this is the same user trying to update their profile
-                let currentUserId = switch (userIdMap.get(caller)) {
-                    case (?found) found;
-                    case (_) { 
-                        // Create new user ID for this principal
-                        let newUserId = autoIndex;
-                        userIdMap.put(caller, newUserId);
-                        autoIndex += 1;
-                        newUserId;
-                    };
-                };
-                
-                if (existingUserId != currentUserId) {
-                    // Username taken by a different user
-                    return #err("Username '" # name # "' is already taken. Please choose a different username.");
-                };
+            case (?_) {
+                // Username taken by a different user
+                return #err("Username '" # name # "' is already taken. Please choose a different username.");
             };
             case (null) {
                 // Username is available
@@ -305,7 +291,7 @@ actor {
     // ===== TEST FUNCTIONS =====
     
     // Test user profile management
-    public shared ({ caller }) func testSetUserProfile() : async Bool {
+    public shared ({ caller = _ }) func testSetUserProfile() : async Bool {
         Debug.print("🧪 Testing setUserProfile...");
         
         let testUsername = "testuser1";
@@ -326,7 +312,7 @@ actor {
     };
 
     // Test username availability
-    public shared ({ caller }) func testIsUsernameAvailable() : async Bool {
+    public shared ({ caller = _ }) func testIsUsernameAvailable() : async Bool {
         Debug.print("🧪 Testing isUsernameAvailable...");
         
         let testUsername = "testuser1";
@@ -378,7 +364,7 @@ actor {
     };
 
     // Test getCurrentUserProfile
-    public shared ({ caller }) func testGetCurrentUserProfile() : async Bool {
+    public shared ({ caller = _ }) func testGetCurrentUserProfile() : async Bool {
         Debug.print("🧪 Testing getCurrentUserProfile...");
         
         let testUsername = "testuser1";
@@ -408,7 +394,7 @@ actor {
     };
 
     // Test getUserProfileByUsername
-    public shared ({ caller }) func testGetUserProfileByUsername() : async Bool {
+    public shared ({ caller = _ }) func testGetUserProfileByUsername() : async Bool {
         Debug.print("🧪 Testing getUserProfileByUsername...");
         
         let testUsername = "testuser1";
@@ -438,7 +424,7 @@ actor {
     };
 
     // Test non-existent user
-    public shared ({ caller }) func testNonExistentUser() : async Bool {
+    public shared ({ caller = _ }) func testNonExistentUser() : async Bool {
         Debug.print("🧪 Testing non-existent user...");
         
         // Try to get principal for non-existent user
@@ -457,7 +443,7 @@ actor {
     };
 
     // Run all tests
-    public shared ({ caller }) func runAllTests() : async Text {
+    public shared ({ caller = _ }) func runAllTests() : async Text {
         Debug.print("🚀 Starting backend tests...");
         
         var passedTests = 0;
