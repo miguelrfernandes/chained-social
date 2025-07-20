@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import PostList from './PostList';
 
-function Profile({ contentActor, userProfile, isLoggedIn }) {
+function Profile({ contentActor, socialGraphActor, userProfile, isLoggedIn }) {
   const { username } = useParams();
   const [profileData, setProfileData] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
@@ -10,9 +10,91 @@ function Profile({ contentActor, userProfile, isLoggedIn }) {
   const [error, setError] = useState(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
 
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowLoading, setIsFollowLoading] = useState(false);
+
   useEffect(() => {
     loadProfileData();
   }, [username, contentActor]);
+
+
+
+  const checkFollowStatus = async () => {
+    if (!socialGraphActor || !userProfile || isOwnProfile) return;
+
+    try {
+      const result = await socialGraphActor.isFollowing(userProfile.id, profileData?.id);
+      setIsFollowing(result);
+    } catch (err) {
+      console.error('Error checking follow status:', err);
+    }
+  };
+
+  const handleFollow = async () => {
+    if (!socialGraphActor || !userProfile || isOwnProfile) return;
+
+    setIsFollowLoading(true);
+    try {
+      if (isFollowing) {
+        const result = await socialGraphActor.unfollowUser(profileData.id);
+        if ('ok' in result) {
+          setIsFollowing(false);
+          if (window.showToast) {
+            window.showToast({
+              message: `Unfollowed ${profileData.name}`,
+              type: 'success',
+              duration: 3000
+            });
+          }
+        } else {
+          if (window.showToast) {
+            window.showToast({
+              message: `Failed to unfollow: ${result.err}`,
+              type: 'error',
+              duration: 5000
+            });
+          }
+        }
+      } else {
+        const result = await socialGraphActor.followUser(profileData.id);
+        if ('ok' in result) {
+          setIsFollowing(true);
+          if (window.showToast) {
+            window.showToast({
+              message: `Started following ${profileData.name}`,
+              type: 'success',
+              duration: 3000
+            });
+          }
+        } else {
+          if (window.showToast) {
+            window.showToast({
+              message: `Failed to follow: ${result.err}`,
+              type: 'error',
+              duration: 5000
+            });
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error following/unfollowing:', err);
+      if (window.showToast) {
+        window.showToast({
+          message: `Error: ${err.message}`,
+          type: 'error',
+          duration: 5000
+        });
+      }
+    } finally {
+      setIsFollowLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (profileData && userProfile && !isOwnProfile && socialGraphActor) {
+      checkFollowStatus();
+    }
+  }, [profileData, userProfile, isOwnProfile, socialGraphActor]);
 
     const loadProfileData = async () => {
     if (!contentActor) return;
@@ -151,7 +233,7 @@ function Profile({ contentActor, userProfile, isLoggedIn }) {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              {isOwnProfile && (
+              {isOwnProfile ? (
                 <Link 
                   to="/"
                   className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -162,7 +244,45 @@ function Profile({ contentActor, userProfile, isLoggedIn }) {
                   </svg>
                   Edit Profile
                 </Link>
-              )}
+              ) : isLoggedIn && userProfile ? (
+                <button
+                  onClick={handleFollow}
+                  disabled={isFollowLoading}
+                  className={`inline-flex items-center px-4 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors ${
+                    isFollowing
+                      ? 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200'
+                      : 'bg-blue-500 text-white border border-blue-500 hover:bg-blue-600'
+                  } ${isFollowLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {isFollowLoading ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      {isFollowing ? 'Unfollowing...' : 'Following...'}
+                    </>
+                  ) : (
+                    <>
+                      {isFollowing ? (
+                        <>
+                          <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          Following
+                        </>
+                      ) : (
+                        <>
+                          <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                          </svg>
+                          Follow
+                        </>
+                      )}
+                    </>
+                  )}
+                </button>
+              ) : null}
               <button className="inline-flex items-center p-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
