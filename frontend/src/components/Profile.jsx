@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import PostList from './PostList';
 import { useAuth } from '../contexts/AuthContext';
+import { createLogger } from '../utils/logger';
+
+const logger = createLogger('Profile');
 
 function Profile({ contentActor }) {
   const { userProfile, isLoggedIn, userPrincipal, socialGraphActor } = useAuth();
@@ -22,7 +25,7 @@ function Profile({ contentActor }) {
 
 
   const checkFollowStatus = async () => {
-    console.log('🔍 checkFollowStatus called with:', {
+    logger.info('checkFollowStatus called', {
       socialGraphActor: !!socialGraphActor,
       userPrincipal,
       isOwnProfile,
@@ -30,7 +33,7 @@ function Profile({ contentActor }) {
     });
 
     if (!socialGraphActor || !userPrincipal || isOwnProfile) {
-      console.log('❌ checkFollowStatus early return:', {
+      logger.info('checkFollowStatus early return', {
         noSocialGraphActor: !socialGraphActor,
         noUserPrincipal: !userPrincipal,
         isOwnProfile
@@ -42,48 +45,50 @@ function Profile({ contentActor }) {
       // Convert string principal to Principal object
       const { Principal } = await import('@dfinity/principal');
       const currentUserPrincipal = Principal.fromText(userPrincipal);
-      console.log('✅ Current user principal created:', currentUserPrincipal.toText());
+      logger.info('Current user principal created', { principal: currentUserPrincipal.toText() });
       
       // Get the principal for the target user
       const { backend } = await import('../../../src/declarations/backend');
-      console.log('🔍 Fetching principal for username:', profileData.name);
+      logger.info('Fetching principal for username', { username: profileData.name });
       const principalResult = await backend.getPrincipalByUsername(profileData.name);
-      console.log('📋 Principal result:', principalResult);
+      logger.debug('Principal result', { principalResult });
       
       if ('ok' in principalResult) {
         const targetPrincipal = principalResult.ok;
-        console.log('🔍 Target principal type:', typeof targetPrincipal);
-        console.log('🔍 Target principal value:', targetPrincipal);
-        console.log('🔍 Current user principal type:', typeof currentUserPrincipal);
-        console.log('🔍 Current user principal value:', currentUserPrincipal.toText());
+        logger.debug('Target principal details', {
+          targetPrincipalType: typeof targetPrincipal,
+          targetPrincipalValue: targetPrincipal,
+          currentUserPrincipalType: typeof currentUserPrincipal,
+          currentUserPrincipalValue: currentUserPrincipal.toText()
+        });
         
         // Convert targetPrincipal to Principal object if it's a string
         let targetPrincipalObj = targetPrincipal;
         if (typeof targetPrincipal === 'string') {
           targetPrincipalObj = Principal.fromText(targetPrincipal);
-          console.log('✅ Converted target principal to Principal object:', targetPrincipalObj.toText());
+          logger.info('Converted target principal to Principal object', { principal: targetPrincipalObj.toText() });
         }
         
-        console.log('🔍 Calling socialGraphActor.isFollowing with:', {
+        logger.info('Calling socialGraphActor.isFollowing', {
           currentUser: currentUserPrincipal.toText(),
           targetUser: targetPrincipalObj.toText()
         });
         const result = await socialGraphActor.isFollowing(currentUserPrincipal, targetPrincipalObj);
-        console.log('✅ isFollowing result:', result);
+        logger.info('isFollowing result', { result });
         setIsFollowing(result);
       } else {
-        console.log('❌ Could not find principal for user:', profileData.name);
-        console.log('❌ Principal result error:', principalResult.err);
+        logger.warn('Could not find principal for user', { username: profileData.name });
+        logger.error('Principal result error', { error: principalResult.err });
         setIsFollowing(false);
       }
     } catch (err) {
-      console.error('❌ Error checking follow status:', err);
+      logger.error('Error checking follow status', { error: err.message });
       setIsFollowing(false);
     }
   };
 
   const handleFollow = async () => {
-    console.log('🔍 handleFollow called with:', {
+    logger.info('handleFollow called', {
       socialGraphActor: !!socialGraphActor,
       userPrincipal,
       isOwnProfile,
@@ -92,7 +97,7 @@ function Profile({ contentActor }) {
     });
 
     if (!socialGraphActor || !userPrincipal || isOwnProfile) {
-      console.log('❌ handleFollow early return:', {
+      logger.info('handleFollow early return', {
         noSocialGraphActor: !socialGraphActor,
         noUserPrincipal: !userPrincipal,
         isOwnProfile
@@ -105,33 +110,35 @@ function Profile({ contentActor }) {
       // Convert string principal to Principal object
       const { Principal } = await import('@dfinity/principal');
       const currentUserPrincipal = Principal.fromText(userPrincipal);
-      console.log('✅ Current user principal created:', currentUserPrincipal.toText());
+      logger.info('Current user principal created', { principal: currentUserPrincipal.toText() });
       
       // Get the principal for the target user
       const { backend } = await import('../../../src/declarations/backend');
-      console.log('🔍 Fetching principal for username:', profileData.name);
+      logger.info('Fetching principal for username', { username: profileData.name });
       const principalResult = await backend.getPrincipalByUsername(profileData.name);
-      console.log('📋 Principal result:', principalResult);
+      logger.debug('Principal result', { principalResult });
       
       if ('ok' in principalResult) {
         const targetPrincipal = principalResult.ok;
-        console.log('🔍 Target principal type:', typeof targetPrincipal);
-        console.log('🔍 Target principal value:', targetPrincipal);
+        logger.debug('Target principal details', {
+          targetPrincipalType: typeof targetPrincipal,
+          targetPrincipalValue: targetPrincipal
+        });
         
         // Convert targetPrincipal to Principal object if it's a string
         let targetPrincipalObj = targetPrincipal;
         if (typeof targetPrincipal === 'string') {
           targetPrincipalObj = Principal.fromText(targetPrincipal);
-          console.log('✅ Converted target principal to Principal object:', targetPrincipalObj.toText());
+          logger.info('Converted target principal to Principal object', { principal: targetPrincipalObj.toText() });
         }
         
         if (isFollowing) {
-          console.log('🔄 Attempting to unfollow user:', targetPrincipalObj.toText());
+          logger.info('Attempting to unfollow user', { targetUser: targetPrincipalObj.toText() });
           const result = await socialGraphActor.unfollowUser(targetPrincipalObj);
-          console.log('📋 Unfollow result:', result);
+          logger.info('Unfollow result', { result });
           
           if ('ok' in result) {
-            console.log('✅ Unfollow successful');
+            logger.info('Unfollow successful');
             setIsFollowing(false);
             if (window.showToast) {
               window.showToast({
@@ -141,7 +148,7 @@ function Profile({ contentActor }) {
               });
             }
           } else {
-            console.log('❌ Unfollow failed:', result.err);
+            logger.error('Unfollow failed', { error: result.err });
             if (window.showToast) {
               window.showToast({
                 message: `Failed to unfollow: ${result.err}`,
@@ -151,12 +158,12 @@ function Profile({ contentActor }) {
             }
           }
         } else {
-          console.log('🔄 Attempting to follow user:', targetPrincipalObj.toText());
+          logger.info('Attempting to follow user', { targetUser: targetPrincipalObj.toText() });
           const result = await socialGraphActor.followUser(targetPrincipalObj);
-          console.log('📋 Follow result:', result);
+          logger.info('Follow result', { result });
           
           if ('ok' in result) {
-            console.log('✅ Follow successful');
+            logger.info('Follow successful');
             setIsFollowing(true);
             if (window.showToast) {
               window.showToast({
@@ -166,7 +173,7 @@ function Profile({ contentActor }) {
               });
             }
           } else {
-            console.log('❌ Follow failed:', result.err);
+            logger.error('Follow failed', { error: result.err });
             if (window.showToast) {
               window.showToast({
                 message: `Failed to follow: ${result.err}`,
@@ -177,8 +184,8 @@ function Profile({ contentActor }) {
           }
         }
       } else {
-        console.log('❌ Could not find principal for user:', profileData.name);
-        console.log('❌ Principal result error:', principalResult.err);
+        logger.warn('Could not find principal for user', { username: profileData.name });
+        logger.error('Principal result error', { error: principalResult.err });
         if (window.showToast) {
           window.showToast({
             message: `Could not find user: ${profileData.name}`,
@@ -188,7 +195,7 @@ function Profile({ contentActor }) {
         }
       }
     } catch (err) {
-      console.error('❌ Error following/unfollowing:', err);
+      logger.error('Error following/unfollowing', { error: err.message });
       if (window.showToast) {
         window.showToast({
           message: `Error: ${err.message}`,
@@ -202,7 +209,7 @@ function Profile({ contentActor }) {
   };
 
   useEffect(() => {
-    console.log('🔍 Profile useEffect triggered with:', {
+    logger.debug('Profile useEffect triggered', {
       profileData: !!profileData,
       userPrincipal: !!userPrincipal,
       isOwnProfile,
@@ -210,10 +217,10 @@ function Profile({ contentActor }) {
     });
     
     if (profileData && userPrincipal && !isOwnProfile && socialGraphActor) {
-      console.log('✅ Calling checkFollowStatus');
+      logger.info('Calling checkFollowStatus');
       checkFollowStatus();
     } else {
-      console.log('❌ Not calling checkFollowStatus:', {
+      logger.debug('Not calling checkFollowStatus', {
         noProfileData: !profileData,
         noUserPrincipal: !userPrincipal,
         isOwnProfile,
@@ -223,14 +230,14 @@ function Profile({ contentActor }) {
   }, [profileData, userPrincipal, isOwnProfile, socialGraphActor]);
 
     const loadProfileData = async () => {
-    console.log('🔍 loadProfileData called with:', {
+    logger.info('loadProfileData called', {
       contentActor: !!contentActor,
       username,
       userProfile: userProfile?.name
     });
 
     if (!contentActor) {
-      console.log('❌ loadProfileData early return: no contentActor');
+      logger.warn('loadProfileData early return: no contentActor');
       return;
     }
 
@@ -238,8 +245,8 @@ function Profile({ contentActor }) {
     setError(null);
 
     try {
-      console.log('👤 Current userProfile:', userProfile);
-      console.log('🔍 Looking for username:', username);
+      logger.debug('Current userProfile', { userProfile });
+      logger.info('Looking for username', { username });
       
       // First, try to get the user's profile from the backend
       let foundProfile = null;

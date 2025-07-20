@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { NFID } from "@nfid/embed";
 import { HttpAgent } from "@dfinity/agent";
 import { canisterId, createActor } from "../../../src/declarations/backend";
+import { createLogger } from '../utils/logger';
+
+const logger = createLogger('useLogin');
 
 export function useLogin(setBackendActor) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -36,16 +39,16 @@ export function useLogin(setBackendActor) {
     
     while (retryCount < maxRetries) {
       try {
-        console.log(`🔄 Attempting NFID initialization (attempt ${retryCount + 1}/${maxRetries})`);
+        logger.info(`Attempting NFID initialization`, { attempt: retryCount + 1, maxRetries });
         nfid = await NFID.init(nfidConfig);
-        console.log("✅ NFID initialized successfully");
+        logger.info("NFID initialized successfully");
         
         setNfidInitialized(true);
         setNfidInstance(nfid);
         return nfid;
       } catch (initError) {
         retryCount++;
-        console.warn(`⚠️ NFID init attempt ${retryCount} failed:`, initError);
+        logger.warn(`NFID init attempt failed`, { attempt: retryCount, error: initError.message });
         
         if (retryCount >= maxRetries) {
           throw new Error(`NFID initialization failed after ${maxRetries} attempts: ${initError.message}`);
@@ -61,7 +64,7 @@ export function useLogin(setBackendActor) {
     setIsLoggingIn(true);
     setLoginError(null);
     
-    console.log("🔍 Starting login process...");
+    logger.info("Starting login process");
     
     try {
       // Environment detection
@@ -70,16 +73,18 @@ export function useLogin(setBackendActor) {
       const isCodespaces = window.location.hostname.includes('github.dev') ||
                           window.location.hostname.includes('app.github.dev');
       
-      console.log(`🌍 Environment: ${isLocal ? 'Local' : isCodespaces ? 'Codespaces' : 'Production'}`);
-      console.log(`📍 Hostname: ${window.location.hostname}`);
-      console.log(`🔗 URL: ${window.location.href}`);
+      logger.info("Environment detected", {
+        environment: isLocal ? 'Local' : isCodespaces ? 'Codespaces' : 'Production',
+        hostname: window.location.hostname,
+        url: window.location.href
+      });
       
       let agent;
       let principal;
       
       if (isLocal || isCodespaces) {
         // For local development and Codespaces, create a persistent identity
-        console.log("✅ Using persistent identity for development");
+        logger.info("Using persistent identity for development");
         
         // Create a deterministic identity based on browser session
         const sessionKey = localStorage.getItem('chainedsocial_session_key') || 
@@ -106,22 +111,22 @@ export function useLogin(setBackendActor) {
         });
         
         // Fetch root key for local development
-        console.log("🔄 Fetching local root key...");
+        logger.info("Fetching local root key");
         try {
           await agent.fetchRootKey();
-          console.log("✅ Root key fetched successfully");
+          logger.info("Root key fetched successfully");
         } catch (rootKeyError) {
-          console.error("❌ Root key fetch failed:", rootKeyError);
+          logger.error("Root key fetch failed", { error: rootKeyError.message });
           throw new Error(`Local replica unavailable. Please run: dfx start --clean\n${rootKeyError.message}`);
         }
         
         // Test the connection
-        console.log("🔄 Testing connection...");
+        logger.info("Testing connection");
         try {
           await agent.status();
-          console.log("✅ Agent connection verified");
+          logger.info("Agent connection verified");
         } catch (statusError) {
-          console.error("❌ Agent status check failed:", statusError);
+          logger.error("Agent status check failed", { error: statusError.message });
           throw new Error(`Connection test failed: ${statusError.message}`);
         }
         
@@ -129,7 +134,7 @@ export function useLogin(setBackendActor) {
         
       } else {
         // For production, use NFID
-        console.log("🚀 Using NFID for production");
+        logger.info("Using NFID for production");
         
         // Use promise-based initialization
         const nfid = await initializeNFID();
@@ -141,15 +146,15 @@ export function useLogin(setBackendActor) {
         
         while (delegationRetries < maxDelegationRetries) {
           try {
-            console.log(`🔄 Attempting delegation (attempt ${delegationRetries + 1}/${maxDelegationRetries})`);
+            logger.info("Attempting delegation", { attempt: delegationRetries + 1, maxRetries: maxDelegationRetries });
             delegationIdentity = await nfid.getDelegation({
               maxTimeToLive: BigInt(8) * BigInt(3_600_000_000_000),
             });
-            console.log("✅ Delegation acquired");
+            logger.info("Delegation acquired");
             break;
           } catch (delegationError) {
             delegationRetries++;
-            console.warn(`⚠️ Delegation attempt ${delegationRetries} failed:`, delegationError);
+            logger.warn("Delegation attempt failed", { attempt: delegationRetries, error: delegationError.message });
             
             if (delegationRetries >= maxDelegationRetries) {
               throw delegationError;
@@ -170,11 +175,11 @@ export function useLogin(setBackendActor) {
 
       const backendActor = createActor(canisterId, { agent });
       
-      console.log("✅ Login successful, Principal:", principal);
+      logger.info("Login successful", { principal });
       setBackendActor(backendActor, principal, agent);
       
     } catch (error) {
-      console.error("❌ Login error:", error);
+      logger.error("Login error", { error: error.message });
       
       // Provide specific guidance based on error type
       let userMessage = "Login failed";

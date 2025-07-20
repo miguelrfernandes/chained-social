@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useLogin } from '../hooks/useLogin';
+import { createLogger } from '../utils/logger';
+
+const logger = createLogger('AuthContext');
 
 const AuthContext = createContext();
 
@@ -15,7 +18,7 @@ export function AuthProvider({ children }) {
   const [isSettingProfile, setIsSettingProfile] = useState(false);
 
   const handleBackendActorSet = async (actor, principal, agent) => {
-    console.log("🔍 handleBackendActorSet called with:", {
+    logger.info('handleBackendActorSet called', {
       actor: !!actor,
       principal,
       principalType: typeof principal,
@@ -26,42 +29,44 @@ export function AuthProvider({ children }) {
     setUserPrincipal(principal);
     setIsLoggedIn(true);
 
-    console.log("✅ Authentication state updated:", {
+    logger.info('Authentication state updated', {
       isLoggedIn: true,
       userPrincipal: principal
     });
 
     // Create socialGraphActor with the same identity
     try {
-      console.log("🔄 Creating socialGraphActor with user identity...");
+      logger.info('Creating socialGraphActor with user identity');
       const { canisterId, createActor } = await import('../../../src/declarations/socialgraph');
       const socialGraphActor = createActor(canisterId, { agent });
       setSocialGraphActor(socialGraphActor);
-      console.log("✅ SocialGraphActor created with user identity");
+      logger.info('SocialGraphActor created with user identity');
     } catch (socialGraphError) {
-      console.error("❌ Failed to create socialGraphActor:", socialGraphError);
+      logger.error('Failed to create socialGraphActor', { error: socialGraphError.message });
     }
 
     // Try to load existing user profile
     try {
-      console.log("🔄 Loading existing user profile...");
+      logger.info('Loading existing user profile');
       const profileResult = await actor.getCurrentUserProfile();
-      console.log("📋 Profile result:", profileResult);
+      logger.debug('Profile result', { profileResult });
       
       if ('ok' in profileResult) {
-        console.log("✅ Found existing profile:", profileResult.ok);
-        console.log("🔍 Profile ID type:", typeof profileResult.ok.id);
-        console.log("🔍 Profile ID value:", profileResult.ok.id);
+        logger.info('Found existing profile', {
+          profile: profileResult.ok,
+          profileIdType: typeof profileResult.ok.id,
+          profileIdValue: profileResult.ok.id
+        });
         setUserProfile(profileResult.ok);
-        console.log("✅ User profile set in context");
+        logger.info('User profile set in context');
         window.showToast?.({
           message: `Welcome back, ${profileResult.ok.name}!`,
           type: 'success',
           duration: 4000
         });
       } else {
-        console.log("ℹ️ No existing profile found, user needs to set up profile");
-        console.log("❌ Profile error:", profileResult.err);
+        logger.info('No existing profile found, user needs to set up profile');
+        logger.error('Profile error', { error: profileResult.err });
         window.showToast?.({
           message: `Logged in successfully!\nPrincipal: ${principal}\nPlease set up your profile.`,
           type: 'success',
@@ -69,7 +74,7 @@ export function AuthProvider({ children }) {
         });
       }
     } catch (profileError) {
-      console.log("ℹ️ Error loading profile (user may not have one yet):", profileError);
+      logger.info('Error loading profile (user may not have one yet)', { error: profileError.message });
       window.showToast?.({
         message: `Logged in successfully!\nPrincipal: ${principal}\nPlease set up your profile.`,
         type: 'success',
@@ -211,12 +216,12 @@ export function AuthProvider({ children }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    console.error('❌ useAuth called outside of AuthProvider');
+    logger.error('useAuth called outside of AuthProvider');
     throw new Error('useAuth must be used within an AuthProvider');
   }
   
   // Log authentication state when useAuth is called
-  console.log('🔍 useAuth called with state:', {
+  logger.debug('useAuth called with state', {
     isLoggedIn: context.isLoggedIn,
     userPrincipal: context.userPrincipal,
     userProfile: context.userProfile?.name,
