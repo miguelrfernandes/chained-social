@@ -39,7 +39,7 @@ jobs:
         with:
           node-version-file: 'package.json'
           cache: 'npm'
-          cache-dependency-path: 'frontend/package-lock.json'
+          cache-dependency-path: 'package-lock.json'
 
       - name: 📦 Install just
         uses: taiki-e/install-action@just
@@ -92,7 +92,7 @@ jobs:
         with:
           node-version-file: 'package.json'
           cache: 'npm'
-          cache-dependency-path: 'frontend/package-lock.json'
+          cache-dependency-path: 'package-lock.json'
 
       - name: 📦 Install just
         uses: taiki-e/install-action@just
@@ -166,7 +166,7 @@ jobs:
         with:
           node-version-file: 'package.json'
           cache: 'npm'
-          cache-dependency-path: 'frontend/package-lock.json'
+          cache-dependency-path: 'package-lock.json'
 
       - name: 🔍 Run Super-Linter
         uses: super-linter/super-linter@v8
@@ -200,7 +200,7 @@ jobs:
         with:
           node-version-file: 'package.json'
           cache: 'npm'
-          cache-dependency-path: 'frontend/package-lock.json'
+          cache-dependency-path: 'package-lock.json'
 
       - name: 📦 Install just
         uses: taiki-e/install-action@just
