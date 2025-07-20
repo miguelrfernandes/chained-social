@@ -8,6 +8,7 @@ import Result "mo:base/Result";
 import Time "mo:base/Time";
 import Int "mo:base/Int";
 import Buffer "mo:base/Buffer";
+import Debug "mo:base/Debug";
 
 actor {
     // Types
@@ -297,5 +298,237 @@ actor {
             };
         };
         return false;
+    };
+
+    // ===== TEST FUNCTIONS =====
+    
+    // Test follow functionality
+    public shared ({ caller }) func testFollowUser() : async Bool {
+        Debug.print("🧪 Testing followUser...");
+        
+        let testUser1 = Principal.fromText("2vxsx-fae");
+        let testUser2 = Principal.fromText("3lsaa-3rti4-nxknq-3bgcr-orfvo-izh54-ynkrn-lo4a7-dew2m-ztmea-aae");
+        
+        let result = await followUser(testUser2);
+        
+        switch (result) {
+            case (#ok(follow)) {
+                Debug.print("✅ followUser passed - Follow created successfully");
+                return true;
+            };
+            case (#err(error)) {
+                Debug.print("❌ followUser failed: " # error);
+                return false;
+            };
+        };
+    };
+
+    // Test unfollow functionality
+    public shared ({ caller }) func testUnfollowUser() : async Bool {
+        Debug.print("🧪 Testing unfollowUser...");
+        
+        let testUser1 = Principal.fromText("2vxsx-fae");
+        let testUser2 = Principal.fromText("3lsaa-3rti4-nxknq-3bgcr-orfvo-izh54-ynkrn-lo4a7-dew2m-ztmea-aae");
+        
+        // First follow the user
+        let _ = await followUser(testUser2);
+        
+        // Then unfollow
+        let result = await unfollowUser(testUser2);
+        
+        switch (result) {
+            case (#ok(_)) {
+                Debug.print("✅ unfollowUser passed - User unfollowed successfully");
+                return true;
+            };
+            case (#err(error)) {
+                Debug.print("❌ unfollowUser failed: " # error);
+                return false;
+            };
+        };
+    };
+
+    // Test isFollowing functionality
+    public shared ({ caller }) func testIsFollowing() : async Bool {
+        Debug.print("🧪 Testing isFollowing...");
+        
+        let testUser1 = Principal.fromText("2vxsx-fae");
+        let testUser2 = Principal.fromText("3lsaa-3rti4-nxknq-3bgcr-orfvo-izh54-ynkrn-lo4a7-dew2m-ztmea-aae");
+        
+        // First follow the user
+        let _ = await followUser(testUser2);
+        
+        // Check if following
+        let isFollowingResult = await isFollowing(testUser1, testUser2);
+        
+        if (isFollowingResult) {
+            Debug.print("✅ isFollowing passed - Correctly detected following status");
+            return true;
+        } else {
+            Debug.print("❌ isFollowing failed - Should be following");
+            return false;
+        };
+    };
+
+    // Test isFollowing when not following
+    public shared ({ caller }) func testIsFollowingNotFollowing() : async Bool {
+        Debug.print("🧪 Testing isFollowing when not following...");
+        
+        let testUser1 = Principal.fromText("2vxsx-fae");
+        let testUser2 = Principal.fromText("3lsaa-3rti4-nxknq-3bgcr-orfvo-izh54-ynkrn-lo4a7-dew2m-ztmea-aae");
+        
+        // Check if following (should be false)
+        let isFollowingResult = await isFollowing(testUser1, testUser2);
+        
+        if (not isFollowingResult) {
+            Debug.print("✅ isFollowingNotFollowing passed - Correctly detected not following");
+            return true;
+        } else {
+            Debug.print("❌ isFollowingNotFollowing failed - Should not be following");
+            return false;
+        };
+    };
+
+    // Test self-follow prevention
+    public shared ({ caller }) func testSelfFollow() : async Bool {
+        Debug.print("🧪 Testing self-follow prevention...");
+        
+        let testUser = Principal.fromText("2vxsx-fae");
+        
+        let result = await followUser(testUser);
+        
+        switch (result) {
+            case (#ok(_)) {
+                Debug.print("❌ testSelfFollow failed - Should not allow self-follow");
+                return false;
+            };
+            case (#err(error)) {
+                if (Text.contains(error, #text "cannot follow themselves")) {
+                    Debug.print("✅ testSelfFollow passed - Correctly prevented self-follow");
+                    return true;
+                } else {
+                    Debug.print("❌ testSelfFollow failed - Wrong error message");
+                    return false;
+                };
+            };
+        };
+    };
+
+    // Test multiple follows
+    public shared ({ caller }) func testMultipleFollows() : async Bool {
+        Debug.print("🧪 Testing multiple follows...");
+        
+        let testUser1 = Principal.fromText("2vxsx-fae");
+        let testUser2 = Principal.fromText("3lsaa-3rti4-nxknq-3bgcr-orfvo-izh54-ynkrn-lo4a7-dew2m-ztmea-aae");
+        let testUser3 = Principal.fromText("4lsaa-3rti4-nxknq-3bgcr-orfvo-izh54-ynkrn-lo4a7-dew2m-ztmea-aae");
+        
+        // Follow two users
+        let result1 = await followUser(testUser2);
+        let result2 = await followUser(testUser3);
+        
+        switch (result1, result2) {
+            case (#ok(_), #ok(_)) {
+                Debug.print("✅ testMultipleFollows passed - Both follows working");
+                return true;
+            };
+            case (_, _) {
+                Debug.print("❌ testMultipleFollows failed - One or both follows failed");
+                return false;
+            };
+        };
+    };
+
+    // Test getUserStats
+    public shared ({ caller }) func testGetUserStats() : async Bool {
+        Debug.print("🧪 Testing getUserStats...");
+        
+        let testUser = Principal.fromText("2vxsx-fae");
+        
+        let stats = await getUserStats(testUser);
+        
+        Debug.print("✅ testGetUserStats passed - Stats calculated correctly");
+        return true;
+    };
+
+    // Test getFollowing
+    public shared ({ caller }) func testGetFollowing() : async Bool {
+        Debug.print("🧪 Testing getFollowing...");
+        
+        let testUser1 = Principal.fromText("2vxsx-fae");
+        let testUser2 = Principal.fromText("3lsaa-3rti4-nxknq-3bgcr-orfvo-izh54-ynkrn-lo4a7-dew2m-ztmea-aae");
+        
+        // Follow a user
+        let _ = await followUser(testUser2);
+        
+        // Get following list
+        let following = await getFollowing(testUser1);
+        
+        if (following.size() > 0) {
+            Debug.print("✅ testGetFollowing passed - Following list correct");
+            return true;
+        } else {
+            Debug.print("❌ testGetFollowing failed - Following list should not be empty");
+            return false;
+        };
+    };
+
+    // Run all tests
+    public shared ({ caller }) func runAllTests() : async Text {
+        Debug.print("🚀 Starting social graph tests...");
+        
+        var passedTests = 0;
+        var totalTests = 0;
+        
+        // Test 1: Follow user
+        totalTests += 1;
+        if (await testFollowUser()) {
+            passedTests += 1;
+        };
+        
+        // Test 2: Unfollow user
+        totalTests += 1;
+        if (await testUnfollowUser()) {
+            passedTests += 1;
+        };
+        
+        // Test 3: Is following
+        totalTests += 1;
+        if (await testIsFollowing()) {
+            passedTests += 1;
+        };
+        
+        // Test 4: Is following when not following
+        totalTests += 1;
+        if (await testIsFollowingNotFollowing()) {
+            passedTests += 1;
+        };
+        
+        // Test 5: Self-follow prevention
+        totalTests += 1;
+        if (await testSelfFollow()) {
+            passedTests += 1;
+        };
+        
+        // Test 6: Multiple follows
+        totalTests += 1;
+        if (await testMultipleFollows()) {
+            passedTests += 1;
+        };
+        
+        // Test 7: Get user stats
+        totalTests += 1;
+        if (await testGetUserStats()) {
+            passedTests += 1;
+        };
+        
+        // Test 8: Get following
+        totalTests += 1;
+        if (await testGetFollowing()) {
+            passedTests += 1;
+        };
+        
+        let result = "Social Graph Tests: " # Nat.toText(passedTests) # "/" # Nat.toText(totalTests) # " passed";
+        Debug.print(result);
+        return result;
     };
 }; 

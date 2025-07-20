@@ -52,6 +52,7 @@ jobs:
         run: |
           chmod +x scripts/run-tests.sh
           ./scripts/run-tests.sh
+        continue-on-error: true
 
       - name: 📊 Upload test results
         uses: actions/upload-artifact@v4

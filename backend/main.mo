@@ -10,6 +10,7 @@ import Buffer "mo:base/Buffer";
 import Nat "mo:base/Nat";
 import Principal "mo:base/Principal";
 import Nat32 "mo:base/Nat32";
+import Debug "mo:base/Debug";
 
 actor {
     stable var autoIndex = 0;
@@ -299,5 +300,207 @@ actor {
 
         // 6. RETURN RESPONSE OF THE BODY
         return decoded_text;
+    };
+
+    // ===== TEST FUNCTIONS =====
+    
+    // Test user profile management
+    public shared ({ caller }) func testSetUserProfile() : async Bool {
+        Debug.print("🧪 Testing setUserProfile...");
+        
+        let testUsername = "testuser1";
+        let testBio = "Test user 1 bio";
+        
+        let result = await setUserProfile(testUsername, testBio);
+        
+        switch (result) {
+            case (#ok(profile)) {
+                Debug.print("✅ setUserProfile passed - Profile created: " # profile.name);
+                return true;
+            };
+            case (#err(error)) {
+                Debug.print("❌ setUserProfile failed: " # error);
+                return false;
+            };
+        };
+    };
+
+    // Test username availability
+    public shared ({ caller }) func testIsUsernameAvailable() : async Bool {
+        Debug.print("🧪 Testing isUsernameAvailable...");
+        
+        let testUsername = "testuser1";
+        let testBio = "Test user 1 bio";
+        
+        // First, set a profile
+        let _ = await setUserProfile(testUsername, testBio);
+        
+        // Test that the username is no longer available
+        let isAvailable = await isUsernameAvailable(testUsername);
+        
+        if (not isAvailable) {
+            Debug.print("✅ isUsernameAvailable passed - Username correctly unavailable");
+            return true;
+        } else {
+            Debug.print("❌ isUsernameAvailable failed - Username should be unavailable");
+            return false;
+        };
+    };
+
+    // Test principal lookup by username
+    public shared ({ caller }) func testGetPrincipalByUsername() : async Bool {
+        Debug.print("🧪 Testing getPrincipalByUsername...");
+        
+        let testUsername = "testuser1";
+        let testBio = "Test user 1 bio";
+        
+        // First, set a profile
+        let _ = await setUserProfile(testUsername, testBio);
+        
+        // Test getting principal by username
+        let result = await getPrincipalByUsername(testUsername);
+        
+        switch (result) {
+            case (#ok(principal)) {
+                if (Principal.equal(principal, caller)) {
+                    Debug.print("✅ getPrincipalByUsername passed - Principal found correctly");
+                    return true;
+                } else {
+                    Debug.print("❌ getPrincipalByUsername failed - Principal mismatch");
+                    return false;
+                };
+            };
+            case (#err(error)) {
+                Debug.print("❌ getPrincipalByUsername failed: " # error);
+                return false;
+            };
+        };
+    };
+
+    // Test getCurrentUserProfile
+    public shared ({ caller }) func testGetCurrentUserProfile() : async Bool {
+        Debug.print("🧪 Testing getCurrentUserProfile...");
+        
+        let testUsername = "testuser1";
+        let testBio = "Test user 1 bio";
+        
+        // First, set a profile
+        let _ = await setUserProfile(testUsername, testBio);
+        
+        // Get current user profile
+        let result = await getCurrentUserProfile();
+        
+        switch (result) {
+            case (#ok(profile)) {
+                if (profile.name == testUsername and profile.bio == testBio) {
+                    Debug.print("✅ getCurrentUserProfile passed - Profile retrieved correctly");
+                    return true;
+                } else {
+                    Debug.print("❌ getCurrentUserProfile failed - Profile data mismatch");
+                    return false;
+                };
+            };
+            case (#err(error)) {
+                Debug.print("❌ getCurrentUserProfile failed: " # error);
+                return false;
+            };
+        };
+    };
+
+    // Test getUserProfileByUsername
+    public shared ({ caller }) func testGetUserProfileByUsername() : async Bool {
+        Debug.print("🧪 Testing getUserProfileByUsername...");
+        
+        let testUsername = "testuser1";
+        let testBio = "Test user 1 bio";
+        
+        // First, set a profile
+        let _ = await setUserProfile(testUsername, testBio);
+        
+        // Get profile by username
+        let result = await getUserProfileByUsername(testUsername);
+        
+        switch (result) {
+            case (#ok(profile)) {
+                if (profile.name == testUsername and profile.bio == testBio) {
+                    Debug.print("✅ getUserProfileByUsername passed - Profile found correctly");
+                    return true;
+                } else {
+                    Debug.print("❌ getUserProfileByUsername failed - Profile data mismatch");
+                    return false;
+                };
+            };
+            case (#err(error)) {
+                Debug.print("❌ getUserProfileByUsername failed: " # error);
+                return false;
+            };
+        };
+    };
+
+    // Test non-existent user
+    public shared ({ caller }) func testNonExistentUser() : async Bool {
+        Debug.print("🧪 Testing non-existent user...");
+        
+        // Try to get principal for non-existent user
+        let result = await getPrincipalByUsername("nonexistentuser");
+        
+        switch (result) {
+            case (#ok(_)) {
+                Debug.print("❌ testNonExistentUser failed - Should return error");
+                return false;
+            };
+            case (#err(_)) {
+                Debug.print("✅ testNonExistentUser passed - Correctly returned error");
+                return true;
+            };
+        };
+    };
+
+    // Run all tests
+    public shared ({ caller }) func runAllTests() : async Text {
+        Debug.print("🚀 Starting backend tests...");
+        
+        var passedTests = 0;
+        var totalTests = 0;
+        
+        // Test 1: Set user profile
+        totalTests += 1;
+        if (await testSetUserProfile()) {
+            passedTests += 1;
+        };
+        
+        // Test 2: Username availability
+        totalTests += 1;
+        if (await testIsUsernameAvailable()) {
+            passedTests += 1;
+        };
+        
+        // Test 3: Principal lookup
+        totalTests += 1;
+        if (await testGetPrincipalByUsername()) {
+            passedTests += 1;
+        };
+        
+        // Test 4: Get current user profile
+        totalTests += 1;
+        if (await testGetCurrentUserProfile()) {
+            passedTests += 1;
+        };
+        
+        // Test 5: Get user profile by username
+        totalTests += 1;
+        if (await testGetUserProfileByUsername()) {
+            passedTests += 1;
+        };
+        
+        // Test 6: Non-existent user
+        totalTests += 1;
+        if (await testNonExistentUser()) {
+            passedTests += 1;
+        };
+        
+        let result = "Backend Tests: " # Nat.toText(passedTests) # "/" # Nat.toText(totalTests) # " passed";
+        Debug.print(result);
+        return result;
     };
 };
