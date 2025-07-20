@@ -190,4 +190,4 @@ Enable debug logging by setting `NODE_ENV=development` in your environment.
 
 ---
 
-*For more information, see [Python Logging HOWTO](https://docs.python.org/3/howto/logging.html) and [Console.log() Tips](https://dev.to/ackshaey/level-up-your-javascript-browser-logs-with-these-console-log-tips-55o2)* 
+*For more information, see [Pino Documentation](https://getpino.io/) and [Console.log() Tips](https://dev.to/ackshaey/level-up-your-javascript-browser-logs-with-these-console-log-tips-55o2)* 

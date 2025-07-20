@@ -49,9 +49,9 @@ This documentation follows established best practices:
 
 ## 🔗 External Resources
 
-- **[Python Logging HOWTO](https://docs.python.org/3/howto/logging.html)** - Official Python logging guide
 - **[Console.log() Tips](https://dev.to/ackshaey/level-up-your-javascript-browser-logs-with-these-console-log-tips-55o2)** - Browser logging best practices
-- **[Python Logging Examples](https://github.com/mccright/PythonLoggingExamples)** - Comprehensive logging examples
+- **[Pino Documentation](https://getpino.io/)** - Official Pino logging library guide
+- **[React Logging Best Practices](https://react.dev/learn/keeping-components-pure)** - React component logging guidelines
 
 ## 🤝 Contributing
 
