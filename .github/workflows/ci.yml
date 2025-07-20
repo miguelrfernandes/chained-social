@@ -19,6 +19,10 @@ jobs:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 
+      - name: 📦 Install just
+        run: |
+          curl -s https://just.systems/install.sh | bash -s -- --to /usr/local/bin
+
       - name: 📦 Install dfx
         uses: dfinity/setup-dfx@main
         with:
@@ -60,6 +64,10 @@ jobs:
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
+
+      - name: 📦 Install just
+        run: |
+          curl -s https://just.systems/install.sh | bash -s -- --to /usr/local/bin
 
       - name: 📦 Install dfx
         uses: dfinity/setup-dfx@main
@@ -148,6 +156,10 @@ jobs:
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
+
+      - name: 📦 Install just
+        run: |
+          curl -s https://just.systems/install.sh | bash -s -- --to /usr/local/bin
 
       - name: 📦 Install dfx
         uses: dfinity/setup-dfx@main
