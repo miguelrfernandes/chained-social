@@ -37,7 +37,7 @@ export function AuthProvider({ children }) {
     // Create socialGraphActor with the same identity
     try {
       logger.info('Creating socialGraphActor with user identity');
-      const { canisterId, createActor } = await import('../../../src/declarations/socialgraph');
+      const { canisterId, createActor } = await import('../declarations/socialgraph');
       const socialGraphActor = createActor(canisterId, { agent });
       setSocialGraphActor(socialGraphActor);
       logger.info('SocialGraphActor created with user identity');

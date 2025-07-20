@@ -2,31 +2,43 @@
   "canisters": {
     "backend": {
       "main": "backend/main.mo",
-      "type": "motoko"
+      "type": "motoko",
+      "declarations": {
+        "bindings": ["js", "ts", "did"],
+        "output": "frontend/src/declarations/backend"
+      }
     },
     "content": {
       "main": "content/main.mo",
-      "type": "motoko"
+      "type": "motoko",
+      "declarations": {
+        "bindings": ["js", "ts", "did"],
+        "output": "frontend/src/declarations/content"
+      }
     },
     "socialgraph": {
       "main": "socialgraph/main.mo",
-      "type": "motoko"
+      "type": "motoko",
+      "declarations": {
+        "bindings": ["js", "ts", "did"],
+        "output": "frontend/src/declarations/socialgraph"
+      }
     },
-
     "frontend": {
       "dependencies": ["backend", "content", "socialgraph"],
-      "frontend": {
-        "entrypoint": "frontend/index.html"
-      },
-      "source": ["frontend/dist"],
       "type": "assets",
+      "source": ["frontend/dist"],
       "candid": "frontend/assetstorage.did"
     }
   },
   "networks": {
     "ic": {
-      "providers": ["https://ic0.app"],
-      "type": "persistent"
+      "type": "persistent",
+      "providers": ["https://ic0.app"]
+    },
+    "local": {
+      "type": "ephemeral",
+      "bind": "127.0.0.1:4943"
     }
   }
 }

@@ -49,19 +49,9 @@ jobs:
         with:
           dfx-version: "0.27.0"
 
-      - name: 🔧 Setup dfx environment
-        run: |
-          dfx --version
-          dfx start --background --clean
-
-      - name: 📦 Install frontend dependencies
-        run: |
-          cd frontend
-          npm ci
-
       - name: 🚀 Deploy and build
         run: |
-          just setup
+          just troubleshoot
           just deploy
 
       - name: 🧪 Run unit tests

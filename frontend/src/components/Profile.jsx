@@ -48,7 +48,7 @@ function Profile({ contentActor }) {
       logging.logInfo('Current user principal created', { principal: currentUserPrincipal.toText() });
       
       // Get the principal for the target user
-      const { backend } = await import('../../../src/declarations/backend');
+      const { backend } = await import('../declarations/backend');
       logging.logInfo('Fetching principal for username', { username: profileData.name });
       const principalResult = await backend.getPrincipalByUsername(profileData.name);
       logging.logDebug('Principal result', { principalResult });
@@ -113,7 +113,7 @@ function Profile({ contentActor }) {
       logging.logInfo('Current user principal created', { principal: currentUserPrincipal.toText() });
       
       // Get the principal for the target user
-      const { backend } = await import('../../../src/declarations/backend');
+      const { backend } = await import('../declarations/backend');
       logging.logInfo('Fetching principal for username', { username: profileData.name });
       const principalResult = await backend.getPrincipalByUsername(profileData.name);
       logging.logDebug('Principal result', { principalResult });
@@ -251,7 +251,7 @@ function Profile({ contentActor }) {
       // First, try to get the user's profile from the backend
       let foundProfile = null;
       try {
-        const { backend } = await import('../../../src/declarations/backend');
+        const { backend } = await import('../declarations/backend');
         console.log('🔍 Searching for profile in backend:', username);
         const profileResult = await backend.getUserProfileByUsername(username);
         console.log('📋 Backend profile result:', profileResult);

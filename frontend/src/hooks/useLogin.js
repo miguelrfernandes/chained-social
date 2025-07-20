@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NFID } from "@nfid/embed";
 import { HttpAgent } from "@dfinity/agent";
-import { canisterId, createActor } from "../../../src/declarations/backend";
+import { canisterId, createActor } from "../declarations/backend";
 import { createLogger } from '../utils/logger';
 
 const logger = createLogger('useLogin');

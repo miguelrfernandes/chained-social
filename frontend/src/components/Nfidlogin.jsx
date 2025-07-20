@@ -5,7 +5,7 @@ import { AnonymousIdentity } from "@dfinity/agent";
 import {
   canisterId,
   createActor,
-} from "../../../src/declarations/backend";
+} from "../declarations/backend";
 
 function NfidLogin({ setBackendActor }) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);

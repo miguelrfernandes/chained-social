@@ -1,30 +1,40 @@
 # 🚀 Justfile for Chained Social ICP Project
 
-# 🚀 Setup: Initial project setup (install dependencies, build, deploy)
-setup:
+# 🧹 Clean: Clean build artifacts
+clean:
+    @echo "🧹 Cleaning build artifacts..."
+    dfx stop || true
+    dfx start --background --clean
+    dfx stop
+    rm -rf .dfx
+    rm -rf frontend/dist
+    rm -rf src/declarations
+    @echo "✅ Clean complete!"
+
+# 🚀 Deploy: Full deployment (install, build, deploy)
+deploy:
     @echo "🚀 Setting up ChainedSocial project..."
     @echo "📦 Installing frontend dependencies..."
     cd frontend && npm install
     @echo "🚀 Starting dfx and deploying canisters..."
-    dfx stop || true
-    dfx start --background --clean
-    dfx deploy
+    dfx start --background
+    @echo "🔄 Creating canisters..."
+    dfx canister create --all
+    @echo "🏗️ Building Motoko canisters..."
+    dfx build backend
+    dfx build content
+    dfx build socialgraph
     @echo "🔄 Generating type declarations..."
-    dfx generate
+    dfx generate backend
+    dfx generate content
+    dfx generate socialgraph
+    @echo "🚀 Deploying canisters..."
+    dfx deploy
     @echo "🏗️ Building frontend assets..."
     cd frontend && npm run build
     @echo "✅ Setup complete! Your project is ready."
-    just urls
-
-# 🚀 Deploy: Full deployment (install, build, deploy)
-deploy:
-    @echo "🚀 Full deployment..."
-    dfx stop || true
-    dfx start --background --clean
-    cd frontend && npm install
-    dfx deploy
-    dfx generate
-    cd frontend && npm run build
+    @echo "🔍 Verifying deployment..."
+    dfx canister status --all
     just urls
 
 # 🧪 Run unit tests
@@ -49,15 +59,6 @@ deploy-playground:
 status:
     @echo "🔍 Checking project status..."
     dfx canister status --all
-
-# 🧹 Clean: Clean build artifacts
-clean:
-    @echo "🧹 Cleaning build artifacts..."
-    dfx stop || true
-    rm -rf .dfx
-    rm -rf frontend/dist
-    rm -rf src/declarations
-    @echo "✅ Clean complete!"
 
 # 🔗 URLs: Show current canister URLs
 urls:
