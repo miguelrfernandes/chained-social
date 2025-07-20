@@ -23,7 +23,7 @@ jobs:
       - name: 🔍 Run TruffleHog
         uses: trufflesecurity/trufflehog@main
         with:
-          extra_args: --results=verified,unknown --fail
+          extra_args: --results=verified,unknown --fail --exclude-paths=.trufflehogignore
 
   test:
     name: 🧪 Run Tests
@@ -37,7 +37,7 @@ jobs:
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version-file: 'package.json'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
@@ -90,7 +90,7 @@ jobs:
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version-file: 'package.json'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
@@ -164,7 +164,7 @@ jobs:
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version-file: 'package.json'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
@@ -198,7 +198,7 @@ jobs:
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version-file: 'package.json'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
