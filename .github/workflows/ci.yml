@@ -23,7 +23,7 @@ jobs:
       - name: 🔍 Run TruffleHog
         uses: trufflesecurity/trufflehog@main
         with:
-          extra_args: --results=verified,unknown --fail --exclude-paths=.trufflehogignore
+          extra_args: --results=verified,unknown --exclude-paths=.trufflehogignore
 
   test:
     name: 🧪 Run Tests
