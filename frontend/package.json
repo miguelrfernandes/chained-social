@@ -6,7 +6,12 @@
     "prebuild": "npm i --include=dev",
     "build": "vite build",
     "postbuild": "cp .ic-assets.json5 dist/",
-    "dev": "vite"
+    "dev": "vite",
+    "lint": "eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --ext js,jsx,ts,tsx --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@dfinity/agent": "2.4.1",
@@ -25,7 +30,13 @@
     "@types/react-dom": "18.3.1",
     "@vitejs/plugin-react": "4.3.3",
     "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.34.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "8.4.48",
+    "prettier": "^3.2.5",
     "tailwindcss": "3.4.14",
     "typescript": "^5.8.3",
     "vite": "5.4.11"

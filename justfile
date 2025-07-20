@@ -35,6 +35,11 @@ deploy:
     cd frontend && npm run build
     just urls
 
+# 🧪 Run unit tests
+test:
+    @echo "🧪 Running unit tests..."
+    ./scripts/run-tests.sh
+
 # 🚀 Deploy to playground
 deploy-playground:
     dfx deploy --playground

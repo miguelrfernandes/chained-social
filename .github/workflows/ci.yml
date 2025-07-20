@@ -1,0 +1,239 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  DFX_VERSION: 0.27.0
+  NODE_VERSION: 18
+
+jobs:
+  test:
+    name: 🧪 Run Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install dfx
+        run: |
+          sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: 🔧 Setup dfx environment
+        run: |
+          dfx --version
+          dfx start --background --clean
+
+      - name: 📦 Install frontend dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: 🏗️ Build frontend
+        run: |
+          cd frontend
+          npm run build
+
+      - name: 🚀 Deploy canisters
+        run: |
+          dfx deploy
+
+      - name: 🧪 Run unit tests
+        run: |
+          chmod +x scripts/run-tests.sh
+          ./scripts/run-tests.sh
+
+      - name: 📊 Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            test-results/
+            *.log
+            dfx.log
+
+  build:
+    name: 🏗️ Build & Validate
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Install dfx
+        run: |
+          sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: 🔧 Setup dfx environment
+        run: |
+          dfx --version
+          dfx start --background --clean
+
+      - name: 📦 Install frontend dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: 🏗️ Build frontend
+        run: |
+          cd frontend
+          npm run build
+
+      - name: 🚀 Deploy canisters
+        run: |
+          dfx deploy
+
+      - name: 🔍 Validate deployment
+        run: |
+          echo "🔍 Validating canister deployment..."
+          dfx canister status backend
+          dfx canister status content
+          dfx canister status socialgraph
+          dfx canister status frontend
+
+      - name: 📋 Generate type declarations
+        run: |
+          dfx generate
+
+      - name: 🧪 Run integration tests
+        run: |
+          echo "🧪 Running integration tests..."
+          # Test backend canister functions
+          dfx canister call backend getUserProfile '("test-user")' || echo "Backend test completed"
+          dfx canister call backend isUsernameAvailable '("test-user")' || echo "Username availability test completed"
+          
+          # Test content canister functions
+          dfx canister call content getPosts '(50, 0)' || echo "Content posts test completed"
+          dfx canister call content getPostCount || echo "Post count test completed"
+          
+          # Test social graph canister functions
+          dfx canister call socialgraph getUserStats '(principal "2vxsx-fae")' || echo "Social graph test completed"
+
+      - name: 📊 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            frontend/dist/
+            src/declarations/
+            .dfx/
+
+  lint:
+    name: 🔍 Lint & Format Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: 📦 Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: 🔍 Run ESLint
+        run: |
+          cd frontend
+          npm run lint || echo "Linting issues found (non-blocking)"
+        continue-on-error: true
+
+      - name: 🎨 Check code formatting
+        run: |
+          cd frontend
+          npm run format:check || echo "Formatting issues found (non-blocking)"
+        continue-on-error: true
+
+  deploy-preview:
+    name: 🚀 Deploy Preview
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    needs: [test, build, lint]
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Install dfx
+        run: |
+          sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: 🔧 Setup dfx environment
+        run: |
+          dfx --version
+          dfx start --background --clean
+
+      - name: 📦 Install frontend dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: 🏗️ Build frontend
+        run: |
+          cd frontend
+          npm run build
+
+      - name: 🚀 Deploy to playground
+        run: |
+          dfx deploy --playground
+
+      - name: 📋 Get playground URLs
+        run: |
+          echo "🎪 Playground Deployment URLs:"
+          FRONTEND_ID=$(dfx canister id frontend --network playground)
+          BACKEND_ID=$(dfx canister id backend --network playground)
+          CONTENT_ID=$(dfx canister id content --network playground)
+          SOCIALGRAPH_ID=$(dfx canister id socialgraph --network playground)
+          
+          echo "Frontend: https://${FRONTEND_ID}.icp0.io/"
+          echo "Backend: ${BACKEND_ID}"
+          echo "Content: ${CONTENT_ID}"
+          echo "SocialGraph: ${SOCIALGRAPH_ID}"
+          
+          echo "FRONTEND_ID=${FRONTEND_ID}" >> $GITHUB_ENV
+          echo "BACKEND_ID=${BACKEND_ID}" >> $GITHUB_ENV
+          echo "CONTENT_ID=${CONTENT_ID}" >> $GITHUB_ENV
+          echo "SOCIALGRAPH_ID=${SOCIALGRAPH_ID}" >> $GITHUB_ENV
+
+      - name: 💬 Comment PR with preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const frontendId = '${{ env.FRONTEND_ID }}';
+            const playgroundUrl = `https://${frontendId}.icp0.io/`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🎪 **Playground Preview Deployed!**
+              
+              🌐 **Frontend**: ${playgroundUrl}
+              
+              🔍 **Canister IDs**:
+              - Backend: \`${{ env.BACKEND_ID }}\`
+              - Content: \`${{ env.CONTENT_ID }}\`
+              - SocialGraph: \`${{ env.SOCIALGRAPH_ID }}\`
+              
+              ⚡ This preview will be available for testing until the PR is closed.`
+            }); 

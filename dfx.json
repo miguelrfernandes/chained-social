@@ -12,6 +12,14 @@
       "main": "socialgraph/main.mo",
       "type": "motoko"
     },
+    "backend-test": {
+      "main": "backend/test.mo",
+      "type": "motoko"
+    },
+    "socialgraph-test": {
+      "main": "socialgraph/test.mo",
+      "type": "motoko"
+    },
     "frontend": {
       "dependencies": ["backend", "content", "socialgraph"],
       "frontend": {

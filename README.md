@@ -18,6 +18,8 @@ ChainedSocial is a fully decentralized social media platform built on the Intern
 - **Real-Time Messaging**: Instant communication between users
 - **NFT Integration**: Profile pictures and collectible posts as NFTs
 - **AI-Powered Discovery**: Intelligent content recommendations
+- **AI integration to create images and posts**
+- **Create AI agents that can talk, aggregate information, etc**
 
 ## 🏗️ Technical Architecture
 
@@ -132,10 +134,32 @@ just
 ### Key Commands:
 - `just setup` - Initial project setup
 - `just deploy` - Deploy all canisters
+- `just test` - Run unit tests
 - `just urls` - Show current canister URLs
 - `just explain-urls` - Understand different URL types
 - `just troubleshoot` - Diagnose deployment issues
 - `just status` - Check project status
+
+## 🧪 Testing
+
+### Running Tests
+```bash
+# Run all unit tests
+just test
+
+# Run tests manually
+chmod +x scripts/run-tests.sh
+./scripts/run-tests.sh
+```
+
+### CI/CD Pipeline
+This project includes a comprehensive GitHub Actions CI/CD pipeline that:
+- Runs unit tests on every push and pull request
+- Validates canister deployments
+- Performs code quality checks
+- Deploys preview environments for pull requests
+
+See [CI_CD.md](CI_CD.md) for detailed documentation.
 
 ## 📁 Project Structure
 

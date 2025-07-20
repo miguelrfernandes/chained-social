@@ -261,6 +261,7 @@ function App() {
               socialGraphActor={socialGraphActor}
               userProfile={userProfile}
               isLoggedIn={isLoggedIn}
+              userPrincipal={userPrincipal}
             />
           } />
           <Route path="/" element={

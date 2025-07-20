@@ -20,6 +20,9 @@ actor {
     // Add reverse lookup for username uniqueness
     let usernameToUserIdMap = HashMap.HashMap<Text, Nat>(0, Text.equal, Text.hash);
     
+    // Add reverse lookup for principal by username
+    let usernameToPrincipalMap = HashMap.HashMap<Text, Principal>(0, Text.equal, Text.hash);
+    
     public query func getUserProfile() : async Result.Result<{ id : Nat; name : Text; bio : Text }, Text> {
         return #ok({ id = 123; name = "test"; bio = "test bio" });
     };
@@ -62,6 +65,14 @@ actor {
             usernames.add(username);
         };
         return Buffer.toArray(usernames);
+    };
+
+    // Get principal by username for social graph functionality
+    public query func getPrincipalByUsername(username : Text) : async Result.Result<Principal, Text> {
+        switch (usernameToPrincipalMap.get(username)) {
+            case (?principal) { #ok(principal) };
+            case (null) { #err("User not found") };
+        };
     };
 
     public shared ({ caller }) func setUserProfile(name : Text, bio : Text) : async Result.Result<{ id : Nat; name : Text; bio : Text }, Text> {
@@ -129,6 +140,9 @@ actor {
         
         // Add username to reverse lookup map for uniqueness tracking
         usernameToUserIdMap.put(name, userId);
+        
+        // Add username to principal mapping for social graph functionality
+        usernameToPrincipalMap.put(name, caller);
 
         return #ok({ id = userId; name = name; bio = bio });
     };
