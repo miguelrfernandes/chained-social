@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Users, Zap } from 'lucide-react';
+import { Shield, Users, Zap, Github } from 'lucide-react';
 
 function HeroSection({ onGetStarted, isLoggingIn = false }) {
   return (
@@ -66,8 +66,9 @@ function HeroSection({ onGetStarted, isLoggingIn = false }) {
                 href="https://github.com/miguelrfernandes/chained-social" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium inline-block"
+                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium inline-flex items-center gap-2"
               >
+                <Github className="h-4 w-4" />
                 Learn More
               </a>
             </div>
