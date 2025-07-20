@@ -25,8 +25,8 @@ jobs:
         with:
           extra_args: --results=verified,unknown
 
-  test:
-    name: 🧪 Run Tests
+  test-and-build:
+    name: 🧪 Test & Build
     runs-on: ubuntu-latest
     needs: security
     
@@ -61,60 +61,13 @@ jobs:
 
       - name: 🚀 Deploy and build
         run: |
+          just setup
           just deploy
 
       - name: 🧪 Run unit tests
         run: |
           just test
         continue-on-error: true
-
-      - name: 📊 Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results
-          path: |
-            test-results/
-            *.log
-            dfx.log
-
-  build:
-    name: 🏗️ Build & Validate
-    runs-on: ubuntu-latest
-    needs: security
-    
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-
-      - name: 📦 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-          cache: 'npm'
-          cache-dependency-path: 'package-lock.json'
-
-      - name: 📦 Install just
-        uses: taiki-e/install-action@just
-
-      - name: 📦 Install dfx
-        uses: dfinity/setup-dfx@main
-        with:
-          dfx-version: "0.27.0"
-
-      - name: 🔧 Setup dfx environment
-        run: |
-          dfx --version
-          dfx start --background --clean
-
-      - name: 📦 Install frontend dependencies
-        run: |
-          cd frontend
-          npm ci
-
-      - name: 🚀 Deploy and build
-        run: |
-          just deploy
 
       - name: 🔍 Validate deployment
         run: |
@@ -140,6 +93,16 @@ jobs:
           dfx canister status backend || echo "Backend status check completed"
           dfx canister status content || echo "Content status check completed"
           dfx canister status socialgraph || echo "Social graph status check completed"
+
+      - name: 📊 Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            test-results/
+            *.log
+            dfx.log
 
       - name: 📦 Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -189,7 +152,7 @@ jobs:
     name: 🚀 Deploy Preview
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    needs: [security, test, build, lint]
+    needs: [security, test-and-build, lint]
     
     steps:
       - name: 📥 Checkout code
