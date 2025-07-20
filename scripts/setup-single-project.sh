@@ -61,8 +61,8 @@ gh issue create --title "Security audit and improvements" \
 
 # CI/CD & Infrastructure Issues
 echo "Creating CI/CD & Infrastructure issues..."
-gh issue create --title "Nix CI optimization" \
-  --body "Optimize the Nix-based CI pipeline for faster builds and better caching" \
+gh issue create --title "CI optimization" \
+  --body "Optimize the CI pipeline for faster builds and better caching" \
   --label "enhancement"
 
 gh issue create --title "Deployment automation" \

@@ -220,8 +220,8 @@ gh issue create --title "User Story: Social Feed" \
 # Epic 4: Platform Infrastructure - User Stories
 echo "Creating user stories for Epic: Platform Infrastructure"
 
-gh issue create --title "User Story: Optimize Nix CI Pipeline" \
-  --body "## User Story: Optimize Nix CI Pipeline
+gh issue create --title "User Story: Optimize CI Pipeline" \
+  --body "## User Story: Optimize CI Pipeline
 
 **As a** developer
 **I want to** have a fast and reliable CI pipeline
@@ -229,14 +229,14 @@ gh issue create --title "User Story: Optimize Nix CI Pipeline" \
 
 ### Acceptance Criteria
 - [ ] CI builds complete in under 5 minutes
-- [ ] Nix cache is properly utilized
+- [ ] CI cache is properly utilized
 - [ ] Build failures are clearly reported
 - [ ] CI runs on all PRs automatically
 - [ ] Deployment to playground is automated
 - [ ] Build artifacts are cached efficiently
 
 ### Technical Requirements
-- Optimize Nix store caching
+- Optimize CI store caching
 - Improve build time with parallel builds
 - Add comprehensive error reporting
 - Implement automated deployment

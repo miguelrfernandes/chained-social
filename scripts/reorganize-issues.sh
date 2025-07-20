@@ -171,19 +171,17 @@ EPIC_INFRASTRUCTURE=$(gh issue create --title "Epic: Platform Infrastructure & C
 Comprehensive infrastructure setup including CI/CD, monitoring, and deployment automation.
 
 ### Goals
-- Optimized Nix-based CI/CD pipeline
 - Automated deployment to playground and mainnet
 - Comprehensive monitoring and alerting
 - Performance optimization and scaling
 
 ### Success Criteria
-- CI/CD pipeline is fast and reliable
 - Deployments are automated and secure
 - Monitoring provides real-time insights
 - Platform performance is optimized
 
 ### Dependencies
-- Nix CI setup (already implemented)
+- CI setup (already implemented)
 - Monitoring tools integration
 - Deployment automation scripts" \
   --label "epic,enhancement")

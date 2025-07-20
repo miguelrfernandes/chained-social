@@ -5,14 +5,14 @@ setup:
     @echo "🚀 Setting up ChainedSocial project..."
     @echo "📦 Installing frontend dependencies..."
     cd frontend && npm install
-    @echo "🏗️ Building frontend assets..."
-    cd frontend && npm run build
     @echo "🚀 Starting dfx and deploying canisters..."
     dfx stop || true
     dfx start --background --clean
     dfx deploy
     @echo "🔄 Generating type declarations..."
     dfx generate
+    @echo "🏗️ Building frontend assets..."
+    cd frontend && npm run build
     @echo "✅ Setup complete! Your project is ready."
     just urls
 
