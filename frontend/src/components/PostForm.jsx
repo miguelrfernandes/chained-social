@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
-function PostForm({ contentActor, userProfile, onPostCreated }) {
+function PostForm({ contentActor, onPostCreated }) {
+  const { userProfile } = useAuth();
   const [postContent, setPostContent] = useState('');
   const [isPosting, setIsPosting] = useState(false);
   const [error, setError] = useState(null);

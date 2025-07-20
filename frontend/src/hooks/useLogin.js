@@ -94,8 +94,8 @@ export function useLogin(setBackendActor) {
         }
         
         // Create identity from seed
-        const { Ed25519KeyIdentity } = await import('@dfinity/identity');
-        const identity = Ed25519KeyIdentity.fromSeed(seed);
+        const identityModule = await import('@dfinity/identity');
+        const identity = identityModule.Ed25519KeyIdentity.fromSeed(seed);
         
         agent = new HttpAgent({ 
           identity: identity,

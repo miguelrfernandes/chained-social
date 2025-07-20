@@ -1,7 +1,15 @@
 import React from 'react';
 import { Shield, Users, Zap, Github } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
-function HeroSection({ onGetStarted, isLoggingIn = false }) {
+function HeroSection() {
+  const { handleLogin, isLoggingIn, isLoggedIn } = useAuth();
+  
+  // Don't show hero section if user is logged in
+  if (isLoggedIn) {
+    return null;
+  }
+  
   return (
     <div className="mb-8 rounded-lg bg-white border border-gray-200 shadow-sm overflow-hidden">
       <div className="p-8">
@@ -56,7 +64,7 @@ function HeroSection({ onGetStarted, isLoggingIn = false }) {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
               <button
-                onClick={onGetStarted}
+                onClick={handleLogin}
                 disabled={isLoggingIn}
                 className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white border-none rounded-lg cursor-pointer shadow-sm transition-all duration-300 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
               >

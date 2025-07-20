@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
-function PostList({ contentActor, userProfile, onPostCreated, posts: externalPosts, showUserPostsOnly = false }) {
+function PostList({ contentActor, onPostCreated, posts: externalPosts, showUserPostsOnly = false }) {
+  const { userProfile } = useAuth();
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
