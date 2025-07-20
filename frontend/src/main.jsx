@@ -39,7 +39,7 @@ function App() {
         console.log('🔄 Initializing content actor...');
 
         // Try to import the content actor
-        const { content, createActor } = await import('../../src/declarations/content');
+        const { content, createActor } = await import('../src/declarations/content');
 
         let contentActor = content;
 

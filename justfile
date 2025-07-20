@@ -34,7 +34,16 @@ test:
 
 # 🚀 Deploy to playground
 deploy-playground:
+    @echo "🚀 Deploying to playground..."
     dfx deploy --playground
+    dfx generate
+    cd frontend && npm run build
+    @echo "✅ Playground deployment complete!"
+    @echo "🔗 URLs:"
+    @dfx canister id frontend --network playground 2>/dev/null && echo "   Frontend: https://$$(dfx canister id frontend --network playground).icp0.io/" || echo "   Frontend: Not deployed"
+    @dfx canister id backend --network playground 2>/dev/null && echo "   Backend: $$(dfx canister id backend --network playground)" || echo "   Backend: Not deployed"
+    @dfx canister id content --network playground 2>/dev/null && echo "   Content: $$(dfx canister id content --network playground)" || echo "   Content: Not deployed"
+    @dfx canister id socialgraph --network playground 2>/dev/null && echo "   SocialGraph: $$(dfx canister id socialgraph --network playground)" || echo "   SocialGraph: Not deployed"
 
 # 🛠️ Build: Build frontend and generate types
 build:
