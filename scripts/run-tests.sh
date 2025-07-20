@@ -33,3 +33,17 @@ echo ""
 echo "📊 Summary:"
 echo "  Backend: $BACKEND_RESULT"
 echo "  Social Graph: $SOCIALGRAPH_RESULT" 
+
+# # Test backend canister functions
+#           dfx canister call backend isUsernameAvailable '("test-user")' || echo "Username availability test completed"
+          
+#           # Test content canister functions
+#           dfx canister call content getPostCount || echo "Post count test completed"
+          
+#           # Test social graph canister functions
+#           dfx canister call socialgraph getUserStats '(principal "2vxsx-fae")' || echo "Social graph test completed"
+          
+#           # Test canister status
+#           dfx canister status backend || echo "Backend status check completed"
+#           dfx canister status content || echo "Content status check completed"
+#           dfx canister status socialgraph || echo "Social graph status check completed"

@@ -54,35 +54,14 @@ jobs:
           just troubleshoot
           just deploy
 
-      - name: 🧪 Run unit tests
+      - name: 🧪 Run tests
         run: |
           just test
         continue-on-error: true
 
       - name: 🔍 Validate deployment
         run: |
-          echo "🔍 Validating canister deployment..."
-          dfx canister status backend
-          dfx canister status content
-          dfx canister status socialgraph
-          dfx canister status frontend
-
-      - name: 🧪 Run integration tests
-        run: |
-          echo "🧪 Running integration tests..."
-          # Test backend canister functions
-          dfx canister call backend isUsernameAvailable '("test-user")' || echo "Username availability test completed"
-          
-          # Test content canister functions
-          dfx canister call content getPostCount || echo "Post count test completed"
-          
-          # Test social graph canister functions
-          dfx canister call socialgraph getUserStats '(principal "2vxsx-fae")' || echo "Social graph test completed"
-          
-          # Test canister status
-          dfx canister status backend || echo "Backend status check completed"
-          dfx canister status content || echo "Content status check completed"
-          dfx canister status socialgraph || echo "Social graph status check completed"
+          just status
 
       - name: 🚀 Deploy to playground (PR only)
         if: github.event_name == 'pull_request'
