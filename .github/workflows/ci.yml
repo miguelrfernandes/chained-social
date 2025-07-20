@@ -26,8 +26,18 @@ jobs:
 
       - name: 📦 Install dfx
         run: |
-          sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          # Install dfx non-interactively
+          DFX_VERSION=0.27.0 sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)" -- --yes
+          echo "$HOME/.local/share/dfx/bin" >> $GITHUB_PATH
+          
+          # Alternative installation method if the above fails
+          if ! command -v dfx &> /dev/null; then
+            echo "Fallback: Installing dfx via direct download..."
+            mkdir -p $HOME/.local/bin
+            curl -L https://github.com/dfinity/dfx/releases/download/0.27.0/dfx-0.27.0-x86_64-unknown-linux-gnu.tar.gz | tar -xz
+            mv dfx $HOME/.local/bin/
+            echo "$HOME/.local/bin" >> $GITHUB_PATH
+          fi
 
       - name: 🔧 Setup dfx environment
         run: |
@@ -75,8 +85,9 @@ jobs:
 
       - name: 📦 Install dfx
         run: |
-          sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          # Install dfx non-interactively
+          DFX_VERSION=0.27.0 sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)" -- --yes
+          echo "$HOME/.local/share/dfx/bin" >> $GITHUB_PATH
 
       - name: 🔧 Setup dfx environment
         run: |
@@ -179,8 +190,9 @@ jobs:
 
       - name: 📦 Install dfx
         run: |
-          sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          # Install dfx non-interactively
+          DFX_VERSION=0.27.0 sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)" -- --yes
+          echo "$HOME/.local/share/dfx/bin" >> $GITHUB_PATH
 
       - name: 🔧 Setup dfx environment
         run: |
