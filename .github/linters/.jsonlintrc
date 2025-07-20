@@ -1,0 +1,8 @@
+{
+  "comments": false,
+  "strict": true,
+  "duplicate-keys": true,
+  "trailing-comma": false,
+  "quotes": "double",
+  "indent": 2
+} 

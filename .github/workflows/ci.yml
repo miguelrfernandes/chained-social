@@ -121,29 +121,31 @@ jobs:
             .dfx/
 
   lint:
-    name: 🔍 Lint & Format Check
+    name: 🔍 Super-Linter
     runs-on: ubuntu-latest
     
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: 📦 Install dependencies
-        run: |
-          cd frontend
-          npm ci
-
-      - name: 🔍 Run ESLint
-        run: |
-          cd frontend
-          npm run lint || echo "Linting issues found (non-blocking)"
-        continue-on-error: true
-
-      - name: 🎨 Check code formatting
-        run: |
-          cd frontend
-          npm run format:check || echo "Formatting issues found (non-blocking)"
-        continue-on-error: true
+      - name: 🔍 Run Super-Linter
+        uses: super-linter/super-linter@v8
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LINTER_RULES_PATH: .github/linters
+          ENABLE_GITHUB_ACTIONS_STEP_SUMMARY: true
+          SAVE_SUPER_LINTER_SUMMARY: true
+          # Include only relevant directories
+          FILTER_REGEX_INCLUDE: (^frontend/|^backend/|^content/|^socialgraph/|^scripts/|^docs/|^justfile|^dfx\.json|^package\.json|^README\.md)
+          # Exclude generated files and build artifacts
+          FILTER_REGEX_EXCLUDE: (^frontend/dist/|^src/declarations/|^\.dfx/|^node_modules/|^\.git/|^\.github/|^\.vscode/)
+          # Ignore generated files
+          IGNORE_GENERATED_FILES: true
+          # Ignore gitignored files
+          IGNORE_GITIGNORED_FILES: true
 
   deploy-preview:
     name: 🚀 Deploy Preview

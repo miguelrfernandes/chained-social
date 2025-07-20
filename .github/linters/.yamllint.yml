@@ -1,0 +1,50 @@
+# YAML linting configuration for ChainedSocial
+extends: default
+
+rules:
+  # Line length
+  line-length:
+    max: 120
+    level: warning
+
+  # Indentation
+  indentation:
+    spaces: 2
+    indent-sequences: true
+
+  # Comments
+  comments-indentation:
+    level: warning
+
+  # Document start
+  document-start:
+    present: true
+
+  # Trailing spaces
+  trailing-spaces:
+    level: warning
+
+  # Truthy values
+  truthy:
+    check-keys: false
+
+  # Hyphens
+  hyphens:
+    max-spaces-before: 0
+    max-spaces-after: 1
+
+  # Commas
+  commas:
+    max-spaces-before: 0
+    min-spaces-after: 1
+
+  # Colons
+  colons:
+    max-spaces-before: 0
+    max-spaces-after: 1
+
+  # Empty lines
+  empty-lines:
+    max: 1
+    max-start: 0
+    max-end: 0 

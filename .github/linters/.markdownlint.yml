@@ -1,0 +1,44 @@
+# Markdown linting configuration for ChainedSocial documentation
+default: true
+
+# Line length
+MD013:
+  line_length: 120
+  code_blocks: false
+  tables: false
+
+# Headings
+MD022:
+  level: 1
+
+# List style
+MD004:
+  style: dash
+
+# Emphasis
+MD037:
+  style: underscore
+
+# Links
+MD033:
+  allowed_elements: []
+
+# Code blocks
+MD040:
+  language: auto
+
+# Tables
+MD032:
+  list_items: true
+
+# Inline HTML
+MD033:
+  allowed_elements: []
+
+# Trailing spaces
+MD009:
+  br_spaces: 2
+
+# Line endings
+MD047:
+  style: consistent 

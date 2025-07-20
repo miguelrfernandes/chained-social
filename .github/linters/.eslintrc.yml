@@ -1,0 +1,46 @@
+---
+# ESLint configuration for ChainedSocial frontend
+env:
+  browser: true
+  es2021: true
+  node: true
+
+extends:
+  - eslint:recommended
+  - plugin:react/recommended
+  - plugin:react-hooks/recommended
+  - plugin:jsx-a11y/recommended
+
+parserOptions:
+  ecmaVersion: latest
+  sourceType: module
+  ecmaFeatures:
+    jsx: true
+
+plugins:
+  - react
+  - react-hooks
+  - jsx-a11y
+
+settings:
+  react:
+    version: detect
+
+rules:
+  # React specific rules
+  react/prop-types: off
+  react/react-in-jsx-scope: off
+  react/jsx-uses-react: off
+  
+  # General JavaScript rules
+  no-unused-vars: warn
+  no-console: warn
+  
+  # Accessibility rules
+  jsx-a11y/anchor-is-valid: warn
+  
+  # Code style
+  indent: [error, 2]
+  quotes: [error, single]
+  semi: [error, always]
+  comma-dangle: [error, never] 

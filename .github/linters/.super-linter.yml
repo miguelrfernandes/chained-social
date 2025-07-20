@@ -1,0 +1,149 @@
+# Super-Linter configuration for ChainedSocial
+# This file configures which linters to enable/disable
+
+# JavaScript/TypeScript
+JAVASCRIPT_ES: true
+JAVASCRIPT_STANDARD: false
+TYPESCRIPT_ES: false
+TYPESCRIPT_STANDARD: false
+
+# React
+REACT: true
+
+# Markdown
+MARKDOWN: true
+MARKDOWN_MARKDOWNLINT: true
+
+# YAML
+YAML: true
+YAML_YAMLLINT: true
+
+# JSON
+JSON: true
+JSON_JSONLINT: true
+
+# Shell scripts
+SHELL_SHFMT: true
+SHELL_SHELLCHECK: true
+
+# Docker
+DOCKER: false
+
+# HTML
+HTML: false
+
+# CSS
+CSS: false
+
+# Python (if we add any Python scripts later)
+PYTHON: false
+PYTHON_BLACK: false
+PYTHON_FLAKE8: false
+PYTHON_ISORT: false
+PYTHON_MYPY: false
+PYTHON_PYLINT: false
+
+# Go (if we add any Go code later)
+GO: false
+GO_GOLANGCI_LINT: false
+
+# Rust (if we add any Rust code later)
+RUST: false
+RUST_CLIPPY: false
+
+# Java (if we add any Java code later)
+JAVA: false
+
+# C/C++ (if we add any C/C++ code later)
+C: false
+CPP: false
+
+# PHP (if we add any PHP code later)
+PHP: false
+
+# Ruby (if we add any Ruby code later)
+RUBY: false
+
+# Terraform (if we add any infrastructure code later)
+TERRAFORM: false
+
+# Ansible (if we add any Ansible code later)
+ANSIBLE: false
+
+# PowerShell (if we add any PowerShell scripts later)
+POWERSHELL: false
+
+# Kotlin (if we add any Kotlin code later)
+KOTLIN: false
+
+# Scala (if we add any Scala code later)
+SCALA: false
+
+# Swift (if we add any Swift code later)
+SWIFT: false
+
+# R (if we add any R code later)
+R: false
+
+# Lua (if we add any Lua code later)
+LUA: false
+
+# Tcl (if we add any Tcl code later)
+TCL: false
+
+# Dart (if we add any Dart code later)
+DART: false
+
+# Solidity (if we add any Solidity code later)
+SOLIDITY: false
+
+# Prose (for documentation)
+PROSE: false
+
+# Clojure (if we add any Clojure code later)
+CLOJURE: false
+
+# Coffeescript (if we add any CoffeeScript code later)
+COFFEESCRIPT: false
+
+# Crystal (if we add any Crystal code later)
+CRYSTAL: false
+
+# Erlang (if we add any Erlang code later)
+ERLANG: false
+
+# Groovy (if we add any Groovy code later)
+GROOVY: false
+
+# Haskell (if we add any Haskell code later)
+HASKELL: false
+
+# Julia (if we add any Julia code later)
+JULIA: false
+
+# Lisp (if we add any Lisp code later)
+LISP: false
+
+# Nim (if we add any Nim code later)
+NIM: false
+
+# OCaml (if we add any OCaml code later)
+OCAML: false
+
+# Perl (if we add any Perl code later)
+PERL: false
+
+# Raku (if we add any Raku code later)
+RAKU: false
+
+# Vala (if we add any Vala code later)
+VALA: false
+
+# VHDL (if we add any VHDL code later)
+VHDL: false
+
+# XML (if we add any XML files later)
+XML: false
+
+# YAML (already enabled above)
+YAML: true 
