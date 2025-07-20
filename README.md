@@ -109,8 +109,9 @@ ChainedSocial is a fully decentralized social media platform built on the Intern
    # Install DFX
    sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
    
-   # Install ic-mops
-   pnpm add -g ic-mops
+   # Install Node.js
+   # Visit: https://nodejs.org/
+   # Or run: curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt-get install -y nodejs
    ```
 
 2. **Setup the Project:**
@@ -181,8 +182,7 @@ chainedsocial/
 │   ├── README.md    # Documentation index
 │   ├── BUILD.md     # Build instructions
 │   ├── CI_CD.md     # CI/CD setup
-│   ├── LOGGING.md   # Enhanced logging guide
-│   └── NIX-CI.md    # Nix build system
+│   └── LOGGING.md   # Enhanced logging guide
 ├── scripts/          # Utility scripts
 ├── justfile          # Task runner configuration
 ├── dfx.json          # DFX project configuration
@@ -197,7 +197,6 @@ For comprehensive documentation, see the [docs/](docs/) directory:
 - **[Build Guide](docs/BUILD.md)** - Build and deployment instructions
 - **[CI/CD Setup](docs/CI_CD.md)** - Continuous integration configuration
 - **[Logging Guide](docs/LOGGING.md)** - Enhanced Pino logging setup
-- **[Nix Configuration](docs/NIX-CI.md)** - Build system documentation
 
 ## 🏆 Current Features
 
