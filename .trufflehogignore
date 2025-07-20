@@ -1,0 +1,70 @@
+# TruffleHog ignore file
+# Exclude directories and files that shouldn't be scanned for secrets
+
+# Build artifacts and generated files
+.dfx/
+src/declarations/
+frontend/dist/
+node_modules/
+build/
+*.log
+
+# Git and version control
+.git/
+.github/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Documentation (usually doesn't contain secrets)
+docs/
+*.md
+*.txt
+
+# Configuration files that might contain false positives
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Test files
+test-results/
+coverage/
+*.test.js
+*.spec.js
+
+# Lock files and manifests
+*.lock
+package.json
+dfx.json
+
+# Generated canister files
+*.did
+*.wasm
+
+# Log files
+logs/
+*.log
+
+# Environment files (these should be in .gitignore anyway)
+.env
+.env.local
+.env.*.local 
