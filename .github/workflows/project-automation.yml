@@ -1,0 +1,110 @@
+name: Project Automation
+
+on:
+  issues:
+    types: [opened, edited, closed, reopened, labeled, unlabeled]
+  pull_request:
+    types: [opened, edited, closed, reopened, labeled, unlabeled, ready_for_review, review_requested]
+
+jobs:
+  project-automation:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup GitHub CLI
+        uses: cli/setup-gh@v1
+        with:
+          version: latest
+
+      - name: Auto-assign to project (new issues)
+        if: github.event_name == 'issues' && github.event.action == 'opened'
+        run: |
+          echo "Adding new issue #${{ github.event.issue.number }} to project..."
+          gh project item-add 1 ${{ github.event.issue.number }} --owner miguelrfernandes || echo "Failed to add to project (may already be added)"
+
+      - name: Auto-assign type labels (new issues)
+        if: github.event_name == 'issues' && github.event.action == 'opened'
+        run: |
+          TITLE="${{ github.event.issue.title }}"
+          BODY="${{ github.event.issue.body }}"
+          
+          # Auto-assign type labels based on title/content
+          if [[ "$TITLE" == *"epic"* ]] || [[ "$BODY" == *"epic"* ]]; then
+            echo "Adding epic label to issue #${{ github.event.issue.number }}"
+            gh issue edit ${{ github.event.issue.number }} --add-label "epic"
+          fi
+          
+          if [[ "$TITLE" == *"story"* ]] || [[ "$TITLE" == *"user story"* ]]; then
+            echo "Adding user-story label to issue #${{ github.event.issue.number }}"
+            gh issue edit ${{ github.event.issue.number }} --add-label "user-story"
+          fi
+          
+          if [[ "$TITLE" == *"bug"* ]] || [[ "$TITLE" == *"fix"* ]]; then
+            echo "Adding bug label to issue #${{ github.event.issue.number }}"
+            gh issue edit ${{ github.event.issue.number }} --add-label "bug"
+          fi
+          
+          if [[ "$TITLE" == *"doc"* ]] || [[ "$TITLE" == *"documentation"* ]]; then
+            echo "Adding documentation label to issue #${{ github.event.issue.number }}"
+            gh issue edit ${{ github.event.issue.number }} --add-label "documentation"
+          fi
+          
+          if [[ "$TITLE" == *"enhancement"* ]] || [[ "$TITLE" == *"improvement"* ]]; then
+            echo "Adding enhancement label to issue #${{ github.event.issue.number }}"
+            gh issue edit ${{ github.event.issue.number }} --add-label "enhancement"
+          fi
+
+      - name: Auto-assign priority labels (new issues)
+        if: github.event_name == 'issues' && github.event.action == 'opened'
+        run: |
+          TITLE="${{ github.event.issue.title }}"
+          
+          # Auto-assign priority based on keywords
+          if [[ "$TITLE" == *"urgent"* ]] || [[ "$TITLE" == *"critical"* ]] || [[ "$TITLE" == *"high priority"* ]]; then
+            echo "Adding high priority label to issue #${{ github.event.issue.number }}"
+            gh issue edit ${{ github.event.issue.number }} --add-label "priority:high"
+          elif [[ "$TITLE" == *"low priority"* ]] || [[ "$TITLE" == *"nice to have"* ]]; then
+            echo "Adding low priority label to issue #${{ github.event.issue.number }}"
+            gh issue edit ${{ github.event.issue.number }} --add-label "priority:low"
+          else
+            echo "Adding medium priority label to issue #${{ github.event.issue.number }}"
+            gh issue edit ${{ github.event.issue.number }} --add-label "priority:medium"
+          fi
+
+      - name: Auto-assign status labels (new issues)
+        if: github.event_name == 'issues' && github.event.action == 'opened'
+        run: |
+          # New issues start as ready-for-dev by default
+          echo "Adding ready-for-dev label to issue #${{ github.event.issue.number }}"
+          gh issue edit ${{ github.event.issue.number }} --add-label "ready-for-dev"
+
+      - name: Handle PR automation
+        if: github.event_name == 'pull_request'
+        run: |
+          if [[ "${{ github.event.action }}" == "opened" ]]; then
+            echo "PR #${{ github.event.pull_request.number }} opened - adding in-progress label"
+            gh pr edit ${{ github.event.pull_request.number }} --add-label "in-progress"
+          elif [[ "${{ github.event.action }}" == "ready_for_review" ]]; then
+            echo "PR #${{ github.event.pull_request.number }} ready for review - adding review-needed label"
+            gh pr edit ${{ github.event.pull_request.number }} --add-label "review-needed"
+          elif [[ "${{ github.event.action }}" == "closed" ]] && [[ "${{ github.event.pull_request.merged }}" == "true" ]]; then
+            echo "PR #${{ github.event.pull_request.number }} merged - adding to done"
+            # Note: Moving to done column would require additional API calls
+            echo "PR merged successfully"
+          fi
+
+      - name: Log automation actions
+        run: |
+          echo "🤖 Project automation completed for event: ${{ github.event_name }}"
+          echo "Action: ${{ github.event.action }}"
+          if [[ "${{ github.event_name }}" == "issues" ]]; then
+            echo "Issue: #${{ github.event.issue.number }}"
+          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "PR: #${{ github.event.pull_request.number }}"
+          fi 
