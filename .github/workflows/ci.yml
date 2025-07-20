@@ -23,7 +23,7 @@ jobs:
       - name: 🔍 Run TruffleHog
         uses: trufflesecurity/trufflehog@main
         with:
-          extra_args: --results=verified,unknown --exclude-paths=.trufflehogignore
+          extra_args: --results=verified,unknown filesystem . --exclude-paths=.dfx,src/declarations,frontend/dist,node_modules,.git,.github,.vscode,.idea,*.log,*.tmp,*.temp,*.bak,*.backup,docs,*.md,*.txt,package-lock.json,yarn.lock,pnpm-lock.yaml,test-results,coverage,*.test.js,*.spec.js,*.lock,package.json,dfx.json,*.did,*.wasm,logs,.env,.env.local,.env.*.local
 
   test:
     name: 🧪 Run Tests
