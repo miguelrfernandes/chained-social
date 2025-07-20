@@ -316,6 +316,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Discord**: https://discord.gg/chainedsocial
 - **Telegram**: https://t.me/chainedsocial
 
+## 📺 Videos
+
+- **[ChainedSocial Demo](https://www.youtube.com/watch?v=JiQCSyT3_HA)** - Watch our platform in action
+- **[ChainedSocial Walkthrough](https://www.youtube.com/watch?v=N4btismZ5I0)** - Detailed feature overview and demonstration
+
 ## 🚀 Built for ICP WCHL25
 
 This project is built for the World Computer Hacker League 2025 qualification round. It demonstrates the power of the Internet Computer Protocol for hosting complete, scalable social media platforms entirely on-chain.
