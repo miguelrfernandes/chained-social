@@ -8,6 +8,8 @@ import PostList from './components/PostList';
 import Header from './components/Header';
 import Toast from './components/Toast';
 import Profile from './components/Profile';
+import HeroSection from './components/HeroSection';
+import { useLogin } from './hooks/useLogin';
 
 function App() {
   const [error, setError] = useState(null);
@@ -28,7 +30,7 @@ function App() {
     window.showToast = (toastConfig) => {
       setToast(toastConfig);
     };
-    
+
     return () => {
       delete window.showToast;
     };
@@ -42,12 +44,12 @@ function App() {
     const initContentActor = async () => {
       try {
         console.log('🔄 Initializing content actor...');
-        
+
         // Try to import the content actor
         const { content, createActor } = await import('../../src/declarations/content');
-        
+
         let contentActor = content;
-        
+
         // If content is undefined, try to create it manually
         if (!contentActor) {
           console.log('⚠️ Content actor is undefined, trying to create manually...');
@@ -55,14 +57,14 @@ function App() {
           contentActor = createActor(canisterId);
           console.log('🔧 Created content actor manually with canister ID:', canisterId);
         }
-        
+
         if (!contentActor) {
           console.error('❌ Failed to create content actor');
           return;
         }
-        
+
         setContentActor(contentActor);
-        
+
         // Test the connection
         try {
           const testResult = await contentActor.getPosts(1, 0);
@@ -80,7 +82,7 @@ function App() {
       }
     };
     initContentActor();
-    
+
     // Initialize social graph actor
     const initSocialGraphActor = async () => {
       try {
@@ -101,7 +103,7 @@ function App() {
     setBackendActor(actor);
     setUserPrincipal(principal);
     setIsLoggedIn(true);
-    
+
     // Try to load existing user profile
     try {
       console.log("🔄 Loading existing user profile...");
@@ -142,16 +144,36 @@ function App() {
     setUserProfile(null);
     setProfileForm({ username: '', bio: '' });
     setUsernameAvailability(null);
-    
+
     // Clear localStorage session key for fresh identity on next login
     localStorage.removeItem('chainedsocial_session_key');
-    
+
     // Show logout message
     setToast({
       message: 'Logged out successfully!',
       type: 'success',
       duration: 3000
     });
+  };
+
+  // Use shared login hook
+  const { handleLogin, isLoggingIn, loginError, setLoginError } = useLogin(handleBackendActorSet);
+
+  // Show login errors as toasts
+  useEffect(() => {
+    if (loginError) {
+      setToast({
+        message: loginError,
+        type: 'error',
+        duration: 5000
+      });
+      setLoginError(null); // Clear the error after showing toast
+    }
+  }, [loginError, setLoginError]);
+
+  const onGetStarted = () => {
+    // Trigger the login process directly
+    handleLogin();
   };
 
   // Check username availability with debouncing
@@ -246,17 +268,19 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
-        <Header 
+        <Header
           isLoggedIn={isLoggedIn}
           userPrincipal={userPrincipal}
           userProfile={userProfile}
           setBackendActor={handleBackendActorSet}
           onLogout={handleLogout}
+          onLogin={handleLogin}
+          isLoggingIn={isLoggingIn}
         />
-        
+
         <Routes>
           <Route path="/profile/:username" element={
-            <Profile 
+            <Profile
               contentActor={contentActor}
               socialGraphActor={socialGraphActor}
               userProfile={userProfile}
@@ -267,7 +291,14 @@ function App() {
           <Route path="/" element={
             <div className="w-full max-w-4xl mx-auto p-8">
               <div className="bg-white rounded-lg shadow-lg p-8">
-                
+
+
+                                {/* Landing Page Hero Section */}
+                {!isLoggedIn && (
+                  <HeroSection onGetStarted={onGetStarted} isLoggingIn={isLoggingIn} />
+                )}
+
+                {/* Profile Setup Form */}
                 {isLoggedIn && !userProfile && (
                   <div className="mb-6 rounded-lg bg-blue-50 p-4 border border-blue-200">
                     <h3 className="text-blue-800 font-medium mb-3">👤 Set Your Profile</h3>
@@ -282,13 +313,12 @@ function App() {
                             id="username"
                             value={profileForm.username}
                             onChange={(e) => setProfileForm({ ...profileForm, username: e.target.value })}
-                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                              usernameAvailability === false 
-                                ? 'border-red-300 focus:ring-red-500' 
-                                : usernameAvailability === true 
-                                ? 'border-green-300 focus:ring-green-500'
-                                : 'border-gray-300'
-                            }`}
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${usernameAvailability === false
+                                ? 'border-red-300 focus:ring-red-500'
+                                : usernameAvailability === true
+                                  ? 'border-green-300 focus:ring-green-500'
+                                  : 'border-gray-300'
+                              }`}
                             placeholder="Enter your username"
                             required
                           />
@@ -349,131 +379,130 @@ function App() {
                   </div>
                 )}
 
-          {userProfile && (
-            <div className="mb-4 rounded-lg bg-purple-50 p-4 border border-purple-200">
-              <div className="flex items-center space-x-3 mb-3">
-                <Link 
-                  to={`/profile/${userProfile.name}`}
-                  className="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform"
-                >
-                  <span className="text-lg font-bold text-white">
-                    {userProfile.name.charAt(0).toUpperCase()}
-                  </span>
-                </Link>
-                <div className="flex-1">
-                  <h3 className="text-purple-800 font-medium">👤 Your Profile</h3>
-                  <p className="text-purple-600 text-sm">Username: {userProfile.name}</p>
-                  <p className="text-purple-600 text-sm">Bio: {userProfile.bio || 'No bio set'}</p>
-                  <p className="text-purple-600 text-sm">ID: {userProfile.id?.toString() || 'N/A'}</p>
-                </div>
-              </div>
-              <div className="flex space-x-2">
-                <Link 
-                  to={`/profile/${userProfile.name}`}
-                  className="inline-block px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors text-sm"
-                >
-                  View Full Profile →
-                </Link>
-                <button
-                  onClick={() => setProfileForm({ username: userProfile.name, bio: userProfile.bio || '' })}
-                  className="inline-block px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm"
-                >
-                  Edit Profile
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Profile Edit Form */}
-          {userProfile && profileForm.username && (
-            <div className="mb-6 rounded-lg bg-yellow-50 p-4 border border-yellow-200">
-              <h3 className="text-yellow-800 font-medium mb-3">✏️ Edit Your Profile</h3>
-              <form onSubmit={handleSetProfile} className="space-y-3">
-                <div>
-                  <label htmlFor="edit-username" className="block text-sm font-medium text-gray-700 mb-1">
-                    Username
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      id="edit-username"
-                      value={profileForm.username}
-                      onChange={(e) => setProfileForm({ ...profileForm, username: e.target.value })}
-                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        usernameAvailability === false 
-                          ? 'border-red-300 focus:ring-red-500' 
-                          : usernameAvailability === true 
-                          ? 'border-green-300 focus:ring-green-500'
-                          : 'border-gray-300'
-                      }`}
-                      placeholder="Enter your username"
-                      required
-                    />
-                    {isCheckingUsername && (
-                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                {userProfile && (
+                  <div className="mb-4 rounded-lg bg-purple-50 p-4 border border-purple-200">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <Link
+                        to={`/profile/${userProfile.name}`}
+                        className="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform"
+                      >
+                        <span className="text-lg font-bold text-white">
+                          {userProfile.name.charAt(0).toUpperCase()}
+                        </span>
+                      </Link>
+                      <div className="flex-1">
+                        <h3 className="text-purple-800 font-medium">👤 Your Profile</h3>
+                        <p className="text-purple-600 text-sm">Username: {userProfile.name}</p>
+                        <p className="text-purple-600 text-sm">Bio: {userProfile.bio || 'No bio set'}</p>
+                        <p className="text-purple-600 text-sm">ID: {userProfile.id?.toString() || 'N/A'}</p>
                       </div>
-                    )}
-                    {usernameAvailability === true && !isCheckingUsername && (
-                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                        <svg className="h-4 w-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                    )}
-                    {usernameAvailability === false && !isCheckingUsername && (
-                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                        <svg className="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </div>
-                    )}
+                    </div>
+                    <div className="flex space-x-2">
+                      <Link
+                        to={`/profile/${userProfile.name}`}
+                        className="inline-block px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors text-sm"
+                      >
+                        View Full Profile →
+                      </Link>
+                      <button
+                        onClick={() => setProfileForm({ username: userProfile.name, bio: userProfile.bio || '' })}
+                        className="inline-block px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm"
+                      >
+                        Edit Profile
+                      </button>
+                    </div>
                   </div>
-                  {usernameAvailability === true && !isCheckingUsername && (
-                    <p className="text-sm text-green-600 mt-1">✅ Username is available</p>
-                  )}
-                  {usernameAvailability === false && !isCheckingUsername && (
-                    <p className="text-sm text-red-600 mt-1">❌ Username is already taken</p>
-                  )}
-                  {usernameAvailability === 'current' && !isCheckingUsername && (
-                    <p className="text-sm text-blue-600 mt-1">ℹ️ This is your current username</p>
-                  )}
-                  {isCheckingUsername && (
-                    <p className="text-sm text-gray-500 mt-1">🔄 Checking availability...</p>
-                  )}
-                </div>
-                <div>
-                  <label htmlFor="edit-bio" className="block text-sm font-medium text-gray-700 mb-1">
-                    Bio
-                  </label>
-                  <textarea
-                    id="edit-bio"
-                    value={profileForm.bio}
-                    onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Tell us about yourself..."
-                    rows="3"
-                  />
-                </div>
-                <div className="flex space-x-2">
-                  <button
-                    type="submit"
-                    disabled={isSettingProfile || !profileForm.username.trim() || usernameAvailability === false}
-                    className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isSettingProfile ? '🔄 Updating Profile...' : '💾 Update Profile'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setProfileForm({ username: '', bio: '' })}
-                    className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
+                )}
+
+                {/* Profile Edit Form */}
+                {userProfile && profileForm.username && (
+                  <div className="mb-6 rounded-lg bg-yellow-50 p-4 border border-yellow-200">
+                    <h3 className="text-yellow-800 font-medium mb-3">✏️ Edit Your Profile</h3>
+                    <form onSubmit={handleSetProfile} className="space-y-3">
+                      <div>
+                        <label htmlFor="edit-username" className="block text-sm font-medium text-gray-700 mb-1">
+                          Username
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            id="edit-username"
+                            value={profileForm.username}
+                            onChange={(e) => setProfileForm({ ...profileForm, username: e.target.value })}
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${usernameAvailability === false
+                                ? 'border-red-300 focus:ring-red-500'
+                                : usernameAvailability === true
+                                  ? 'border-green-300 focus:ring-green-500'
+                                  : 'border-gray-300'
+                              }`}
+                            placeholder="Enter your username"
+                            required
+                          />
+                          {isCheckingUsername && (
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                            </div>
+                          )}
+                          {usernameAvailability === true && !isCheckingUsername && (
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                              <svg className="h-4 w-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                          )}
+                          {usernameAvailability === false && !isCheckingUsername && (
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                              <svg className="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                        {usernameAvailability === true && !isCheckingUsername && (
+                          <p className="text-sm text-green-600 mt-1">✅ Username is available</p>
+                        )}
+                        {usernameAvailability === false && !isCheckingUsername && (
+                          <p className="text-sm text-red-600 mt-1">❌ Username is already taken</p>
+                        )}
+                        {usernameAvailability === 'current' && !isCheckingUsername && (
+                          <p className="text-sm text-blue-600 mt-1">ℹ️ This is your current username</p>
+                        )}
+                        {isCheckingUsername && (
+                          <p className="text-sm text-gray-500 mt-1">🔄 Checking availability...</p>
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor="edit-bio" className="block text-sm font-medium text-gray-700 mb-1">
+                          Bio
+                        </label>
+                        <textarea
+                          id="edit-bio"
+                          value={profileForm.bio}
+                          onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Tell us about yourself..."
+                          rows="3"
+                        />
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          type="submit"
+                          disabled={isSettingProfile || !profileForm.username.trim() || usernameAvailability === false}
+                          className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isSettingProfile ? '🔄 Updating Profile...' : '💾 Update Profile'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setProfileForm({ username: '', bio: '' })}
+                          className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                )}
 
                 {/* Debug Info for Codespaces */}
                 {window.location.hostname.includes('github.dev') && (
@@ -492,7 +521,7 @@ function App() {
                 {userProfile && contentActor && (
                   <div className="mb-6">
                     <h2 className="text-2xl font-bold text-gray-800 mb-4">📝 Create a Post</h2>
-                    <PostForm 
+                    <PostForm
                       contentActor={contentActor}
                       userProfile={userProfile}
                       onPostCreated={handlePostCreated}
@@ -504,24 +533,24 @@ function App() {
                 {contentActor && (
                   <div className="mb-6">
                     <h2 className="text-2xl font-bold text-gray-800 mb-4">📰 Recent Posts</h2>
-                    <PostList 
+                    <PostList
                       contentActor={contentActor}
                       userProfile={userProfile}
                       onPostCreated={handlePostCreated}
                     />
                   </div>
                 )}
-                
+
                 <p className="text-center text-gray-600 mt-6">
                   A social network hosted onchain on ICP.
                 </p>
-                
+
                 {error && <p className="mt-4 text-center text-red-500">Error: {error}</p>}
               </div>
             </div>
           } />
         </Routes>
-        
+
         {/* Toast Notification */}
         {toast && (
           <Toast

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import NfidLogin from './Nfidlogin';
 
-function Header({ isLoggedIn, userPrincipal, userProfile, setBackendActor, onLogout }) {
+function Header({ isLoggedIn, userPrincipal, userProfile, setBackendActor, onLogout, onLogin, isLoggingIn }) {
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   const handleLogout = () => {
@@ -100,7 +99,13 @@ function Header({ isLoggedIn, userPrincipal, userProfile, setBackendActor, onLog
               </div>
             </>
           ) : (
-            <NfidLogin setBackendActor={setBackendActor} />
+            <button
+              onClick={onLogin}
+              disabled={isLoggingIn}
+              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white border-none rounded-lg cursor-pointer shadow-sm transition-all duration-300 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+            >
+              {isLoggingIn ? "🔄 Connecting..." : "Connect to start posting"}
+            </button>
           )}
         </div>
       </div>
