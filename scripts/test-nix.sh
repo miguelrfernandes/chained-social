@@ -26,7 +26,7 @@ echo "📦 Testing DFX installation..."
 if command -v dfx &> /dev/null; then
     dfx --version
 else
-    echo "DFX not installed - will be installed when needed"
+    echo "DFX not installed - run ./scripts/install-dfx.sh to install"
 fi
 
 echo "✅ Nix environment test completed!" 

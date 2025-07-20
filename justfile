@@ -6,7 +6,7 @@ setup:
     @echo "📦 Installing Node.js..."
     ./scripts/install-nodejs.sh
     @echo "📦 Installing DFX..."
-    sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)" -- --yes
+    ./scripts/install-dfx.sh
     @echo "📦 Installing frontend dependencies..."
     cd frontend && npm install
     @echo "🏗️ Building frontend assets..."

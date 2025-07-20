@@ -25,13 +25,9 @@ jobs:
           python-version: '3.11'
 
       - name: 📦 Install dfx
-        run: |
-          # Install dfx using the official installer
-          DFX_VERSION=0.27.0 sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)" -- --yes
-          echo "$HOME/.local/share/dfx/bin" >> $GITHUB_PATH
-          
-          # Verify installation
-          dfx --version
+        uses: dfinity/setup-dfx@main
+        with:
+          dfx-version: "0.27.0"
 
       - name: 🔧 Setup dfx environment
         run: |

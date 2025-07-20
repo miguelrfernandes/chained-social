@@ -42,7 +42,7 @@ The Nix CI workflow (`ci-nix.yml`) automatically:
 - ✅ **Enables flakes** for modern Nix features
 - ✅ **Caches Nix store** for faster builds
 - ✅ **Installs Node.js** using official installer
-- ✅ **Installs DFX** using official installer
+- ✅ **Installs DFX** using official DFinity GitHub Action
 - ✅ **Runs all tests** in reproducible environment
 - ✅ **Deploys to playground** for preview
 
@@ -53,7 +53,7 @@ Defines the development environment with:
 - **Python 3.11** - Backend utilities
 - **Development tools** - Git, curl, build tools
 - **Node.js installation** - Via official installer to avoid compilation issues
-- **DFX installation** - Via official installer when needed
+- **DFX installation** - Via official DFinity GitHub Action
 
 ### CI Workflow Features
 - **Multi-stage pipeline** - Test → Build → Deploy
@@ -73,7 +73,7 @@ nix develop
 ./scripts/install-nodejs.sh
 
 # Install DFX (if needed)
-sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
+./scripts/install-dfx.sh
 
 # Run DFX commands
 dfx start --clean --background
@@ -171,7 +171,7 @@ dfx start --clean --background
 
 ### Recent Fixes
 - ✅ **Fixed Node.js compilation issues** - Now uses official installer
-- ✅ **Fixed DFX download URLs** - Now uses official installer
+- ✅ **Fixed DFX installation issues** - Now uses official DFinity GitHub Action
 - ✅ **Simplified flake.nix** - Removed problematic packages
 - ✅ **Improved cache strategy** - Better fallback keys
 - ✅ **Added cache debugging** - Better visibility into cache behavior 
