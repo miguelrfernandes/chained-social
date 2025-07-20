@@ -25,8 +25,8 @@
           pname = "dfx";
           version = dfxVersion;
           src = pkgs.fetchurl {
-            url = "https://github.com/dfinity/dfx/releases/download/${dfxVersion}/dfx-${dfxVersion}-x86_64-unknown-linux-gnu.tar.gz";
-            sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # Will be updated by nix-prefetch-url
+            url = "https://github.com/dfinity/dfx/releases/download/${dfxVersion}/dfx-x86_64-unknown-linux-gnu.tar.gz";
+            sha256 = "sha256-kDV8NlVX0FFUTPAu5y5jhjLa+W7K/K5oyMkFBZAX+5A=";
           };
           nativeBuildInputs = [ pkgs.makeWrapper ];
           installPhase = ''
