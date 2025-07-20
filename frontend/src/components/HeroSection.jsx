@@ -62,9 +62,14 @@ function HeroSection({ onGetStarted, isLoggingIn = false }) {
               >
                 {isLoggingIn ? "🔄 Connecting..." : "Get Started"}
               </button>
-              <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+              <a 
+                href="https://github.com/miguelrfernandes/chained-social" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium inline-block"
+              >
                 Learn More
-              </button>
+              </a>
             </div>
           </div>
 

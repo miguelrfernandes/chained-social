@@ -47,7 +47,7 @@ The Nix CI workflow (`ci-nix.yml`) automatically:
 ### `flake.nix`
 Defines the development environment with:
 - **DFX 0.27.0** - Internet Computer SDK
-- **Node.js 18** - Frontend development
+- **Node.js 20** - Frontend development
 - **Python 3.11** - Backend utilities
 - **Development tools** - Git, curl, build tools
 

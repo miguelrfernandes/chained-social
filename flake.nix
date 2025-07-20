@@ -46,7 +46,7 @@
             dfx
             
             # Node.js ecosystem
-            nodejs_18
+            nodejs_20
             nodePackages.npm
             
             # Python ecosystem

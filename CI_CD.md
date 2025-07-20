@@ -76,7 +76,7 @@ The pipeline generates several artifacts:
 
 ### Environment Variables
 - `DFX_VERSION`: dfx version (0.27.0)
-- `NODE_VERSION`: Node.js version (18)
+- `NODE_VERSION`: Node.js version (20)
 
 ### Dependencies
 - **dfx**: Internet Computer SDK
@@ -167,5 +167,5 @@ dfx logs socialgraph
 
 - GitHub repository with Actions enabled
 - dfx 0.27.0 or later
-- Node.js 18 or later
+- Node.js 20 or later
 - Python 3.11 or later 
