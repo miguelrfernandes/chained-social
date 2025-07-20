@@ -17,7 +17,6 @@ function App() {
   const [error, setError] = useState(null);
   const [contentActor, setContentActor] = useState(null);
   const [toast, setToast] = useState(null);
-  const [socialGraphActor, setSocialGraphActor] = useState(null);
 
   // Expose toast function globally for components to use
   useEffect(() => {
@@ -76,19 +75,6 @@ function App() {
       }
     };
     initContentActor();
-
-    // Initialize social graph actor
-    const initSocialGraphActor = async () => {
-      try {
-        console.log('🔄 Initializing social graph actor...');
-        const { socialgraph } = await import('../../src/declarations/socialgraph');
-        setSocialGraphActor(socialgraph);
-        console.log('✅ Social graph actor initialized successfully');
-      } catch (err) {
-        console.error('❌ Failed to initialize social graph actor:', err);
-      }
-    };
-    initSocialGraphActor();
   }, []);
 
 
@@ -117,7 +103,6 @@ function App() {
             <Route path="/profile/:username" element={
               <Profile
                 contentActor={contentActor}
-                socialGraphActor={socialGraphActor}
               />
             } />
             <Route path="/" element={

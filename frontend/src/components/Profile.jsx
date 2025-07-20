@@ -3,8 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import PostList from './PostList';
 import { useAuth } from '../contexts/AuthContext';
 
-function Profile({ contentActor, socialGraphActor }) {
-  const { userProfile, isLoggedIn, userPrincipal } = useAuth();
+function Profile({ contentActor }) {
+  const { userProfile, isLoggedIn, userPrincipal, socialGraphActor } = useAuth();
   const { username } = useParams();
   const [profileData, setProfileData] = useState(null);
   const [userPosts, setUserPosts] = useState([]);

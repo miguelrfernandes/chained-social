@@ -171,7 +171,7 @@ export function useLogin(setBackendActor) {
       const backendActor = createActor(canisterId, { agent });
       
       console.log("✅ Login successful, Principal:", principal);
-      setBackendActor(backendActor, principal);
+      setBackendActor(backendActor, principal, agent);
       
     } catch (error) {
       console.error("❌ Login error:", error);

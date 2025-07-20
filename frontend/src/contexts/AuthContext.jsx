@@ -5,6 +5,7 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [backendActor, setBackendActor] = useState(null);
+  const [socialGraphActor, setSocialGraphActor] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userPrincipal, setUserPrincipal] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
@@ -13,11 +14,12 @@ export function AuthProvider({ children }) {
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   const [isSettingProfile, setIsSettingProfile] = useState(false);
 
-  const handleBackendActorSet = async (actor, principal) => {
+  const handleBackendActorSet = async (actor, principal, agent) => {
     console.log("🔍 handleBackendActorSet called with:", {
       actor: !!actor,
       principal,
-      principalType: typeof principal
+      principalType: typeof principal,
+      agent: !!agent
     });
 
     setBackendActor(actor);
@@ -28,6 +30,17 @@ export function AuthProvider({ children }) {
       isLoggedIn: true,
       userPrincipal: principal
     });
+
+    // Create socialGraphActor with the same identity
+    try {
+      console.log("🔄 Creating socialGraphActor with user identity...");
+      const { canisterId, createActor } = await import('../../../src/declarations/socialgraph');
+      const socialGraphActor = createActor(canisterId, { agent });
+      setSocialGraphActor(socialGraphActor);
+      console.log("✅ SocialGraphActor created with user identity");
+    } catch (socialGraphError) {
+      console.error("❌ Failed to create socialGraphActor:", socialGraphError);
+    }
 
     // Try to load existing user profile
     try {
@@ -167,6 +180,7 @@ export function AuthProvider({ children }) {
   const value = {
     // State
     backendActor,
+    socialGraphActor,
     isLoggedIn,
     userPrincipal,
     userProfile,
