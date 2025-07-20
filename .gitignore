@@ -13,3 +13,9 @@ target/
 
 # generated files
 **/declarations/
+
+# Nix
+result
+result-*
+.direnv
+.envrc
