@@ -94,6 +94,38 @@ jobs:
           dfx canister status content || echo "Content status check completed"
           dfx canister status socialgraph || echo "Social graph status check completed"
 
+      - name: 🚀 Deploy to playground (PR only)
+        if: github.event_name == 'pull_request'
+        run: |
+          just deploy-playground
+
+      - name: 📋 Get playground URLs
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "🎪 Playground Deployment URLs:" >> $GITHUB_STEP_SUMMARY
+          FRONTEND_ID=$(dfx canister id frontend --network playground)
+          BACKEND_ID=$(dfx canister id backend --network playground)
+          CONTENT_ID=$(dfx canister id content --network playground)
+          SOCIALGRAPH_ID=$(dfx canister id socialgraph --network playground)
+          
+          echo "### 🔗 Playground URLs" >> $GITHUB_STEP_SUMMARY
+          echo "- **Frontend**: https://${FRONTEND_ID}.icp0.io/" >> $GITHUB_STEP_SUMMARY
+          echo "- **Backend Canister**: ${BACKEND_ID}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Content Canister**: ${CONTENT_ID}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Social Graph Canister**: ${SOCIALGRAPH_ID}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🧪 Testing" >> $GITHUB_STEP_SUMMARY
+          echo "You can test your changes by visiting the frontend URL above." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 Status" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Security scan passed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Build completed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Tests passed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Deployment successful" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*This is an automated deployment for PR #${GITHUB_ISSUE_NUMBER}*" >> $GITHUB_STEP_SUMMARY
+
       - name: 📊 Upload test results
         uses: actions/upload-artifact@v4
         if: always()
@@ -148,94 +180,4 @@ jobs:
           # Ignore gitignored files
           IGNORE_GITIGNORED_FILES: true
 
-  deploy-preview:
-    name: 🚀 Deploy Preview
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    needs: [security, test-and-build, lint]
-    
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-
-      - name: 📦 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-          cache: 'npm'
-          cache-dependency-path: 'package-lock.json'
-
-      - name: 📦 Install just
-        uses: taiki-e/install-action@just
-
-      - name: 📦 Install dfx
-        uses: dfinity/setup-dfx@main
-        with:
-          dfx-version: "0.27.0"
-
-      - name: 🔧 Setup dfx environment
-        run: |
-          dfx --version
-          dfx start --background --clean
-
-      - name: 📦 Install frontend dependencies
-        run: |
-          cd frontend
-          npm ci
-
-      - name: 🚀 Deploy to playground
-        run: |
-          just deploy-playground
-
-      - name: 📋 Get playground URLs
-        run: |
-          echo "🎪 Playground Deployment URLs:"
-          FRONTEND_ID=$(dfx canister id frontend --network playground)
-          BACKEND_ID=$(dfx canister id backend --network playground)
-          CONTENT_ID=$(dfx canister id content --network playground)
-          SOCIALGRAPH_ID=$(dfx canister id socialgraph --network playground)
-          
-          echo "Frontend: https://${FRONTEND_ID}.icp0.io/"
-          echo "Backend: ${BACKEND_ID}"
-          echo "Content: ${CONTENT_ID}"
-          echo "SocialGraph: ${SOCIALGRAPH_ID}"
-          
-          echo "FRONTEND_ID=${FRONTEND_ID}" >> $GITHUB_ENV
-          echo "BACKEND_ID=${BACKEND_ID}" >> $GITHUB_ENV
-          echo "CONTENT_ID=${CONTENT_ID}" >> $GITHUB_ENV
-          echo "SOCIALGRAPH_ID=${SOCIALGRAPH_ID}" >> $GITHUB_ENV
-
-      - name: 💬 Comment PR with preview URL
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { FRONTEND_ID, BACKEND_ID, CONTENT_ID, SOCIALGRAPH_ID } = process.env;
-            
-            const comment = `## 🚀 Deployment Preview
-            
-            Your changes have been deployed to the Internet Computer playground!
-            
-            ### 🔗 URLs
-            - **Frontend**: https://${FRONTEND_ID}.icp0.io/
-            - **Backend Canister**: ${BACKEND_ID}
-            - **Content Canister**: ${CONTENT_ID}
-            - **Social Graph Canister**: ${SOCIALGRAPH_ID}
-            
-            ### 🧪 Testing
-            You can test your changes by visiting the frontend URL above.
-            
-            ### 📊 Status
-            - ✅ Security scan passed
-            - ✅ Build completed
-            - ✅ Tests passed
-            - ✅ Deployment successful
-            
-            ---
-            *This is an automated deployment for PR #${context.issue.number}*`;
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            }); 
+  

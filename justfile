@@ -45,14 +45,6 @@ deploy-playground:
     @dfx canister id content --network playground 2>/dev/null && echo "   Content: $$(dfx canister id content --network playground)" || echo "   Content: Not deployed"
     @dfx canister id socialgraph --network playground 2>/dev/null && echo "   SocialGraph: $$(dfx canister id socialgraph --network playground)" || echo "   SocialGraph: Not deployed"
 
-# 🛠️ Build: Build frontend and generate types
-build:
-    @echo "🏗️ Building project..."
-    cd frontend && npm install
-    cd frontend && npm run build
-    dfx generate
-    @echo "✅ Build complete!"
-
 # 🔍 Status: Check project status
 status:
     @echo "🔍 Checking project status..."
