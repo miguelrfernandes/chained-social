@@ -306,7 +306,7 @@ actor {
     public shared ({ caller = _ }) func testFollowUser() : async Bool {
         Debug.print("🧪 Testing followUser...");
         
-        let testUser1 = Principal.fromText("2vxsx-fae");
+
         let testUser2 = Principal.fromText("3lsaa-3rti4-nxknq-3bgcr-orfvo-izh54-ynkrn-lo4a7-dew2m-ztmea-aae");
         
         let result = await followUser(testUser2);
@@ -415,7 +415,6 @@ actor {
     public shared ({ caller = _ }) func testMultipleFollows() : async Bool {
         Debug.print("🧪 Testing multiple follows...");
         
-        let testUser1 = Principal.fromText("2vxsx-fae");
         let testUser2 = Principal.fromText("3lsaa-3rti4-nxknq-3bgcr-orfvo-izh54-ynkrn-lo4a7-dew2m-ztmea-aae");
         let testUser3 = Principal.fromText("2vxsx-fae");
         
@@ -451,14 +450,13 @@ actor {
     public shared ({ caller = _ }) func testGetFollowing() : async Bool {
         Debug.print("🧪 Testing getFollowing...");
         
-        let testUser1 = Principal.fromText("2vxsx-fae");
         let testUser2 = Principal.fromText("3lsaa-3rti4-nxknq-3bgcr-orfvo-izh54-ynkrn-lo4a7-dew2m-ztmea-aae");
         
         // Follow a user
         let _ = await followUser(testUser2);
         
         // Get following list
-        let following = await getFollowing(testUser1);
+        let following = await getFollowing(Principal.fromText("2vxsx-fae"));
         
         if (following.size() > 0) {
             Debug.print("✅ testGetFollowing passed - Following list correct");

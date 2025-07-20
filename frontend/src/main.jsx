@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import '../index.css';
-import NfidLogin from './components/Nfidlogin';
+
 import PostForm from './components/PostForm';
 import PostList from './components/PostList';
 import Header from './components/Header';
