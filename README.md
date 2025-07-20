@@ -137,7 +137,6 @@ just
 - `just deploy` - Deploy all canisters
 - `just test` - Run unit tests
 - `just urls` - Show current canister URLs
-- `just explain-urls` - Understand different URL types
 - `just troubleshoot` - Diagnose deployment issues
 - `just status` - Check project status
 
