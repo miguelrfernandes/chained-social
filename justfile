@@ -1,18 +1,14 @@
 # 🚀 Justfile for Chained Social ICP Project
 
-# 🛠️ Setup: Complete project initialization and deployment
+# 🚀 Setup: Initial project setup (install dependencies, build, deploy)
 setup:
-    @echo "🚀 Setting up Chained Social project..."
+    @echo "🚀 Setting up ChainedSocial project..."
+    @echo "📦 Installing Node.js..."
+    ./scripts/install-nodejs.sh
+    @echo "📦 Installing DFX..."
+    sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)" -- --yes
     @echo "📦 Installing frontend dependencies..."
     cd frontend && npm install
-    @echo "📝 Creating stub declarations for build..."
-    mkdir -p src/declarations/content src/declarations/backend src/declarations/socialgraph src/declarations/frontend
-    echo 'export const content = { createPost: async () => ({ err: "Not available" }), getPosts: async () => ({ err: "Not available" }), getPost: async () => ({ err: "Not available" }), getUserPosts: async () => ({ err: "Not available" }), likePost: async () => ({ err: "Not available" }), addComment: async () => ({ err: "Not available" }), getPostCount: async () => 0 };' > src/declarations/content/index.js
-    echo 'export const backend = { setUserProfile: async () => ({ err: "Not available" }), getUserProfile: async () => ({ err: "Not available" }), getUserProfileByUsername: async () => ({ err: "Not available" }), addUserResult: async () => ({ err: "Not available" }), getUserResults: async () => ({ err: "Not available" }), outcall_ai_model_for_sentiment_analysis: async () => ({ err: "Not available" }) };' > src/declarations/backend/index.js
-    echo 'export const socialgraph = { followUser: async () => ({ err: "Not available" }), unfollowUser: async () => ({ err: "Not available" }), sendConnectionRequest: async () => ({ err: "Not available" }), respondToConnectionRequest: async () => ({ err: "Not available" }), addInteraction: async () => ({ err: "Not available" }), getFollowers: async () => [], getFollowing: async () => [], getConnections: async () => [], getUserStats: async () => ({ followersCount: 0, followingCount: 0, connectionsCount: 0, interactionsReceived: 0, interactionsGiven: 0 }), getSocialGraph: async () => ({ followers: [], following: [], connections: [], interactions: [] }), isFollowing: async () => false, areConnected: async () => false };' > src/declarations/socialgraph/index.js
-    echo 'export const canisterId = "stub-canister-id";' >> src/declarations/backend/index.js
-    echo 'export const createActor = (canisterId, options) => ({ stub: true });' >> src/declarations/backend/index.js
-    echo 'export const frontend = {};' > src/declarations/frontend/index.js
     @echo "🏗️ Building frontend assets..."
     cd frontend && npm run build
     @echo "🚀 Starting dfx and deploying canisters..."

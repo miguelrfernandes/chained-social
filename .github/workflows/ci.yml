@@ -26,18 +26,12 @@ jobs:
 
       - name: 📦 Install dfx
         run: |
-          # Install dfx non-interactively
+          # Install dfx using the official installer
           DFX_VERSION=0.27.0 sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)" -- --yes
           echo "$HOME/.local/share/dfx/bin" >> $GITHUB_PATH
           
-          # Alternative installation method if the above fails
-          if ! command -v dfx &> /dev/null; then
-            echo "Fallback: Installing dfx via direct download..."
-            mkdir -p $HOME/.local/bin
-            curl -L https://github.com/dfinity/dfx/releases/download/0.27.0/dfx-0.27.0-x86_64-unknown-linux-gnu.tar.gz | tar -xz
-            mv dfx $HOME/.local/bin/
-            echo "$HOME/.local/bin" >> $GITHUB_PATH
-          fi
+          # Verify installation
+          dfx --version
 
       - name: 🔧 Setup dfx environment
         run: |

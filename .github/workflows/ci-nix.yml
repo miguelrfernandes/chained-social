@@ -28,19 +28,53 @@ jobs:
           path: /nix/store
           key: nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}
           restore-keys: |
+            nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}
             nix-store-${{ runner.os }}-
+            nix-store-
+          enableCrossOsArchive: false
+          fail-on-cache-miss: false
+          lookup-only: false
+          save-always: true
+
+      - name: 🔧 Setup Nix config cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.config/nix
+          key: nix-config-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-keys: |
+            nix-config-${{ runner.os }}-
+
+      - name: 🔍 Debug cache info
+        run: |
+          echo "Cache key: nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}"
+          echo "Runner OS: ${{ runner.os }}"
+          echo "Flake.lock hash: ${{ hashFiles('flake.lock') }}"
+          echo "Cache path: /nix/store"
+          ls -la /nix/store | head -10 || echo "Nix store not found (this is normal on first run)"
 
       - name: 🔧 Enable flakes
         run: |
           mkdir -p ~/.config/nix
           echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 
+      - name: 🔧 Install DFX
+        run: |
+          # Install dfx using the official installer
+          DFX_VERSION=0.27.0 sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)" -- --yes
+          echo "$HOME/.local/share/dfx/bin" >> $GITHUB_PATH
+          dfx --version
+
+      - name: 🔧 Install Node.js
+        run: |
+          # Install Node.js using the official installer
+          curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          node --version
+          npm --version
+
       - name: 🔧 Install dependencies
         run: |
           nix develop --command echo "Dependencies installed"
-          nix develop --command dfx --version
-          nix develop --command node --version
-          nix develop --command npm --version
           nix develop --command python3 --version
 
       - name: 🔧 Setup dfx environment
@@ -117,7 +151,9 @@ jobs:
           path: /nix/store
           key: nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}
           restore-keys: |
+            nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}
             nix-store-${{ runner.os }}-
+            nix-store-
 
       - name: 🔧 Enable flakes
         run: |
@@ -189,7 +225,9 @@ jobs:
           path: /nix/store
           key: nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}
           restore-keys: |
+            nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}
             nix-store-${{ runner.os }}-
+            nix-store-
 
       - name: 🔧 Enable flakes
         run: |
@@ -239,7 +277,9 @@ jobs:
           path: /nix/store
           key: nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}
           restore-keys: |
+            nix-store-${{ runner.os }}-${{ hashFiles('flake.lock') }}
             nix-store-${{ runner.os }}-
+            nix-store-
 
       - name: 🔧 Enable flakes
         run: |

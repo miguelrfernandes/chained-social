@@ -29,9 +29,11 @@ echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 # Enter development environment
 nix develop
 
-# Or run specific commands
-nix develop --command dfx --version
-nix develop --command npm install
+# Install Node.js (if needed)
+./scripts/install-nodejs.sh
+
+# Install DFX (if needed)
+sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
 ```
 
 ### CI/CD Pipeline
@@ -39,6 +41,8 @@ The Nix CI workflow (`ci-nix.yml`) automatically:
 - ✅ **Installs Nix** with DeterminateSystems installer
 - ✅ **Enables flakes** for modern Nix features
 - ✅ **Caches Nix store** for faster builds
+- ✅ **Installs Node.js** using official installer
+- ✅ **Installs DFX** using official installer
 - ✅ **Runs all tests** in reproducible environment
 - ✅ **Deploys to playground** for preview
 
@@ -46,14 +50,15 @@ The Nix CI workflow (`ci-nix.yml`) automatically:
 
 ### `flake.nix`
 Defines the development environment with:
-- **DFX 0.27.0** - Internet Computer SDK
-- **Node.js 20** - Frontend development
 - **Python 3.11** - Backend utilities
 - **Development tools** - Git, curl, build tools
+- **Node.js installation** - Via official installer to avoid compilation issues
+- **DFX installation** - Via official installer when needed
 
 ### CI Workflow Features
 - **Multi-stage pipeline** - Test → Build → Deploy
 - **Nix caching** - Faster subsequent runs
+- **Official installers** - Node.js and DFX via official installers
 - **Playground deployment** - Automatic preview for PRs
 - **Integration testing** - Inter-canister communication
 
@@ -63,6 +68,12 @@ Defines the development environment with:
 ```bash
 # Enter development shell
 nix develop
+
+# Install Node.js (if needed)
+./scripts/install-nodejs.sh
+
+# Install DFX (if needed)
+sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
 
 # Run DFX commands
 dfx start --clean --background
@@ -87,6 +98,12 @@ nix develop --command bash -c 'dfx build && dfx test'
 nix develop --command bash -c 'dfx deploy --playground'
 ```
 
+### Testing Nix Environment
+```bash
+# Run the test script
+./scripts/test-nix.sh
+```
+
 ## 🔍 Troubleshooting
 
 ### Nix Installation Issues
@@ -99,54 +116,62 @@ mkdir -p ~/.config/nix
 echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 ```
 
-### Cache Issues
+### Node.js Issues
 ```bash
-# Clear Nix cache
-nix store gc
+# Install Node.js using official installer
+./scripts/install-nodejs.sh
 
-# Rebuild environment
-nix develop --command echo "Rebuilt"
+# Or manually install
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
 ```
+
+### Cache Issues
+
+#### Common Cache Problems
+1. **Cache Miss on First Run**: Normal behavior - cache will be created
+2. **Cache Key Changes**: Happens when `flake.lock` is updated
+3. **Cache Size Limits**: GitHub Actions has cache size limits
+
+#### Debugging Cache Issues
+```bash
+# Check cache key generation
+echo "Cache key: nix-store-$(uname -s)-$(sha256sum flake.lock | cut -d' ' -f1)"
+
+# Check Nix store size
+du -sh /nix/store
+
+# List cached packages
+ls /nix/store | head -20
+```
+
+#### Cache Optimization Strategies
+1. **Use `save-always: true`**: Ensures cache is updated even on failures
+2. **Multiple restore-keys**: Provides fallback cache options
+3. **Separate config cache**: Caches Nix configuration separately
+4. **Cache warming**: Pre-builds common dependencies
+
+#### Cache Performance Tips
+- **First run**: ~5-10 minutes (downloads)
+- **Subsequent runs**: ~2-3 minutes (cached)
+- **Cache hit rate**: Should be >80% after first run
+- **Cache size**: Monitor for GitHub Actions limits
 
 ### DFX Issues
 ```bash
+# Install DFX using official installer
+sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
+
 # Check DFX installation
-nix develop --command dfx --version
+dfx --version
 
 # Reset DFX environment
-nix develop --command bash -c 'dfx start --clean --background'
+dfx start --clean --background
 ```
 
-## 📊 Performance
-
-### Caching Benefits
-- **Nix store cache** - Shared across CI runs
-- **Dependency cache** - No re-downloading
-- **Build cache** - Faster subsequent builds
-
-### Expected Times
-- **First run**: ~5-10 minutes (downloads)
-- **Subsequent runs**: ~2-3 minutes (cached)
-- **Dependency updates**: ~1-2 minutes (incremental)
-
-## 🔄 Migration from Docker
-
-### Benefits of Migration
-- ✅ **No Docker build failures** - Direct tool installation
-- ✅ **Better caching** - Nix store vs Docker layers
-- ✅ **Reproducible** - Exact same environment
-- ✅ **ICP ecosystem** - Used by DFinity projects
-
-### Migration Steps
-1. **Add `flake.nix`** - Define development environment
-2. **Update CI workflow** - Use Nix instead of Docker
-3. **Test locally** - `nix develop`
-4. **Deploy** - Monitor CI performance
-
-## 📚 References
-
-- [Nix CI Documentation](https://nix.dev/tutorials/continuous-integration-github-actions)
-- [DFinity Motoko CI](https://github.com/dfinity/motoko/pull/5067/)
-- [DeterminateSystems Nix Installer](https://github.com/DeterminateSystems/nix-installer)
-- [Nix Flakes](https://nixos.wiki/wiki/Flakes)
-- [GitHub Actions Nix](https://github.com/DeterminateSystems/nix-installer-action) 
+### Recent Fixes
+- ✅ **Fixed Node.js compilation issues** - Now uses official installer
+- ✅ **Fixed DFX download URLs** - Now uses official installer
+- ✅ **Simplified flake.nix** - Removed problematic packages
+- ✅ **Improved cache strategy** - Better fallback keys
+- ✅ **Added cache debugging** - Better visibility into cache behavior 
