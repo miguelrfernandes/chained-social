@@ -159,7 +159,7 @@ This project includes a comprehensive GitHub Actions CI/CD pipeline that:
 - Performs code quality checks
 - Deploys preview environments for pull requests
 
-See [CI_CD.md](CI_CD.md) for detailed documentation.
+See [CI_CD.md](docs/CI_CD.md) for detailed documentation.
 
 ## 📁 Project Structure
 
@@ -177,11 +177,27 @@ chainedsocial/
 │   │   ├── components/
 │   │   └── main.jsx
 │   └── package.json
+├── docs/            # Documentation
+│   ├── README.md    # Documentation index
+│   ├── BUILD.md     # Build instructions
+│   ├── CI_CD.md     # CI/CD setup
+│   ├── LOGGING.md   # Enhanced logging guide
+│   └── NIX-CI.md    # Nix build system
 ├── scripts/          # Utility scripts
 ├── justfile          # Task runner configuration
 ├── dfx.json          # DFX project configuration
 └── README.md         # This file
 ```
+
+## 📚 Documentation
+
+For comprehensive documentation, see the [docs/](docs/) directory:
+
+- **[Documentation Index](docs/README.md)** - Complete documentation overview
+- **[Build Guide](docs/BUILD.md)** - Build and deployment instructions
+- **[CI/CD Setup](docs/CI_CD.md)** - Continuous integration configuration
+- **[Logging Guide](docs/LOGGING.md)** - Enhanced Pino logging setup
+- **[Nix Configuration](docs/NIX-CI.md)** - Build system documentation
 
 ## 🏆 Current Features
 
