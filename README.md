@@ -332,8 +332,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📺 Videos
 
-- **[ChainedSocial Demo](https://www.youtube.com/watch?v=JiQCSyT3_HA)** - Watch our platform in action
-- **[ChainedSocial Walkthrough](https://www.youtube.com/watch?v=N4btismZ5I0)** - Detailed feature overview and demonstration
+- **[ChainedSocial Demo](https://youtu.be/JiQCSyT3_HA)** - Watch our platform in action
+- **[ChainedSocial Deployment and Walkthrough](https://youtu.be/N4btismZ5I0)** - Detailed feature overview and demonstration
 
 ## 🚀 Built for ICP WCHL25
 
