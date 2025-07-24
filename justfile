@@ -84,14 +84,27 @@ urls:
 # 🌿 Branch: Create a new feature branch with descriptive name
 branch type description:
     @echo "🌿 Creating new feature branch..."
-    @echo "Usage: just branch <type> <description>"
-    @echo ""
-    @echo "Types: feature, fix, docs, refactor, test, chore"
-    @echo "Examples:"
-    @echo "  just branch feature user-auth"
-    @echo "  just branch fix login-bug"
-    @echo "  just branch docs api-docs"
-    @./scripts/create-feature-branch.sh {{type}} {{description}}
+    git checkout main
+    git pull origin main
+    git checkout -b {{type}}/{{description}}
+    @echo "✅ Branch '{{type}}/{{description}}' created!"
+    @echo "💡 Next: Make changes, then 'just pr <title>' to create PR"
+
+# 🚀 PR: Create a pull request for current branch
+pr title body="":
+    @echo "🚀 Creating pull request..."
+    git push origin $(git branch --show-current)
+    gh pr create --title "{{title}}" --body "{{body}}" --head $(git branch --show-current)
+    @echo "✅ PR created! View at: $(gh pr view --json url --jq '.url')"
+
+# 📋 PR-New: Create branch and PR in one command
+pr-new type description title body="":
+    @echo "📋 Creating branch and PR..."
+    git checkout main
+    git pull origin main
+    git checkout -b {{type}}/{{description}}
+    @echo "✅ Branch '{{type}}/{{description}}' created!"
+    @echo "💡 Make your changes, then run: just pr '{{title}}' '{{body}}'"
 
 # 🔧 Troubleshoot: Diagnose common issues
 troubleshoot:
