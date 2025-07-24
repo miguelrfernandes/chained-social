@@ -28,6 +28,18 @@ just branch test unit-tests
 just branch chore dependency-updates
 ```
 
+### Creating Pull Requests
+
+After making changes, create a PR with one command:
+
+```bash
+# Create PR with title and description
+just pr "Add user authentication" "Implements secure login system"
+
+# Create PR with just title
+just pr "Fix login bug"
+```
+
 ### Manual Branch Creation
 
 If you prefer manual creation:
@@ -100,11 +112,12 @@ git commit -m "feat: add user authentication system"
 ### 3. Push and Create PR
 
 ```bash
-# Push to remote
-git push origin feature/your-feature-name
+# Push and create PR in one command
+just pr "Your PR title" "Your PR description"
 
-# Create pull request at:
-# https://github.com/miguelrfernandes/chained-social/pull/new/feature/your-feature-name
+# Or manually
+git push origin feature/your-feature-name
+gh pr create --title "Your PR title" --body "Your PR description"
 ```
 
 ### 4. After PR is Merged
@@ -161,6 +174,9 @@ git commit -m "fix: resolve user authentication timeout issue"
 ```bash
 # Create new branch
 just branch <type> <description>
+
+# Create PR for current branch
+just pr <title> [description]
 
 # Deploy project
 just deploy
