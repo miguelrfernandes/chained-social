@@ -324,11 +324,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🌐 Links
 
-- **Demo**: https://chainedsocial.icp0.io
-- **Documentation**: https://docs.chainedsocial.network
-- **Twitter**: https://twitter.com/chainedsocial
-- **Discord**: https://discord.gg/chainedsocial
-- **Telegram**: https://t.me/chainedsocial
+- **Twitter**: https://twitter.com/cs_icp
 
 ## 📺 Videos
 
