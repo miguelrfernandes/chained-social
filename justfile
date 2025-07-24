@@ -17,7 +17,7 @@ deploy:
     @echo "📦 Installing frontend dependencies..."
     cd frontend && npm install
     @echo "🚀 Starting dfx and deploying canisters..."
-    dfx start --background
+    dfx start --background || true
     @echo "🔄 Creating canisters..."
     dfx canister create --all
     @echo "🏗️ Building Motoko canisters..."
