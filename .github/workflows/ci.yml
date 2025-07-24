@@ -63,39 +63,39 @@ jobs:
         run: |
           just status
 
-      - name: 🚀 Deploy to playground (PR only)
-        if: github.event_name == 'pull_request'
-        run: |
-          just troubleshoot
-          just deploy
-          just deploy-playground
+      # - name: 🚀 Deploy to playground (PR only)
+      #   if: github.event_name == 'pull_request'
+      #   run: |
+      #     just troubleshoot
+      #     just deploy
+      #     just deploy-playground
 
-      - name: 📋 Get playground URLs
-        if: github.event_name == 'pull_request'
-        run: |
-          echo "🎪 Playground Deployment URLs:" >> $GITHUB_STEP_SUMMARY
-          FRONTEND_ID=$(dfx canister id frontend --network playground)
-          BACKEND_ID=$(dfx canister id backend --network playground)
-          CONTENT_ID=$(dfx canister id content --network playground)
-          SOCIALGRAPH_ID=$(dfx canister id socialgraph --network playground)
+      # - name: 📋 Get playground URLs
+      #   if: github.event_name == 'pull_request'
+      #   run: |
+      #     echo "🎪 Playground Deployment URLs:" >> $GITHUB_STEP_SUMMARY
+      #     FRONTEND_ID=$(dfx canister id frontend --network playground)
+      #     BACKEND_ID=$(dfx canister id backend --network playground)
+      #     CONTENT_ID=$(dfx canister id content --network playground)
+      #     SOCIALGRAPH_ID=$(dfx canister id socialgraph --network playground)
           
-          echo "### 🔗 Playground URLs" >> $GITHUB_STEP_SUMMARY
-          echo "- **Frontend**: https://${FRONTEND_ID}.icp0.io/" >> $GITHUB_STEP_SUMMARY
-          echo "- **Backend Canister**: ${BACKEND_ID}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Content Canister**: ${CONTENT_ID}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Social Graph Canister**: ${SOCIALGRAPH_ID}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 🧪 Testing" >> $GITHUB_STEP_SUMMARY
-          echo "You can test your changes by visiting the frontend URL above." >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📊 Status" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Security scan passed" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Build completed" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Tests passed" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Deployment successful" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "---" >> $GITHUB_STEP_SUMMARY
-          echo "*This is an automated deployment for PR #${GITHUB_ISSUE_NUMBER}*" >> $GITHUB_STEP_SUMMARY
+      #     echo "### 🔗 Playground URLs" >> $GITHUB_STEP_SUMMARY
+      #     echo "- **Frontend**: https://${FRONTEND_ID}.icp0.io/" >> $GITHUB_STEP_SUMMARY
+      #     echo "- **Backend Canister**: ${BACKEND_ID}" >> $GITHUB_STEP_SUMMARY
+      #     echo "- **Content Canister**: ${CONTENT_ID}" >> $GITHUB_STEP_SUMMARY
+      #     echo "- **Social Graph Canister**: ${SOCIALGRAPH_ID}" >> $GITHUB_STEP_SUMMARY
+      #     echo "" >> $GITHUB_STEP_SUMMARY
+      #     echo "### 🧪 Testing" >> $GITHUB_STEP_SUMMARY
+      #     echo "You can test your changes by visiting the frontend URL above." >> $GITHUB_STEP_SUMMARY
+      #     echo "" >> $GITHUB_STEP_SUMMARY
+      #     echo "### 📊 Status" >> $GITHUB_STEP_SUMMARY
+      #     echo "- ✅ Security scan passed" >> $GITHUB_STEP_SUMMARY
+      #     echo "- ✅ Build completed" >> $GITHUB_STEP_SUMMARY
+      #     echo "- ✅ Tests passed" >> $GITHUB_STEP_SUMMARY
+      #     echo "- ✅ Deployment successful" >> $GITHUB_STEP_SUMMARY
+      #     echo "" >> $GITHUB_STEP_SUMMARY
+      #     echo "---" >> $GITHUB_STEP_SUMMARY
+      #     echo "*This is an automated deployment for PR #${GITHUB_ISSUE_NUMBER}*" >> $GITHUB_STEP_SUMMARY
 
       - name: 📊 Upload test results
         uses: actions/upload-artifact@v4
