@@ -66,6 +66,8 @@ jobs:
       - name: 🚀 Deploy to playground (PR only)
         if: github.event_name == 'pull_request'
         run: |
+          just troubleshoot
+          just deploy
           just deploy-playground
 
       - name: 📋 Get playground URLs
