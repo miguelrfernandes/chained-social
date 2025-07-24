@@ -8,6 +8,7 @@ Welcome to the comprehensive documentation for ChainedSocial, a decentralized so
 |--------------|-----------------|----------|
 | **Build Guide** | Build and deployment instructions | [BUILD.md](BUILD.md) |
 | **CI/CD Setup** | Continuous integration configuration | [CI_CD.md](CI_CD.md) |
+| **Competitor Analysis** | Analysis of competitors and market positioning | [COMPETITOR_ANALYSIS.md](COMPETITOR_ANALYSIS.md) |
 | **Logging Guide** | Enhanced Pino logging setup | [LOGGING.md](LOGGING.md) |
 | **Project Workflow** | Development workflow and processes | [PROJECT_WORKFLOW.md](PROJECT_WORKFLOW.md) |
 
@@ -30,6 +31,13 @@ Continuous integration and deployment configuration:
 - Automated testing
 - Preview deployments
 - Code quality checks
+
+### [COMPETITOR_ANALYSIS.md](COMPETITOR_ANALYSIS.md)
+Comprehensive analysis of competitors in the decentralized social space:
+- Direct competitors (Proton/IceCube, NeutronStarDAO)
+- Protocol competitors (Lens, Farcaster)
+- Competitive advantages and positioning
+- Strategic recommendations
 
 ### [LOGGING.md](LOGGING.md)
 Enhanced logging implementation:
