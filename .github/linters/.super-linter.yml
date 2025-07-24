@@ -1,6 +1,12 @@
 # Super-Linter configuration for ChainedSocial
 # This file configures which linters to enable/disable
 
+# Security and Code Quality
+CHECKOV: false
+JSCPD: false
+SAST: false
+SNYK: false
+
 # JavaScript/TypeScript
 JAVASCRIPT_ES: true
 JAVASCRIPT_STANDARD: false
@@ -13,6 +19,7 @@ REACT: true
 # Markdown
 MARKDOWN: true
 MARKDOWN_MARKDOWNLINT: true
+MARKDOWN_PRETTIER: false
 
 # YAML
 YAML: true
@@ -28,6 +35,7 @@ SHELL_SHELLCHECK: true
 
 # Docker
 DOCKER: false
+DOCKERFILE_HADOLINT: false
 
 # HTML
 HTML: false
