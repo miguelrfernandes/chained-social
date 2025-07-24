@@ -8,18 +8,31 @@
 
 ChainedSocial is a fully decentralized social media platform built on the Internet Computer Protocol (ICP) blockchain. Our mission is to create a social media ecosystem where users own their data, control their content, and participate in platform governance.
 
+## 🌐 Links
+
+- **Twitter**: https://twitter.com/cs_icp
+
+## 📺 Videos
+
+- **[ChainedSocial Demo](https://youtu.be/JiQCSyT3_HA)** - Watch our platform in action
+- **[ChainedSocial Deployment and Walkthrough](https://youtu.be/N4btismZ5I0)** - Detailed feature overview and demonstration
+
+## Pitch Deck
+
+- [Slide Deck A](https://www.icloud.com/keynote/075Mep0AWnS5J_sFPHDLKtUzw#ChainedSocial_ICP_WCHL25)
+- [Slide Deck B](https://www.icloud.com/keynote/0b9cMMg34FoqpXNe60GhKCWhw#ChainedSocial-ICP-WCHL25_2)
+
 ## 🚀 Key Features
 
 - **100% On-Chain**: All data stored on ICP blockchain with unlimited scalability
 - **Passwordless Auth**: Secure authentication via Internet Identity
-- **Community Governance**: DAO-based decision making for platform features
-- **Creator Economy**: Direct monetization through ICP tokens and tips
+- **Planned: Community Governance**: DAO-based decision making for platform features
+- **Planned: Creator Economy**: Direct monetization through ICP tokens and tips
 - **Censorship Resistant**: Content stored across distributed nodes
-- **Real-Time Messaging**: Instant communication between users
-- **NFT Integration**: Profile pictures and collectible posts as NFTs
-- **AI-Powered Discovery**: Intelligent content recommendations
-- **AI integration to create images and posts**
-- **Create AI agents that can talk, aggregate information, etc**
+- **Planned: Real-Time Messaging**: Instant communication between users
+- **Planned: NFT Integration**: Profile pictures and collectible posts as NFTs
+- **Planned: AI integration to create images and posts**
+- **Planned: Create AI agents that can talk, aggregate information, etc**
 
 ## 🏗️ Technical Architecture
 
@@ -321,15 +334,6 @@ We welcome contributions from the community! Please read our [Contributing Guide
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🌐 Links
-
-- **Twitter**: https://twitter.com/cs_icp
-
-## 📺 Videos
-
-- **[ChainedSocial Demo](https://youtu.be/JiQCSyT3_HA)** - Watch our platform in action
-- **[ChainedSocial Deployment and Walkthrough](https://youtu.be/N4btismZ5I0)** - Detailed feature overview and demonstration
 
 ## 🚀 Built for ICP WCHL25
 
