@@ -81,6 +81,18 @@ urls:
     @dfx canister id content 2>/dev/null && echo "   Content: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$$(dfx canister id content)" || echo "   Content: Not deployed"
     @dfx canister id socialgraph 2>/dev/null && echo "   SocialGraph: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$$(dfx canister id socialgraph)" || echo "   SocialGraph: Not deployed"
 
+# 🌿 Branch: Create a new feature branch with descriptive name
+branch type description:
+    @echo "🌿 Creating new feature branch..."
+    @echo "Usage: just branch <type> <description>"
+    @echo ""
+    @echo "Types: feature, fix, docs, refactor, test, chore"
+    @echo "Examples:"
+    @echo "  just branch feature user-auth"
+    @echo "  just branch fix login-bug"
+    @echo "  just branch docs api-docs"
+    @./scripts/create-feature-branch.sh {{type}} {{description}}
+
 # 🔧 Troubleshoot: Diagnose common issues
 troubleshoot:
     @echo "🔧 Troubleshooting Guide:"
