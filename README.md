@@ -48,6 +48,22 @@ ChainedSocial is a fully decentralized social media platform built on the Intern
 
 **USE DFX 0.27.0**
 
+### 🌿 Development Workflow
+
+Before starting development, familiarize yourself with our git workflow:
+
+```bash
+# Create a new feature branch
+just branch feature your-feature-name
+
+# Or manually
+git checkout main
+git pull origin main
+git checkout -b feature/your-feature-name
+```
+
+📖 **See [Git Workflow Guide](docs/GIT_WORKFLOW.md) for complete details**
+
 ### Option 1: Playground Development (Recommended)
 
 1. **Setup the Project:**
