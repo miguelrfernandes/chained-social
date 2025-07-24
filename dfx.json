@@ -24,8 +24,16 @@
         "output": "frontend/src/declarations/socialgraph"
       }
     },
+    "messaging": {
+      "main": "messaging/main.mo",
+      "type": "motoko",
+      "declarations": {
+        "bindings": ["js", "ts", "did"],
+        "output": "frontend/src/declarations/messaging"
+      }
+    },
     "frontend": {
-      "dependencies": ["backend", "content", "socialgraph"],
+      "dependencies": ["backend", "content", "socialgraph", "messaging"],
       "type": "assets",
       "source": ["frontend/dist"],
       "candid": "frontend/assetstorage.did"

@@ -24,10 +24,12 @@ deploy:
     dfx build backend
     dfx build content
     dfx build socialgraph
+    dfx build messaging
     @echo "🔄 Generating type declarations..."
     dfx generate backend
     dfx generate content
     dfx generate socialgraph
+    dfx generate messaging
     @echo "🚀 Deploying canisters..."
     dfx deploy
     @echo "🏗️ Building frontend assets..."
@@ -54,6 +56,7 @@ deploy-playground:
     @dfx canister id backend --network playground 2>/dev/null && echo "   Backend: $$(dfx canister id backend --network playground)" || echo "   Backend: Not deployed"
     @dfx canister id content --network playground 2>/dev/null && echo "   Content: $$(dfx canister id content --network playground)" || echo "   Content: Not deployed"
     @dfx canister id socialgraph --network playground 2>/dev/null && echo "   SocialGraph: $$(dfx canister id socialgraph --network playground)" || echo "   SocialGraph: Not deployed"
+    @dfx canister id messaging --network playground 2>/dev/null && echo "   Messaging: $$(dfx canister id messaging --network playground)" || echo "   Messaging: Not deployed"
 
 # 🔍 Status: Check project status
 status:
@@ -76,10 +79,14 @@ urls:
     @echo "👥 Social Graph:"
     @dfx canister id socialgraph 2>/dev/null && echo "   $$(dfx canister id socialgraph)" || echo "   Not deployed"
     @echo ""
+    @echo "💬 Messaging:"
+    @dfx canister id messaging 2>/dev/null && echo "   $$(dfx canister id messaging)" || echo "   Not deployed"
+    @echo ""
     @echo "📋 Candid Interfaces:"
     @dfx canister id backend 2>/dev/null && echo "   Backend: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$$(dfx canister id backend)" || echo "   Backend: Not deployed"
     @dfx canister id content 2>/dev/null && echo "   Content: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$$(dfx canister id content)" || echo "   Content: Not deployed"
     @dfx canister id socialgraph 2>/dev/null && echo "   SocialGraph: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$$(dfx canister id socialgraph)" || echo "   SocialGraph: Not deployed"
+    @dfx canister id messaging 2>/dev/null && echo "   Messaging: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$$(dfx canister id messaging)" || echo "   Messaging: Not deployed"
 
 # 🔧 Troubleshoot: Diagnose common issues
 troubleshoot:

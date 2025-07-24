@@ -11,7 +11,9 @@ import Profile from './components/Profile';
 import HeroSection from './components/HeroSection';
 import AuthUI from './components/AuthUI';
 import PostingInterface from './components/PostingInterface';
+import MessagingInterface from './components/MessagingInterface';
 import { AuthProvider } from './contexts/AuthContext';
+import { MessagingProvider } from './contexts/MessagingContext';
 
 function App() {
   const [error, setError] = useState(null);
@@ -95,17 +97,23 @@ function App() {
 
   return (
     <AuthProvider>
-      <Router>
-        <div className="min-h-screen bg-gray-50">
-          <Header />
+      <MessagingProvider>
+        <Router>
+          <div className="min-h-screen bg-gray-50">
+            <Header />
 
-          <Routes>
-            <Route path="/profile/:username" element={
-              <Profile
-                contentActor={contentActor}
-              />
-            } />
-            <Route path="/" element={
+            <Routes>
+              <Route path="/messages" element={
+                <div className="h-screen pt-16">
+                  <MessagingInterface />
+                </div>
+              } />
+              <Route path="/profile/:username" element={
+                <Profile
+                  contentActor={contentActor}
+                />
+              } />
+              <Route path="/" element={
               <div className="w-full max-w-4xl mx-auto p-8">
                 <div className="bg-white rounded-lg shadow-lg p-8">
                   {/* Landing Page Hero Section - Only show when not logged in */}
@@ -160,7 +168,8 @@ function App() {
           )}
         </div>
       </Router>
-    </AuthProvider>
+    </MessagingProvider>
+  </AuthProvider>
   );
 }
 
