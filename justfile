@@ -50,10 +50,15 @@ deploy-playground:
     cd frontend && npm run build
     @echo "✅ Playground deployment complete!"
     @echo "🔗 URLs:"
-    @dfx canister id frontend --network playground 2>/dev/null && echo "   Frontend: https://$$(dfx canister id frontend --network playground).icp0.io/" || echo "   Frontend: Not deployed"
-    @dfx canister id backend --network playground 2>/dev/null && echo "   Backend: $$(dfx canister id backend --network playground)" || echo "   Backend: Not deployed"
-    @dfx canister id content --network playground 2>/dev/null && echo "   Content: $$(dfx canister id content --network playground)" || echo "   Content: Not deployed"
-    @dfx canister id socialgraph --network playground 2>/dev/null && echo "   SocialGraph: $$(dfx canister id socialgraph --network playground)" || echo "   SocialGraph: Not deployed"
+    @dfx canister id frontend --network playground 2>/dev/null >/dev/null && echo "   Frontend: https://$(dfx canister id frontend --network playground).icp0.io/" || echo "   Frontend: Not deployed"
+    @dfx canister id backend --network playground 2>/dev/null >/dev/null && echo "   Backend: $(dfx canister id backend --network playground)" || echo "   Backend: Not deployed"
+    @dfx canister id content --network playground 2>/dev/null >/dev/null && echo "   Content: $(dfx canister id content --network playground)" || echo "   Content: Not deployed"
+    @dfx canister id socialgraph --network playground 2>/dev/null >/dev/null && echo "   SocialGraph: $(dfx canister id socialgraph --network playground)" || echo "   SocialGraph: Not deployed"
+    @echo ""
+    @echo "📋 Candid Interfaces:"
+    @dfx canister id backend --network playground 2>/dev/null >/dev/null && echo "   Backend: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$(dfx canister id backend --network playground)" || echo "   Backend: Not deployed"
+    @dfx canister id content --network playground 2>/dev/null >/dev/null && echo "   Content: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$(dfx canister id content --network playground)" || echo "   Content: Not deployed"
+    @dfx canister id socialgraph --network playground 2>/dev/null >/dev/null && echo "   SocialGraph: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$(dfx canister id socialgraph --network playground)" || echo "   SocialGraph: Not deployed"
 
 # 🔍 Status: Check project status
 status:
@@ -65,21 +70,21 @@ urls:
     @echo "🔗 Current Canister URLs:"
     @echo ""
     @echo "🌐 Frontend:"
-    @dfx canister id frontend 2>/dev/null && echo "   https://$$(dfx canister id frontend).icp0.io/" || echo "   Not deployed"
+    @dfx canister id frontend 2>/dev/null && echo "   https://$(dfx canister id frontend).icp0.io/" || echo "   Not deployed"
     @echo ""
     @echo "🔧 Backend:"
-    @dfx canister id backend 2>/dev/null && echo "   $$(dfx canister id backend)" || echo "   Not deployed"
+    @dfx canister id backend 2>/dev/null >/dev/null && echo "   $(dfx canister id backend)" || echo "   Not deployed"
     @echo ""
     @echo "📝 Content:"
-    @dfx canister id content 2>/dev/null && echo "   $$(dfx canister id content)" || echo "   Not deployed"
+    @dfx canister id content 2>/dev/null >/dev/null && echo "   $(dfx canister id content)" || echo "   Not deployed"
     @echo ""
     @echo "👥 Social Graph:"
-    @dfx canister id socialgraph 2>/dev/null && echo "   $$(dfx canister id socialgraph)" || echo "   Not deployed"
+    @dfx canister id socialgraph 2>/dev/null >/dev/null && echo "   $(dfx canister id socialgraph)" || echo "   Not deployed"
     @echo ""
     @echo "📋 Candid Interfaces:"
-    @dfx canister id backend 2>/dev/null && echo "   Backend: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$$(dfx canister id backend)" || echo "   Backend: Not deployed"
-    @dfx canister id content 2>/dev/null && echo "   Content: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$$(dfx canister id content)" || echo "   Content: Not deployed"
-    @dfx canister id socialgraph 2>/dev/null && echo "   SocialGraph: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$$(dfx canister id socialgraph)" || echo "   SocialGraph: Not deployed"
+    @dfx canister id backend 2>/dev/null >/dev/null && echo "   Backend: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$(dfx canister id backend)" || echo "   Backend: Not deployed"
+    @dfx canister id content 2>/dev/null >/dev/null && echo "   Content: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$(dfx canister id content)" || echo "   Content: Not deployed"
+    @dfx canister id socialgraph 2>/dev/null >/dev/null && echo "   SocialGraph: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$(dfx canister id socialgraph)" || echo "   SocialGraph: Not deployed"
 
 # 🔧 Troubleshoot: Diagnose common issues
 troubleshoot:

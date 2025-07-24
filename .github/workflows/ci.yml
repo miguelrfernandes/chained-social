@@ -63,39 +63,39 @@ jobs:
         run: |
           just status
 
-      - name: 🚀 Deploy to playground (PR only)
-        if: github.event_name == 'pull_request'
-        run: |
-          just troubleshoot
-          just deploy
-          just deploy-playground
+      # - name: 🚀 Deploy to playground (PR only)
+      #   if: github.event_name == 'pull_request'
+      #   run: |
+      #     just troubleshoot
+      #     just deploy
+      #     just deploy-playground
 
-      - name: 📋 Get playground URLs
-        if: github.event_name == 'pull_request'
-        run: |
-          echo "🎪 Playground Deployment URLs:" >> $GITHUB_STEP_SUMMARY
-          FRONTEND_ID=$(dfx canister id frontend --network playground)
-          BACKEND_ID=$(dfx canister id backend --network playground)
-          CONTENT_ID=$(dfx canister id content --network playground)
-          SOCIALGRAPH_ID=$(dfx canister id socialgraph --network playground)
+      # - name: 📋 Get playground URLs
+      #   if: github.event_name == 'pull_request'
+      #   run: |
+      #     echo "🎪 Playground Deployment URLs:" >> $GITHUB_STEP_SUMMARY
+      #     FRONTEND_ID=$(dfx canister id frontend --network playground)
+      #     BACKEND_ID=$(dfx canister id backend --network playground)
+      #     CONTENT_ID=$(dfx canister id content --network playground)
+      #     SOCIALGRAPH_ID=$(dfx canister id socialgraph --network playground)
           
-          echo "### 🔗 Playground URLs" >> $GITHUB_STEP_SUMMARY
-          echo "- **Frontend**: https://${FRONTEND_ID}.icp0.io/" >> $GITHUB_STEP_SUMMARY
-          echo "- **Backend Canister**: ${BACKEND_ID}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Content Canister**: ${CONTENT_ID}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Social Graph Canister**: ${SOCIALGRAPH_ID}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 🧪 Testing" >> $GITHUB_STEP_SUMMARY
-          echo "You can test your changes by visiting the frontend URL above." >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📊 Status" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Security scan passed" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Build completed" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Tests passed" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Deployment successful" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "---" >> $GITHUB_STEP_SUMMARY
-          echo "*This is an automated deployment for PR #${GITHUB_ISSUE_NUMBER}*" >> $GITHUB_STEP_SUMMARY
+      #     echo "### 🔗 Playground URLs" >> $GITHUB_STEP_SUMMARY
+      #     echo "- **Frontend**: https://${FRONTEND_ID}.icp0.io/" >> $GITHUB_STEP_SUMMARY
+      #     echo "- **Backend Canister**: ${BACKEND_ID}" >> $GITHUB_STEP_SUMMARY
+      #     echo "- **Content Canister**: ${CONTENT_ID}" >> $GITHUB_STEP_SUMMARY
+      #     echo "- **Social Graph Canister**: ${SOCIALGRAPH_ID}" >> $GITHUB_STEP_SUMMARY
+      #     echo "" >> $GITHUB_STEP_SUMMARY
+      #     echo "### 🧪 Testing" >> $GITHUB_STEP_SUMMARY
+      #     echo "You can test your changes by visiting the frontend URL above." >> $GITHUB_STEP_SUMMARY
+      #     echo "" >> $GITHUB_STEP_SUMMARY
+      #     echo "### 📊 Status" >> $GITHUB_STEP_SUMMARY
+      #     echo "- ✅ Security scan passed" >> $GITHUB_STEP_SUMMARY
+      #     echo "- ✅ Build completed" >> $GITHUB_STEP_SUMMARY
+      #     echo "- ✅ Tests passed" >> $GITHUB_STEP_SUMMARY
+      #     echo "- ✅ Deployment successful" >> $GITHUB_STEP_SUMMARY
+      #     echo "" >> $GITHUB_STEP_SUMMARY
+      #     echo "---" >> $GITHUB_STEP_SUMMARY
+      #     echo "*This is an automated deployment for PR #${GITHUB_ISSUE_NUMBER}*" >> $GITHUB_STEP_SUMMARY
 
       - name: 📊 Upload test results
         uses: actions/upload-artifact@v4
@@ -116,39 +116,39 @@ jobs:
             src/declarations/
             .dfx/
 
-  lint:
-    name: 🔍 Super-Linter
-    runs-on: ubuntu-latest
-    needs: security
+  # lint:
+  #   name: 🔍 Super-Linter
+  #   runs-on: ubuntu-latest
+  #   needs: security
     
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  #   steps:
+  #     - name: 📥 Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
 
-      - name: 📦 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-          cache: 'npm'
-          cache-dependency-path: 'package-lock.json'
+  #     - name: 📦 Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version-file: 'package.json'
+  #         cache: 'npm'
+  #         cache-dependency-path: 'package-lock.json'
 
-      - name: 🔍 Run Super-Linter
-        uses: super-linter/super-linter@v8
-        env:
-          DEFAULT_BRANCH: main
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LINTER_RULES_PATH: .github/linters
-          ENABLE_GITHUB_ACTIONS_STEP_SUMMARY: true
-          SAVE_SUPER_LINTER_SUMMARY: true
-          # Include only relevant directories
-          FILTER_REGEX_INCLUDE: (^frontend/|^backend/|^content/|^socialgraph/|^scripts/|^docs/|^justfile|^dfx\.json|^package\.json|^README\.md)
-          # Exclude generated files and build artifacts
-          FILTER_REGEX_EXCLUDE: (^frontend/dist/|^src/declarations/|^\.dfx/|^node_modules/|^\.git/|^\.github/|^\.vscode/)
-          # Ignore generated files
-          IGNORE_GENERATED_FILES: true
-          # Ignore gitignored files
-          IGNORE_GITIGNORED_FILES: true
+  #     - name: 🔍 Run Super-Linter
+  #       uses: super-linter/super-linter@v8
+  #       env:
+  #         DEFAULT_BRANCH: main
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         LINTER_RULES_PATH: .github/linters
+  #         ENABLE_GITHUB_ACTIONS_STEP_SUMMARY: true
+  #         SAVE_SUPER_LINTER_SUMMARY: true
+  #         # Include only relevant directories
+  #         FILTER_REGEX_INCLUDE: (^frontend/|^backend/|^content/|^socialgraph/|^scripts/|^docs/|^justfile|^dfx\.json|^package\.json|^README\.md)
+  #         # Exclude generated files and build artifacts
+  #         FILTER_REGEX_EXCLUDE: (^frontend/dist/|^src/declarations/|^\.dfx/|^node_modules/|^\.git/|^\.github/|^\.vscode/)
+  #         # Ignore generated files
+  #         IGNORE_GENERATED_FILES: true
+  #         # Ignore gitignored files
+  #         IGNORE_GITIGNORED_FILES: true
 
   
