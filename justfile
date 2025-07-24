@@ -81,6 +81,31 @@ urls:
     @dfx canister id content 2>/dev/null && echo "   Content: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$$(dfx canister id content)" || echo "   Content: Not deployed"
     @dfx canister id socialgraph 2>/dev/null && echo "   SocialGraph: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=$$(dfx canister id socialgraph)" || echo "   SocialGraph: Not deployed"
 
+# 🌿 Branch: Create a new feature branch with descriptive name
+branch type description:
+    @echo "🌿 Creating new feature branch..."
+    git checkout main
+    git pull origin main
+    git checkout -b {{type}}/{{description}}
+    @echo "✅ Branch '{{type}}/{{description}}' created!"
+    @echo "💡 Next: Make changes, then 'just pr <title>' to create PR"
+
+# 🚀 PR: Create a pull request for current branch
+pr title body="":
+    @echo "🚀 Creating pull request..."
+    git push origin $(git branch --show-current)
+    gh pr create --title "{{title}}" --body "{{body}}" --head $(git branch --show-current)
+    @echo "✅ PR created! View at: $(gh pr view --json url --jq '.url')"
+
+# 📋 PR-New: Create branch and PR in one command
+pr-new type description title body="":
+    @echo "📋 Creating branch and PR..."
+    git checkout main
+    git pull origin main
+    git checkout -b {{type}}/{{description}}
+    @echo "✅ Branch '{{type}}/{{description}}' created!"
+    @echo "💡 Make your changes, then run: just pr '{{title}}' '{{body}}'"
+
 # 🔧 Troubleshoot: Diagnose common issues
 troubleshoot:
     @echo "🔧 Troubleshooting Guide:"
