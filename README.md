@@ -56,10 +56,8 @@ Before starting development, familiarize yourself with our git workflow:
 # Create a new feature branch
 just branch feature your-feature-name
 
-# Or manually
-git checkout main
-git pull origin main
-git checkout -b feature/your-feature-name
+# Make changes, then create PR
+just pr "Your PR title" "Your PR description"
 ```
 
 📖 **See [Git Workflow Guide](docs/GIT_WORKFLOW.md) for complete details**
